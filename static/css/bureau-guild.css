@@ -1,0 +1,228 @@
+/* @override 
+	http://localhost:8888/bureau/css/bureau-guild.css
+	https://www.dur.ac.uk/b.t.tattersley/bureau/css/bureau-guild.css */
+
+body {
+	padding-top: 0;
+}
+
+/*.container {
+	border-width: 10px 0 0 0;
+	background: white !important;
+	padding-left: 20px;
+}
+
+h4 {
+	-webkit-transition: color 0.3s ease 0.5s;
+	transition: color 0.3s ease 0.5s;
+	box-shadow: none;
+	padding-left: 0;
+}*/
+
+/* @group Dark Styles */
+	/* We put them in here for now until bureau is moved over to ultralight style */
+	
+	
+	
+/* @end */
+
+.container {
+	margin-bottom: 10px;
+}
+
+#address-changes h4 {
+	margin-bottom: 0 !important;
+}
+
+.address-change {
+	background: white;
+	max-width: 485px;
+	margin: auto;
+	padding-left: 15px;
+	padding-top: 5px;
+	padding-bottom: 0px;
+	overflow: hidden;
+	box-shadow: 0px 3px 5px #444;
+	position: relative;
+}
+
+.name-row {
+	height: 38px;
+	line-height: 45px;
+	vertical-align: middle;
+	font-size: 33px;
+	font-weight: 300;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	border-bottom: 1px solid #dfdfdf;
+	margin-right: 100px;
+	margin-bottom: 10px;
+	color: #666;
+}
+
+.address-change > p {
+	margin-left: 10px;
+	margin-right: 100px;
+	font-size: 20px;
+	position: relative;
+	color: #666;
+	font-weight: 400;
+	margin-bottom: 20px;
+}
+
+.address-change > p::before {
+	content: attr(title);
+	position: absolute;
+	left: 0;
+	bottom: -16px;
+	font-size: 12px;
+	text-transform: uppercase;
+	color: #888;
+	font-weight: 400;
+}
+
+.address-change > p > span.arrow {
+	color: #bbb;
+	letter-spacing: -6px;
+	margin-left: 10px;
+	margin-right: 10px;
+	font-weight: 300;
+}
+
+.address-change > .display-picture {
+	background-image: url(../images/target.svg);
+	width: 72px;
+	height: 72px;
+	border-radius: 50%;
+	background-size: cover;
+	margin-right: 16px;
+	position: absolute;
+	top: 5px;
+	right: 0;
+	border: 2px solid white;
+}
+
+.address-change a {
+	display: block;
+	margin-left:-15px;
+	margin-bottom: 20px;
+	text-align: center;
+	color: #888;
+	font-weight: 600;
+	text-decoration: none;
+	cursor: pointer;
+	height: 20px;
+	overflow: hidden;
+	
+	-webkit-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+}
+
+.detailschange-actions:target + a {
+	height: 0px;
+	margin-bottom: 0px;
+}
+
+.detailschange-actions {
+	height:0px;
+	overflow: hidden;
+	-webkit-transition: height 0.5s ease;
+	transition: height 0.5s ease;
+	margin-left: -15px;
+}
+
+.detailschange-actions:target {
+	height:110px;
+}
+
+input[type="radio"] {
+	display: block;
+	width: 50%;
+	height: 30px;
+	line-height: 30px;
+	font-size: 20px;
+	margin: 0;
+	float: left;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	text-align: center;
+	outline-offset: -2px;
+	outline: 1px solid white;
+	color: #aaa;
+	cursor: pointer;
+	background: white;
+	-webkit-transition: all 0.7s ease;
+	transition: all 0.7s ease;
+}
+
+input[type="radio"]:hover {
+	background: #f5f5f5;
+}
+
+
+input[type="radio"]:checked {
+	outline: 1px solid rgba(240,97,97,0.4);
+	color:#f06060;
+}
+
+input[type="radio"].approved-radio:checked {
+	outline: 1px solid rgba(47,204,112,0.4);
+	color: #2ecc71;
+}
+
+input[type="radio"]::after {
+	content: attr(value);
+	text-align: center;
+	text-shadow: 0px 0px 2px white;
+}
+
+.detailschange-message {
+	height: 40px;
+	border: none;
+	background: white;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	text-indent: 10px;
+	outline-width: 0px;
+	outline-style: solid;
+	outline-offset: -2px;
+}
+
+.detailschange-message:focus {
+	outline: 1px solid #888;
+}
+
+input[type="submit"] {
+	height: 40px;
+	width: 100%;
+	display: block;
+	background: none;
+	border: none;
+	padding: 0;
+	margin: 0;
+	outline: none;
+	line-height: 40px;
+	color:#666;
+	font-weight: 400;
+	font-size: 15px;
+	outline: 1px solid #888;
+	outline-offset: -3px;
+	cursor: pointer;
+}
+
+input[type="submit"]:hover {
+	color: grey;
+}
+
+#motd-setter {
+	background: white;
+	max-width: 500px;
+	margin: -5px auto auto;
+	padding-top: 2px;
+}
+
+#motd-input {
+	font-size: 20px;
+}

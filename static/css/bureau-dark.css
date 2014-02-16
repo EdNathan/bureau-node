@@ -1,0 +1,236 @@
+/* @override 
+	http://www.dur.ac.uk/b.t.tattersley/bureau/css/bureau-dark.css
+	http://localhost:8888/bureau/css/bureau-dark.css
+	https://www.dur.ac.uk/b.t.tattersley/bureau/css/bureau-dark.css */
+
+/* By presidential order here's a dark stylesheet for bureau */
+
+/* Colours:
+	#8d2828 - DUAS Red
+*/
+
+body.dark {
+	background-color: #111;
+	background-image: url("../images/dots-white.png");
+}
+
+/* @group h1-h6 */
+
+	body.dark h1 {
+		background-color: #222;
+		color: #8c2728 !important;
+		border-color: #8c2728 !important;
+	}
+	
+	body.dark h2 {
+		background: #ddd;
+		color: black;
+	}
+	
+	body.dark h3 {
+		background-color: rgba(140,40,40,0.84);
+		color: white;
+		font-weight: 300;
+		background-image: url("../images/dots-white.png");
+		background-size: 200px 200px;
+		background-repeat: repeat;
+		background-position: 0px;
+	}
+	
+	body.dark h4 {
+		background-color: #ddd;
+		color: black;
+	}
+
+/* @end */
+
+/* @group Login */
+
+	body.dark .login,  body.dark .container{
+		background-color: #8d2828 !important;
+		border-color: #ddd;
+	}
+
+/* @end */
+
+/* @group Toolbar and Grabber */
+
+	body.dark #toolbar {
+		border-color: #8d2828 !important;
+		color: #f06060 !important;
+		background-color: #222 !important;
+		box-shadow: 0 3px 20px rgba(102,102,102,0.28);
+	}
+	
+	body.dark #toolbar * {
+		color: #8d2828 !important;
+		background-color: #222 !important;
+		text-shadow: none !important;
+	}
+	
+	body.dark #grabber {
+		background: #222;
+		box-shadow: 0px 0px 5px 5px #222;
+	}
+
+/* @end */
+
+/* @group Player Cards */
+
+	body.dark .player-card {
+		border-color: #ddd !important;
+		background-image: url("../images/dots.png");
+		background-color: #8d2828 !important;
+	}
+	
+	body.dark .player-card p {
+		color: white;
+	}
+	
+	body.dark .player-card *[title]::after {
+		color: #aaa !important;
+	}
+	
+	body.dark .player-card .header-details {
+		box-shadow: none;
+		color: black;
+		
+		background: #ddd;
+		
+		box-shadow: 0px 1px 5px rgba(0,0,0,0.2);
+		margin-top: 0px;
+		padding-top: 0;
+		font-weight: 300;
+		
+	}
+	
+	body.dark .player-card .name-row {
+		color: black !important;
+	}
+	
+	body.dark .player-card .nickname-rank {
+		border: none !important;
+	}
+	
+	body.dark .player-card .display-picture {
+		box-shadow: none;
+		border: 5px solid #ddd;
+		position: relative;
+
+	}
+	
+	body.dark .player-card td {
+		vertical-align: top;
+	}
+	
+/* @end */
+
+/* Map section */
+
+	body.dark .map-container .button-container {
+		background-image: url("../images/dots-white.png");
+		background-color: rgba(140,40,40,0.84);
+		color: white;
+		
+	}
+	
+	body.dark .map-container .button-container button {
+		color: #ddd;
+	}
+	
+	body.dark .map-container .button-container button::after {
+		background-color: #ddd;
+	}
+
+/* Settings */
+
+	body.dark input[type="checkbox"]:checked {
+		background: #8d2828;
+	}
+
+
+
+/* Personal */
+
+	body.dark #personal-page {
+		background: transparent;
+		color: white;
+		
+		border-top: none;
+		padding-top: 15px;
+	}
+	
+	body.dark #personal-header {
+		color: black;
+		
+		padding-bottom: 0;;
+		
+		border: 2px solid #ddd !important;
+		box-shadow: 0 3px 2px rgba(0,0,0,0.1) !important;
+		overflow: hidden;
+		
+		max-width: 960px;
+		margin-top: auto;
+		margin-bottom: 20px;
+		background-image: url("../images/dots.png");
+		background-repeat: repeat;
+		background-position: 0px;
+	
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		-ms-box-sizing: border-box;
+		box-sizing: border-box;
+		
+		background-color: #8d2828 !important;
+		border-color: #ddd;
+		padding-top: 7px;
+	}
+	
+	body.dark #display-picture {
+		-webkit-transition: none;
+		transition: none;
+		box-shadow: 0 1px 132px #ffffff;
+		border: 1px solid #ffd3d3;
+	}
+	
+	body.dark #personal-header > #name {
+		color: black;
+		
+		background: #ddd;
+		
+		box-shadow: 0px 1px 5px rgba(0,0,0,0.2);
+		margin-top: 7px;
+		padding-top: 0;
+		padding-bottom: 18px;
+		margin-bottom: -19px;
+		
+		font-weight: 300;
+	}
+	
+	body.dark .light-container {
+		margin-left: 0px;
+		margin-right: 0;
+		color: white;
+	}
+	
+	body.dark .light-container h4 {
+		background: none;
+		color: white;
+	}
+	
+	body.dark .light-container input[type="text"] {
+		background: white !important;
+	}
+	
+	body.dark #details label {
+		color: #8d2828 !important;
+		bottom: 0px;
+	}
+	
+	body.dark .edit#details input:focus {
+		outline-color: #8d2828 !important;
+	}
+	
+	body.dark #kd-ratio > span {
+		color: white !important;
+	}

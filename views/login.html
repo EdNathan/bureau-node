@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+<meta charset=UTF-8>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="stylesheet" type="text/css" href="css/bureau.css">
+<link rel="stylesheet" type="text/css" href="css/bureau-dark.css">
+<link rel="stylesheet" type="text/css" href="css/bureau-login.css">
+
+<title>Bureau Login</title>
+
+</head>
+
+<body class="">
+	
+	<div id="login-register-box-wrapper">
+	
+		<div id="login-box" class="login container">
+			<h2>Welcome to Bureau</h2>
+			<div class="error-output"> </div>
+			<form action="/dologin" method="post" autocomplete="off">
+				<input type="text" name="email" placeholder="email" value="">
+				<input type="password" name="password" placeholder="password" value="">
+				
+				<div id="register">
+					
+					<input type="password" name="passwordconfirm" placeholder="confirm password" value="">
+					<input type="text" class="half" name="forename" placeholder="Forename" value="">
+					<input type="text" class="half" name="surname" placeholder="Surname" value="">
+					<input type="text" class="threequarter" name="address" placeholder="Address & Postcode/Block & Room Number" value="">
+					<div class="input-container quarter">
+						<label for="liverin-checkbox">Living In</label>
+						<input type="checkbox" name="liverin" id="liverin-checkbox" value="Yes">
+					</div>
+					
+					<input type="text" name="course" placeholder="Academic Course" value="">
+					<select name="college" class="half" placeholder="College (Durham Only)">
+						<option selected value="">College (Durham Only)</option>
+						<option value="None">None</option>
+						<option value="Castle">Castle</option>
+						<option value="Collingwood">Collingwood</option>
+						<option value="Grey">Grey</option>
+						<option value="Hatfield">Hatfield</option>
+						<option value="St Hild And St Bede">St Hild &amp; St Bede</option>
+						<option value="John Snow">John Snow</option>
+						<option value="Josephine Butler">Josephine Butler</option>
+						<option value="St Aidans">St Aidans</option>
+						<option value="St Chads">St Chads</option>
+						<option value="St Cuthberts">St Cuthberts</option>
+						<option value="St Johns">St Johns</option>
+						<option value="St Marys">St Marys</option>
+						<option value="Stephenson">Stephenson</option>
+						<option value="Trevelyan">Trevelyan</option>
+						<option value="Ustinov">Ustinov</option>
+						<option value="Van Mildert">Van Mildert</option>
+					</select>
+					
+					<select name="gamegroup" class="half" placeholder="Game Group">
+						<option value="">Game Group</option>
+						<option value="DURHAM">Durham</option>
+						<option value="LEEDS">Leeds</option>
+						<option value="CAMBRIDGE">Cambridge</option>
+						<option value="NCAROLINA">North Carolina</option>
+					</select>
+					<label for="consent" id="consent-label">Type "I Agree" below to confirm you have read your group's rules in their entirety and consent for other players to enter your room or address in accordance with said rules:</label>
+					<input type="text" id="consent-box" name="consent" placeholder="Do you agree?">
+				</div>
+				
+				<div id="submit-wrapper">
+					<input type="submit" id="submit-button" value="✓">
+					<div id="rememberme-wrapper">
+						<input type="checkbox" name="rememberme" value="yes" id="rememberme-checkbox">
+						<label for="rememberme-checkbox">Stay Logged In</label>
+					</div>
+					
+				</div>
+				
+				
+			</form>
+			
+			<a id="register-link" href="#register" onclick="hideRegister()">Don't have an account yet? Register</a>
+			
+		</div>
+		<a id="forgot-password-link" href="mailto:someone@example.com?subject=Bureau%20-%20Forgotten%20Login%20Details&body=Please fill out the information you can remember%0Aforename:%0Asurname:%0Aemail:%0Aaddress:%0A" onclick="forgotPassword()">Forgotten your login details?</a>
+	</div>
+	
+{% include "./includes/footer.html" %}
+<script type="text/javascript" src="js/bureau-login.js" charset="utf-8"></script>
+</body>
+</html>
