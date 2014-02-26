@@ -1,0 +1,12 @@
+<ul id="toolbar">
+	<li><a href="/home" title="Home">&#xe006;</a></li>
+	<li><a href="/settings" title="Settings">&#xe000;</a></li>
+	<li><a href="/personal" title="Me">&#xe001;</a></li>
+	<li><a href="https://www.dur.ac.uk/assassins.society/forum/index.php" title="Forum">&#xe003;</a></li>
+	<li><a href="https://www.dur.ac.uk/assassins.society/rules.php" title="Rules">&#xe004;</a></li>
+	<li><a href="/help" title="Help">?</a></li>
+	{% if isGuild %}
+	<li><a href="/guild" title="Guild">&#xe005;</a></li>
+	{% endif %}
+	<li><a href="/goodbye" title="Goodbye">&#xe002;</a></li>
+</ul>

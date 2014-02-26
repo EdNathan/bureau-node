@@ -1,0 +1,41 @@
+.container {
+	// The main container style. Use this to put things in boxes border: 2px solid white;
+	border: 2px solid white;
+	.box-shadow(0 3px 2px rgba(0, 0, 0, 0.1));
+	overflow: hidden;
+	position: relative;
+	max-width: 960px;
+	margin: auto;
+	background-color: #d0d0d0;
+	background-image: url("../images/dots.png");
+	background-size: 200px 200px;
+	background-repeat: repeat;
+	background-position: 0px;
+	-webkit-transition: all 0.5s ease 0.5s;
+	transition: all 0.5s ease 0.5s;
+	-webkit-column-break-inside: avoid;
+	column-break-inside: avoid;
+}
+.light-container {
+	border: 1px solid rgba(0, 0, 0, 0.05);
+	background: white !important;
+	box-shadow: 0 2px 5px -2px rgba(0, 0, 0, 0.2);
+	padding-left: 30px;
+	margin-bottom: 20px;
+	margin-bottom: 0px;
+	margin-right: 5px;
+	margin-left: 5px;
+	position: relative;
+}
+.light-container h4 {
+	box-shadow: none;
+	background: none;
+	text-align: left;
+	margin-top: 11px;
+	padding: 0;
+}
+@media screen and (max-width: 500px) {
+	.light-container {
+		padding-left: 15px;
+	}
+}

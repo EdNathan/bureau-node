@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset=UTF-8>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="stylesheet" type="text/css" href="/css/bureau.css">
+<link rel="stylesheet" type="text/css" href="/css/bureau-dark.css">
+<style id="search_style"></style>
+<title>Bureau</title>
+
+
+</head>
+
+
+<body id="page-{% filter lower %}{% block title %}{% endblock %}{% endfilter %}">
+<h1>{% block title %}Bureau{% endblock %}</h1>
+{% include "./includes/navbar.html" %}
+{% block main %}{% endblock %}
+
+{% include "./includes/footer.html" %}
+</body>
+
+
+</html>

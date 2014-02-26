@@ -1,0 +1,47 @@
+// Congratulations, you have been carefully selected to maintain Bureau.
+// Some things to consider:
+//	 - Don't re-invent the wheel, use the styles already created for you
+//	 	 + The container class is your friend, if you need to box something up then please use it
+//	 	 + Follow the existing styles carefully (e.g. shadows, font weights) and don't depart from the colour pallette. Test everything in dark and light!
+
+//Import the main Bureau font
+@import url('//fonts.googleapis.com/css?family=Lato:100,300,400,700');
+
+// Lato is the main font used in Bureau. It is available for use in the following weights: 
+// 100 - For fancy titles only, not recommended for long text. Use it for game/container titles
+// 300 - Good for body copy
+// 400 - A little bit thicker, use it for headers
+// 700 - When something really needs to grab someone's attention
+
+// Set the font-weight property to change between weights	
+
+//Import the toolbar font
+@font-face { /* We use a custom icon font made with icomoon.io/app/ that means the icons look crisp on displays of any resolution. Gotta be forward thinking! */
+	font-family: 'BureauToolbar';
+	src:url('../fonts/BureauToolbar.eot');
+	src:url('../fonts/BureauToolbar.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/BureauToolbar.woff') format('woff'),
+		url('../fonts/BureauToolbar.ttf') format('truetype'),
+		url('../fonts/BureauToolbar.svg#BureauToolbar') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.font() {font-family: 'Lato', Calibri, Arial, sans-serif;}
+
+// Bureau accent colours
+@blue: #0e83cd;		// Bubbles Blue
+@red: #f06060;		// Rave-N Red
+@yellow: #fcd04b;	// Yi-Fan Yellow
+@green: #2ecc71;	// Groves Green
+@purple: #9e54bd;	// Pavan Purple
+
+//Bureau main background colour
+@dust: #d0d0d0;		// Drop Dust
+
+//DUAS Colours
+@DUASred: #ba2025;
+
+@twocol: ~"min-width:900px";
+@mobile: ~"max-width:480px";
+@notmobile: ~"min-width:481px";

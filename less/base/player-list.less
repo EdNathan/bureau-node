@@ -1,0 +1,534 @@
+.player-table {
+	@t: 5px;
+	@tb: @t solid transparent;
+	
+	.clearfix();
+	
+	max-width: 960px;
+	
+	ul, li, & { //Reset stupid padding and margin
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+	
+	.player-row {
+		width: 100%;
+		float: left;
+		position: relative;
+		height: 60px;
+		.transition(0.4s, ease, height);
+		
+		&.has-killed {
+			opacity: 0.5; 
+			
+			.form-wrapper {
+				display: none;
+			}
+			
+			&::after {
+				content: "deceased";
+				display: block;
+				color: @DUASred;
+				position: absolute;
+				top:3px;
+				right:10px;
+			}
+		}
+		
+		section {
+			background: white;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			padding-left: 1em;
+			
+			@rpadding: 150px;
+			@rpaddingm: 5px;
+			
+			
+			header {
+				.box-shadow(~"0 5px 0px white, 0px 10px 25px -20px rgba(0, 0, 0, 1)");
+				//padding-right: @rpadding;
+				//@media (@mobile) {
+				//	padding-right: @rpaddingm;
+				//}
+				
+				
+				.name {
+					color: #666;
+					height: 45px;
+					line-height: 45px;
+					vertical-align: middle;
+					font-size: 1.5em;
+					font-weight: 400;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+					overflow: hidden;
+		/* 			text-align: center; */
+				}
+			
+				.nickname-rank {
+					font-size: 12px;
+		/* 			border-bottom: 1px solid #dfdfdf; */
+					margin-bottom: 10px;
+		/* 			text-align: center; */
+					padding-bottom: 3px;
+					padding-top: 0;
+					margin-top: -7px;
+					display: block;
+					line-height: 1em;
+					font-weight: 300;
+					
+					span:not(:empty)::after {
+						content:", ";
+					}
+					
+				}
+			}
+			
+			.fields {
+				padding-right: @rpadding;
+				@media (@mobile) {
+					padding-right: @rpaddingm;
+				}
+				*[title] {
+					position: relative;
+					margin-bottom: 5px;
+					padding-bottom: 8px;
+				}
+				
+				*[title]::after {
+					content: attr(title);
+					position: absolute;
+					bottom: 0;
+					left: 10px;
+					font-size: 12px;
+					line-height: 12px;
+				}
+				
+				*[title]:empty {
+					display:none;	
+					&::after {
+						display:none;
+					}
+				}
+			}
+		}
+		
+		aside {
+			.flex-container();
+			.flex-column();
+			.flex-justify(center);
+			
+			position: absolute;
+			top:0;
+			left:-60px;
+			height: 60px;
+			.transition(0);
+			
+			@media (@notmobile) {
+				.transition(0.3s);
+				height: 100%;
+			}
+			
+			.display-picture {
+				width: 50px;
+				height: 50px;
+				.border-radius(50%);
+				background-color: white;
+				background-position: center;
+				background-repeat: no-repeat;
+				background-size: cover;
+				.border-radius(50%);
+				.box-shadow(~"0 0 0 1px white, 0px 5px 5px -5px rgba(0, 0, 0, 1)");
+				.transition(0.3s);
+				
+				//If they don't have a picture give them the default one
+				&[style*="pictures/.jpg)"] {
+					background-image: url(../images/target.svg) !important;
+					.box-shadow(~"0 0 0 1px @{DUASred}, 0px 5px 5px -5px rgba(0, 0, 0, 1)");
+				}
+				
+				&::after { //Add a cutie pie little triangle to the display picture!
+					content: "";
+					display: block;
+					position: absolute;
+					border-right: @t solid white;
+					border-top: @tb;
+					border-bottom: @tb;
+					top: 30px-@t ;
+					right:-10px;
+					opacity:1;
+					.transition(0.3s);
+/*
+					
+					@media(@twocol) {
+						border-left: @t solid white;
+						border-right: 0px;
+						top: 30px-@t ;
+						left:-10px;
+						right: auto;
+					}
+*/
+					
+				}
+			}
+		}
+		
+		
+		.form-wrapper {
+			position: absolute;
+			top:0;
+			right:0;
+			left:auto;
+			height: 60px;
+			width: 112px;
+			overflow: hidden;
+			z-index: 100;
+			
+			form {
+				//display: none; //Hide the form so they can't click it when the row is not expanded
+				
+				width: 100%;
+				height:100%;
+				.transform(translateX(100%) translateZ(0));
+				opacity: 0;
+				.transition(0.5s);
+				
+				input[type="submit"] {
+					margin: 0 auto;
+					display: block;
+					height: 100%;
+					width: 100%;
+					background: none;
+					padding:0;
+					border:none;
+					text-align: left;
+					cursor: pointer;
+					font-size: 24px;
+					color: @DUASred;
+					text-transform: uppercase;
+					outline: none;
+				}
+			}
+		}
+		
+		&.expanded:not(.gamestate-row) {
+			height: 250px;
+			
+			form {
+				display: block;
+				.transform(translateX(0%) translateZ(0));
+				opacity: 1;
+			}
+			
+			@media (@notmobile) {
+				aside {
+					left:100%;
+					height:100%;
+					margin-left:-140px;
+					.transition(0.5s);
+				
+					.display-picture {
+						width:128px;
+						height:128px;
+					
+						&::after {
+							opacity: 0;
+						}
+					}
+				}
+			}
+			@media (@twocol) {
+				aside .display-picture {
+					margin-left: -10px;
+				}
+			
+				&:nth-child(2n) {
+					aside {
+						
+						.display-picture {
+							//margin-left: -200px;
+						}
+					}				
+				}
+				
+			}
+		}
+		
+		
+		
+		@media (@twocol) {
+			@gutter: 1em;
+			width:50%;
+			padding-right:@gutter/2;
+			
+			&.expanded {
+				.form-wrapper {
+					width: 122px;
+				}
+			}
+			
+			float: left;
+			clear: left;
+			
+			&:nth-child(2n) {
+				padding-left: @gutter/2;
+				padding-right: 0;
+				float: right;
+				clear: right;
+				&.expanded {
+					.form-wrapper {
+						width: 115px;
+					}
+				}
+				
+				aside {
+					left: auto;
+					right: -60px;
+					
+					.display-picture::after {
+						border-left: @t solid white;
+						border-right: 0px;
+						top: 30px-@t ;
+						left:-10px;
+						right: auto;
+					}
+				}				
+			}
+			
+		}
+		
+	}
+	
+	
+	& {
+		padding: 0 0 0 60px;
+		margin:0 auto 50px; //Now add margin right back in so nothing clips...
+	}
+	
+	@media (@twocol) {
+		padding: 0 60px;
+	}
+	
+	@media (@mobile) {
+		padding-left: 65px;
+	}
+	
+	&.gamestate {
+		.player-row {
+			&.expanded {
+				height: 250px;
+			}
+			section {
+				padding: 0 15px;
+				header {
+					height: 53px;
+					margin-bottom: 10px;
+					.name {
+						height: 100%;
+						line-height: 60px;
+						.scorekd {
+							float: right;
+							height: 100%;
+							width: 130px;
+							
+							label {
+								float: left;
+							}
+							
+							input[name=scorefield] {
+								float: right;
+								width: 60px;
+								font-size: 100%;
+								height: 100%;
+								line-height: 60px;
+							}
+						}
+					}
+				}
+				.removeplayerform {
+					input[type="submit"] {
+						color: @DUASred;
+						outline-color: @DUASred;
+					}
+				}
+			}
+		}
+	}
+	
+	&.membership {
+		.player-row {
+			section {
+				padding: 0 15px;
+				header {
+					height: 53px;
+					margin-bottom: 10px;
+					position: relative;
+					figure {
+						position: absolute;
+						top:10px;
+						right:5px;
+						opacity: 0.5;
+					}
+				}
+				*[title] {
+					position: relative;
+					margin-bottom: 5px;
+					padding-bottom: 8px;
+				}
+				
+				*[title]::after {
+					content: attr(title);
+					position: absolute;
+					bottom: 0;
+					left: 10px;
+					font-size: 12px;
+					line-height: 12px;
+				}
+				.caption {
+					font-size: 12px;
+					line-height: 12px;
+					padding-left: 10px;
+				}
+				
+				*[title]:empty {
+					display:none;	
+					&::after {
+						display:none;
+					}
+				}
+				
+				p {
+					margin-right: 150px;
+					line-height: 1.3em;
+					font-size: 18px;
+					font-weight: 400;
+					color: #666;
+				}
+				.name {
+					height: 45px;
+					line-height: 45px;
+					vertical-align: middle;
+					font-size: 33px;
+					font-weight: 300;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+					overflow: hidden;
+					text-align: center;
+				}
+				.nickname-rank {
+					font-size: 12px;
+					border-bottom: 0px solid #dfdfdf;
+					margin-bottom: 10px;
+					text-align: center;
+					padding-bottom: 3px;
+					padding-top: 0;
+					margin-top: -7px;
+				}
+				.last-login {
+					margin-top: 10px;
+				}
+				select {
+					border: 1px solid transparent;
+					outline: none;
+					display: block;
+					width: 100%;
+					width: ~"-webkit-calc(100% - 150px)";
+					width: ~"calc(100% - 150px)";
+					height:31px;
+					line-height: 31px;
+					font-size: 18px;
+					background: white;
+					-moz-appearance: none;
+					-webkit-appearance: none;
+					appearance: none;
+					
+					-webkit-border-radius: 0;
+					-moz-border-radius: 0;
+					border-radius: 0;
+					
+					color: #666666;
+					.transition(0.2s);
+					cursor: pointer;
+					&:hover {
+						border: 1px solid #ccc;
+					}
+				}
+			}
+			&.expanded {
+				height:320px;
+				.nickname-rank {
+					border-bottom-width: 1px;
+				}
+			}
+		}
+	}
+	
+	.addplayer-row {
+		display: none;
+		height: 50px;
+		overflow: hidden;
+		font-size: 24px;
+		background: white;
+		margin-bottom: 5px;
+		&:last-child {
+			margin-bottom: 30px;
+		}
+		
+		.name {
+			float: left;
+			height: 50px;
+			line-height: 50px;
+			padding: 0 15px;
+		}
+		
+		form {
+			float: right;
+			height: 100%;
+			width: 50px;
+			display: block;
+			input[type="submit"] {
+				outline: none;
+				background: @green;
+				color: white;
+				font-size: 200%;
+				height: 100%;
+				.transition(0.25s);
+				&:hover {
+					background: white;
+					color: @green;
+				}
+			}
+		}
+	}
+	
+	.addplayer-row-newgame {
+		display: block;
+	}
+}
+
+.player-table-search {
+	.appearance();
+	display: block;
+	height: 50px;
+	width: 100%;
+	max-width: 960px;
+	margin: 10px auto;
+	padding: 0 0 0 60px;
+	font-size: 100%;
+	border: none;
+	.transition(0.5s);
+	outline: none;
+	background: transparent url(../images/search.svg) 10px center no-repeat;
+	&:focus {
+		background-color: white;
+	}
+	
+	&.addplayer-search {
+		margin-top: -30px;
+		background-image: url(../images/plus.svg);
+		
+	}
+}

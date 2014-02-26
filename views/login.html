@@ -5,22 +5,33 @@
 <meta charset=UTF-8>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <link rel="shortcut icon" href="favicon.ico">
-<link rel="stylesheet" type="text/css" href="css/bureau.css">
-<link rel="stylesheet" type="text/css" href="css/bureau-dark.css">
-<link rel="stylesheet" type="text/css" href="css/bureau-login.css">
+<link rel="stylesheet" type="text/css" href="/css/bureau.css">
+<link rel="stylesheet" type="text/css" href="/css/bureau-dark.css">
+<link rel="stylesheet" type="text/css" href="/css/bureau-login.css">
 
 <title>Bureau Login</title>
 
 </head>
 
-<body class="">
+<body>
 	
 	<div id="login-register-box-wrapper">
 	
 		<div id="login-box" class="login container">
 			<h2>Welcome to Bureau</h2>
-			<div class="error-output"> </div>
-			<form action="/dologin" method="post" autocomplete="off">
+			{% if loginErrors %}
+			<div class="error-output">
+				{% for err in loginErrors %}
+				{{err}}<br>
+				{% endfor %}
+			</div>
+			{% endif %}
+			{% if success %}
+			<div class="success-output">
+				New account created
+			</div>
+			{% endif %}
+			<form action="/login" method="post" autocomplete="off">
 				<input type="text" name="email" placeholder="email" value="">
 				<input type="password" name="password" placeholder="password" value="">
 				
@@ -61,6 +72,7 @@
 						<option value="">Game Group</option>
 						<option value="DURHAM">Durham</option>
 						<option value="LEEDS">Leeds</option>
+						<option value="SHEFFIELD">Sheffield</option>
 						<option value="CAMBRIDGE">Cambridge</option>
 						<option value="NCAROLINA">North Carolina</option>
 					</select>
@@ -83,10 +95,10 @@
 			<a id="register-link" href="#register" onclick="hideRegister()">Don't have an account yet? Register</a>
 			
 		</div>
-		<a id="forgot-password-link" href="mailto:someone@example.com?subject=Bureau%20-%20Forgotten%20Login%20Details&body=Please fill out the information you can remember%0Aforename:%0Asurname:%0Aemail:%0Aaddress:%0A" onclick="forgotPassword()">Forgotten your login details?</a>
+		<a id="forgot-password-link" href="mailto:someone@example.com?subject=Bureau%20-%20Forgotten%20Login%20Details&body=Please fill out the information you can remember%0Aforename:%0Asurname:%0Aemail:%0Aaddress:%0A">Forgotten your login details?</a>
 	</div>
 	
 {% include "./includes/footer.html" %}
-<script type="text/javascript" src="js/bureau-login.js" charset="utf-8"></script>
+<script type="text/javascript" src="/js/bureau-login.js" charset="utf-8"></script>
 </body>
 </html>
