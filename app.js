@@ -167,6 +167,11 @@ var pages = {
 				Bureau.assassin.getAssassin(uid, function(err, assassin) {
 					Bureau.assassin.getLethality(uid, function(err, lethality) {
 						Bureau.assassin.hasDetailsChangeRequest(uid, function(err, hasRequest) {
+							if(hasRequest) {
+								for(var key in assassin.detailsChangeRequest) {
+									assassin[key] = assassin.detailsChangeRequest[key]
+								}
+							}
 							res.render('personal', {
 								assassin: assassin,
 								lethality: lethality,

@@ -52,10 +52,34 @@ var Bureau = {
 	},
 	
 	assassin: {
+		cachedAssassins: {}, //This object exists to massively speed up page loading
+	
 		getAssassin: function(uid, callback) {
-			var objID = new mongo.ObjectID(uid)
-			Bureau.db.collection('assassins').findOne({_id: objID}, function(err, doc) {
-				callback(err, doc)
+			if(Bureau.assassin.cachedAssassins.hasOwnProperty(uid)) {
+				callback(null, Bureau.assassin.cachedAssassins[uid])
+			} else {
+				var objID = id(uid)
+				Bureau.db.collection('assassins').findOne({_id: objID}, function(err, doc) {
+					Bureau.assassin.cachedAssassins[uid] = doc
+					callback(err, doc)
+				})
+			}
+		},
+		
+		updateAssassin: function(uid, stuff, callback) {
+			if(Bureau.assassin.cachedAssassins.hasOwnProperty(uid)) {
+				delete Bureau.assassin.cachedAssassins[uid]
+			}
+			var objID = id(uid)
+			Bureau.db.collection('assassins').update({_id: objID}, {$set: stuff}, function(err, doc) {
+				if(!!doc) {
+					Bureau.assassin.getAssassin(uid, function(err, doc) {
+						callback(err, doc)
+					})
+				} else {
+					throw err;
+					callback(err, {})
+				}
 			})
 		},
 		
@@ -104,9 +128,9 @@ var Bureau = {
 		},
 		
 		hasDetailsChangeRequest: function(uid, callback) {
-			var objID = new mongo.ObjectID(uid)
-			Bureau.db.collection('detailschange').count({uid: objID, state:'waiting'}, function(err, count) {
-				callback(err, count > 0)
+			Bureau.assassin.getAssassin(uid, function(err, doc) {
+				var hasReq = doc.hasOwnProperty('detailsChangeRequest')
+				callback(err, hasReq)
 			})
 		},
 		
@@ -118,16 +142,11 @@ var Bureau = {
 					details[key] = data[key]
 				}
 			}
-			details.uid = id(uid)
 			details.submitted = new Date()
 			details.state = 'waiting'
 			details.liverin = details.liverin == 'Yes'
-			Bureau.assassin.getGamegroup(uid, function(err, gg) {
-				details.gamegroup = gg
-				Bureau.db.collection('detailschange').insert(details, {safe: true}, function(err, docs) {
-					console.log(docs)
-					callback(err, docs)
-				})
+			Bureau.assassin.updateAssassin(uid, {detailsChangeRequest: details}, function(err, doc) {
+				callback(err, doc)
 			})
 		}
 	}
