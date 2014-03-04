@@ -1,6 +1,11 @@
 var MongoClient = require('mongodb').MongoClient,
 	mongo = require('mongodb'),
-	utils = require('./utils')
+	utils = require('./utils'),
+	lethalities = require('./lethalities')
+
+function id(uid) {
+	return new mongo.ObjectID(uid)
+}
 
 var Bureau = {
 	db: null,
@@ -54,6 +59,12 @@ var Bureau = {
 			})
 		},
 		
+		getGamegroup: function(uid, callback) {
+			Bureau.assassin.getAssassin(uid, function(err, doc) {
+				callback(err, doc.gamegroup)
+			})
+		},
+		
 		getSalt: function(uid, callback) {
 			Bureau.assassin.getAssassin(uid, function(err, doc) {
 				callback(err, utils.md5(uid+'~'+doc.joindate))
@@ -64,8 +75,62 @@ var Bureau = {
 			Bureau.assassin.getAssassin(uid, function(err, doc) {
 				callback(err, doc.guild)
 			})
+		},
+		
+		totalKills: function(uid, callback) {
+			var objID = new mongo.ObjectID(uid)
+			Bureau.db.collection('reports').count({killer: objID}, function(err, count) {
+				callback(err, count)	
+			})
+		},
+		
+		totalDeaths: function(uid, callback) {
+			var objID = new mongo.ObjectID(uid)
+			Bureau.db.collection('reports').count({victim: objID}, function(err, count) {
+				callback(err, count)	
+			})
+		},
+		
+		getLethality: function(uid, callback) {
+			Bureau.assassin.totalKills(uid, function(err, count) {
+				var lethality,
+					i = 0
+				while(!lethality) {
+					lethality = lethalities[i].kills <= count ? lethalities[i].name : false
+					i++
+				}
+				callback(err, lethality)
+			})
+		},
+		
+		hasDetailsChangeRequest: function(uid, callback) {
+			var objID = new mongo.ObjectID(uid)
+			Bureau.db.collection('detailschange').count({uid: objID, state:'waiting'}, function(err, count) {
+				callback(err, count > 0)
+			})
+		},
+		
+		submitDetailsChangeRequest: function(uid, data, callback) {
+			var whitelisted = ['address', 'course', 'liverin'],
+				details = {}
+			for(var key in data) {
+				if(data.hasOwnProperty(key) && whitelisted.indexOf(key) > -1) {
+					details[key] = data[key]
+				}
+			}
+			details.uid = id(uid)
+			details.submitted = new Date()
+			details.state = 'waiting'
+			details.liverin = details.liverin == 'Yes'
+			Bureau.assassin.getGamegroup(uid, function(err, gg) {
+				details.gamegroup = gg
+				Bureau.db.collection('detailschange').insert(details, {safe: true}, function(err, docs) {
+					console.log(docs)
+					callback(err, docs)
+				})
+			})
 		}
 	}
 }
 
-module.exports = Bureau
+module.exports = exports = Bureau

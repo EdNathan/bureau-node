@@ -1,3 +1,4 @@
+{% import './macros/form.html' as form %}
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -9,18 +10,16 @@
 <link rel="stylesheet" type="text/css" href="/css/bureau-dark.css">
 <style id="search_style"></style>
 <title>Bureau</title>
-
-
 </head>
 
-
 <body id="page-{% filter lower %}{% block title %}{% endblock %}{% endfilter %}">
+{% if not hideHeader %}
 <h1>{% block title %}Bureau{% endblock %}</h1>
+{% endif %}
+
 {% include "./includes/navbar.html" %}
 {% block main %}{% endblock %}
 
 {% include "./includes/footer.html" %}
 </body>
-
-
 </html>

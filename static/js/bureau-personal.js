@@ -5,7 +5,7 @@ function applyColours () {
 		makeColourItem($I('personal-header'), 'borderColor'),
 		makeColourItem($I('personal-page'), 'borderColor')
 	);
-	
+	console.log(a)
 
 	
 	var d = document.querySelectorAll('#details input'),
@@ -18,7 +18,6 @@ function applyColours () {
 	
 	colourItems(a);
 }
-
 function setup() {
 	//Setup the editable regions with their forms
 	var editButtons = document.querySelectorAll('.edit-button'),

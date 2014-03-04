@@ -147,6 +147,7 @@ var pages = {
 							}
 							req.session.uid = uid
 							req.session.gamegroup = assassin.gamegroup
+							req.session.token = utils.md5(assassin.joindate + password.tokenSecret)
 							res.redirect('/home')
 						}
 					})
@@ -155,19 +156,45 @@ var pages = {
 		}
 	
 	},
+
 	authPages = {
 		get: {
 			home: function (req, res) {
 				res.render('template')
 			},
-			echo: {
-				':id': function (req, res) {
-					res.send(req.params.id+'<br>'+req.subdomains.toString())
-				}
+			personal: function(req, res) {
+				var uid = req.session.uid
+				Bureau.assassin.getAssassin(uid, function(err, assassin) {
+					Bureau.assassin.getLethality(uid, function(err, lethality) {
+						Bureau.assassin.hasDetailsChangeRequest(uid, function(err, hasRequest) {
+							res.render('personal', {
+								assassin: assassin,
+								lethality: lethality,
+								detailspending: hasRequest
+							})
+						})
+					})
+				})
+				
+			},
+			test: function(req, res) {
+				Bureau.assassin.totalKills(req.session.uid, function(err, count) {
+					res.send(JSON.stringify(count))
+				})
 			}
 		},
 		post: {
-		
+			personal: function(req, res) {
+				Bureau.assassin.hasDetailsChangeRequest(req.session.uid, function(err, hasRequest) {
+					if(!hasRequest) {
+						Bureau.assassin.submitDetailsChangeRequest(req.session.uid, req.body, function(err, doc) {
+							authPages.get.personal(req, res)
+						})
+					} else {
+						res.send('Error! You already have a pending address request')
+					}
+				})
+			}
 		}
 	},
 	authURLS = []
@@ -198,7 +225,7 @@ swig.setDefaults({
 
 //For authed pages
 function checkAuth(req, res, next) {
-	if(!!req.cookies.BAC && (!req.session.uid || !req.session.gamegroup)) {
+	if(!!req.cookies.BAC && (!req.session.uid || !req.session.gamegroup || !req.session.token)) {
 		var parts = req.cookies.BAC.split('sheepworks'),
 			cUID = parts[0],
 			cTOK = parts[1]
@@ -208,6 +235,7 @@ function checkAuth(req, res, next) {
 				Bureau.assassin.getAssassin(cUID, function(err, assassin) {
 					req.session.uid = assassin._id
 					req.session.gamegroup = assassin.gamegroup
+					req.session.token = utils.md5(assassin.joindate + password.tokenSecret)
 					res.locals.isGuild = assassin.guild
 					next()
 				})
@@ -215,19 +243,37 @@ function checkAuth(req, res, next) {
 				res.redirect('/goodbye')
 			}
 		})
-	} else if(!req.session.uid || !req.session.gamegroup) {
+	} else if(!req.session.uid || !req.session.gamegroup || !req.session.token) {
 		res.redirect('/goodbye')
 	} else {
 		Bureau.assassin.isGuild(req.session.uid, function(err, guild) {
 			res.locals.isGuild = guild
+			res.locals.uid = req.session.uid
+			res.locals.gamegroup = req.session.gamegroup
+			res.locals.token = req.session.token
 			next()
 		})
 	}
 //	next()
 }
 
-app.get('/', function (req, res) {
-	res.send('Hello yes, this is dog');
+//For post requests
+function checkToken(req, res, next) {
+	var seshtoken = req.session.token,
+		formtoken = req.body.token
+	if(!seshtoken) { 
+		res.send('Error! No session token :( Try <a href="/goodbye">logging in again</a>.')
+    } else if(!formtoken) {
+		res.send('Error! No authentication. Nice hax bro.')
+    } else if (seshtoken !== formtoken) {
+		res.send('Error! Invalid authentication.')
+    } else {
+		next()
+	}
+}
+
+app.get('/', checkAuth, function (req, res) {
+	res.redirect('/home')
 })
 
 app.map = function (a, route, method, auth) { //Returns an array of mapped urls
@@ -238,7 +284,9 @@ app.map = function (a, route, method, auth) { //Returns an array of mapped urls
 			app.map(a[key], route + '/' + key, method)
 			break
 		case 'function':
-			if(auth) {
+			if(auth && method == 'post') {
+				app[method](route+'/'+key, checkAuth, checkToken, a[key])
+			} else if(auth) {
 				app[method](route+'/'+key, checkAuth, a[key])
 			} else {
 				app[method](route+'/'+key, a[key])

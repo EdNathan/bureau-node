@@ -19,14 +19,17 @@ module.exports = (grunt) ->
 #			html: 
 #				files: ['index.html', 'cookies.html']
 #				
-			all:
+			less:
 				files: ['less/**']
 				tasks: ['less']
+			js:
+				files: ['client-js/**', 'client-js/components/**']
+				tasks: ['concat:js']
 		
 		concat:
 			js:
-				src: ['js/base/**.js', 'js/base/components/**.js']
-				dest: 'js/bureau.js'
+				src: ['client-js/**.js', 'client-js/components/**.js']
+				dest: 'static/js/bureau.js'
 
 				
 # 		coffee:
@@ -62,4 +65,4 @@ module.exports = (grunt) ->
 	grunt.loadNpmTasks 'grunt-contrib-copy'
 	
 	# Default task(s)
-	grunt.registerTask 'default', ['watch']	
+	grunt.registerTask 'default', ['watch:less', 'watch:js']	
