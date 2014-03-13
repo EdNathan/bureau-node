@@ -7,6 +7,27 @@ function id(uid) {
 	return new mongo.ObjectID(uid)
 }
 
+
+function empty(obj) {
+	var hasOwnProperty = Object.prototype.hasOwnProperty;
+    // null and undefined are "empty"
+    if (obj == null) return true;
+
+    // Assume if it has a length property with a non-zero value
+    // that that property is correct.
+    if (obj.length > 0)    return false;
+    if (obj.length === 0)  return true;
+
+    // Otherwise, does it have any properties of its own?
+    // Note that this doesn't handle
+    // toString and valueOf enumeration bugs in IE < 9
+    for (var key in obj) {
+        if (hasOwnProperty.call(obj, key)) return false;
+    }
+
+    return true;
+}
+
 var Bureau = {
 	db: null,
 	init: function(callback) {
@@ -102,16 +123,28 @@ var Bureau = {
 		},
 		
 		totalKills: function(uid, callback) {
-			var objID = new mongo.ObjectID(uid)
-			Bureau.db.collection('reports').count({killer: objID}, function(err, count) {
+			Bureau.db.collection('reports').count({killer: uid}, function(err, count) {
 				callback(err, count)	
 			})
 		},
 		
 		totalDeaths: function(uid, callback) {
-			var objID = new mongo.ObjectID(uid)
-			Bureau.db.collection('reports').count({victim: objID}, function(err, count) {
+			Bureau.db.collection('reports').count({victim: uid}, function(err, count) {
 				callback(err, count)	
+			})
+		},
+		
+		stats: function(uid, callback) {
+			Bureau.assassin.totalKills(uid, function(err, k) {
+				Bureau.assassin.totalDeaths(uid, function(err, d) {
+					var s = {
+						kills: k,
+						deaths: d,
+						ratio: isNaN(k/d) ? 0 : k/d
+					}
+					console.dir(s)
+					callback(err, s)
+				})
 			})
 		},
 		
@@ -148,6 +181,34 @@ var Bureau = {
 			Bureau.assassin.updateAssassin(uid, {detailsChangeRequest: details}, function(err, doc) {
 				callback(err, doc)
 			})
+		},
+		
+		setPicture: function(uid, picture, callback) {
+			Bureau.assassin.updateAssassin(uid, {imgname: picture}, function(err, doc) {
+				callback(err, doc)
+			})
+		}
+	},
+	
+	gamegroup: {
+		cachedGamegroups: {},
+		
+		getGamegroups: function(callback) {
+			if(!empty(Bureau.gamegroup.cachedGamegroups)) {
+				callback(null, Bureau.assassin.cachedGamegroups)
+			} else {
+				Bureau.db.collection('gamegroups').find({}, function(err, cursor) {
+					cursor.toArray(function(err, ggs) {
+						var i = 0,
+							l = ggs.length,
+							o = Bureau.gamegroup.cachedGamegroups
+						for(i;i<l;i++) {
+							o[ggs[i]._id] = ggs[i]
+						}
+						callback(err, Bureau.gamegroup.cachedGamegroups)
+					})
+				})
+			}
 		}
 	}
 }

@@ -1,9 +1,12 @@
 var Bureau = require('./bureau'),
 	utils = require('./utils'),
-	password = require('./passwords'),
+	passwords = password = require('./passwords'),
 	express = require('express'),
 	cons = require('consolidate'),
 	swig = require('swig'),
+	gm = require('gm'),
+	AWS = require('aws-sdk'),
+	fs = require('fs'),
 	app = express(),
 	validator = require('validator'),
 	MongoStore = require('connect-mongo')(express)
@@ -147,6 +150,7 @@ var pages = {
 							}
 							req.session.uid = uid
 							req.session.gamegroup = assassin.gamegroup
+							req.session.assassin = assassin
 							req.session.token = utils.md5(assassin.joindate + password.tokenSecret)
 							res.redirect('/home')
 						}
@@ -165,40 +169,103 @@ var pages = {
 			personal: function(req, res) {
 				var uid = req.session.uid
 				Bureau.assassin.getAssassin(uid, function(err, assassin) {
-					Bureau.assassin.getLethality(uid, function(err, lethality) {
-						Bureau.assassin.hasDetailsChangeRequest(uid, function(err, hasRequest) {
-							if(hasRequest) {
-								for(var key in assassin.detailsChangeRequest) {
-									assassin[key] = assassin.detailsChangeRequest[key]
+					Bureau.assassin.stats(uid, function(err, stats) {
+						Bureau.assassin.getLethality(uid, function(err, lethality) {
+							Bureau.assassin.hasDetailsChangeRequest(uid, function(err, hasRequest) {
+								if(hasRequest) {
+									for(var key in assassin.detailsChangeRequest) {
+										assassin[key] = assassin.detailsChangeRequest[key]
+									}
 								}
-							}
-							res.render('personal', {
-								assassin: assassin,
-								lethality: lethality,
-								detailspending: hasRequest
+								res.render('personal', {
+									assassin: assassin,
+									lethality: lethality,
+									detailspending: hasRequest,
+									stats: stats
+								})
 							})
 						})
 					})
 				})
 				
 			},
-			test: function(req, res) {
-				Bureau.assassin.totalKills(req.session.uid, function(err, count) {
-					res.send(JSON.stringify(count))
+			admin: function(req, res) {
+				Bureau.gamegroup.getGamegroups(function(err, gamegroups) {
+					res.render('admin', {
+						gamegroups: gamegroups
+					})
 				})
+			},
+			guild: {
+				'/': function(req, res) {
+					res.render('guild')
+				}
 			}
 		},
 		post: {
 			personal: function(req, res) {
-				Bureau.assassin.hasDetailsChangeRequest(req.session.uid, function(err, hasRequest) {
-					if(!hasRequest) {
-						Bureau.assassin.submitDetailsChangeRequest(req.session.uid, req.body, function(err, doc) {
-							authPages.get.personal(req, res)
+				switch(req.body.action) {
+					case 'picturechange':
+						var imgPath = req.files.picture.path,
+							uid = req.session.uid
+						gm(imgPath).size(function(err, size) {
+							if(!err && !!size) {
+								var w = size.width > size.height ? Math.floor(size.width*128/size.height) : 128,
+									tempName = __dirname + '/temp/'+utils.md5(new Date().toString() + Math.random().toString())+'.jpg'
+								this								
+								.resize(w)
+								.gravity('Center')
+								.extent(128, 128)
+								.quality(70)
+								.write(tempName, function (err) {
+									if(err) throw err;
+									fs.readFile(tempName, function (err, data) {
+										if(err) {
+											throw err
+										} else {
+											var s3 = new AWS.S3(),
+												bucket = 'bureau-engine',
+												imgKey = 'pictures/'+uid+'.jpg'
+											s3.putObject({
+												ACL: 'public-read', // by default private access
+												Bucket: bucket,
+												Key: imgKey,
+												Body: data
+											}, function (err, data) {
+												if (err) {
+													console.log(err)
+													res.send(500, 'Image uploading failed :(')
+												} else {
+													Bureau.assassin.setPicture(uid, passwords.awsPath+imgKey, function(err, doc) {
+														if(err) console.log(err);
+														authPages.get.personal(req, res)
+													})
+													
+												}
+											})
+										}
+									})
+								})
+							} else {
+								authPages.get.personal(req, res)
+							}
 						})
-					} else {
-						res.send('Error! You already have a pending address request')
-					}
-				})
+						break;
+					case 'detailschange':
+						Bureau.assassin.hasDetailsChangeRequest(req.session.uid, function(err, hasRequest) {
+							if(!hasRequest) {
+								Bureau.assassin.submitDetailsChangeRequest(req.session.uid, req.body, function(err, doc) {
+								})
+							} else {
+								res.send('Error! You already have a pending address request')
+							}
+						})
+						break;
+					default:
+						authPages.get.personal(req, res)
+						break;
+				}
+				
 			}
 		}
 	},
@@ -240,6 +307,7 @@ function checkAuth(req, res, next) {
 				Bureau.assassin.getAssassin(cUID, function(err, assassin) {
 					req.session.uid = assassin._id
 					req.session.gamegroup = assassin.gamegroup
+					req.session.assassin = assassin
 					req.session.token = utils.md5(assassin.joindate + password.tokenSecret)
 					res.locals.isGuild = assassin.guild
 					next()
@@ -251,11 +319,13 @@ function checkAuth(req, res, next) {
 	} else if(!req.session.uid || !req.session.gamegroup || !req.session.token) {
 		res.redirect('/goodbye')
 	} else {
-		Bureau.assassin.isGuild(req.session.uid, function(err, guild) {
-			res.locals.isGuild = guild
+		Bureau.assassin.getAssassin(req.session.uid, function(err, assassin) {
+			res.locals.isGuild = assassin.guild
+			res.locals.isAdmin = password.adminEmails.indexOf(assassin.email) > -1
 			res.locals.uid = req.session.uid
 			res.locals.gamegroup = req.session.gamegroup
 			res.locals.token = req.session.token
+			res.locals.assassin = assassin
 			next()
 		})
 	}
@@ -286,15 +356,19 @@ app.map = function (a, route, method, auth) { //Returns an array of mapped urls
 	for (var key in a) {
 		switch (typeof a[key]) {
 		case 'object':
-			app.map(a[key], route + '/' + key, method)
+			app.map(a[key], route + '/' + key, method, auth)
 			break
 		case 'function':
+			var glue = '/'
+			if(key === '/') {
+				key = glue = ''
+			}
 			if(auth && method == 'post') {
-				app[method](route+'/'+key, checkAuth, checkToken, a[key])
+				app[method](route+glue+key, checkAuth, checkToken, a[!key?'/':key])
 			} else if(auth) {
-				app[method](route+'/'+key, checkAuth, a[key])
+				app[method](route+glue+key, checkAuth, a[!key?'/':key])
 			} else {
-				app[method](route+'/'+key, a[key])
+				app[method](route+glue+key, a[!key?'/':key])
 			}
 			break
 		}

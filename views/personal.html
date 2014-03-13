@@ -7,9 +7,9 @@
 
 	<div id="personal-header">
 		
-		<div id="display-picture" style="{{assassin.imgname}}">
+		<div id="display-picture" style="{% if assassin.imgname %}background-image: url({{assassin.imgname}}){% endif %}">
 			<form action="/personal" method="POST" enctype="multipart/form-data" id="picture-form">
-<!-- 				<input type="hidden" name="token" value="<?php echo getToken() ?>"> -->
+				{{form.t(token)}}
 				<input type="file" name="picture" id="picture-input">
 				<label id="file-input-label" for="picture-input">Change Picture</label>
 				<input type="hidden" name="action" value="picturechange">
@@ -59,15 +59,13 @@
 			</form>
 		</div>
 		
-		<!--
-<div id="kd-ratio" class="container light-container">
+		<div id="kd-ratio" class="container light-container">
 			<h4>Kill/Death</h4>
-			<span id="kills-total" title="kills"><?php echo $totalkills ?></span>
+			<span id="kills-total" title="kills">{{ stats.kills }}</span>
 			<span id="colon">:</span>
-			<span id="deaths-total" title="deaths"><?php echo $totaldeaths ?></span><br>
-			<span id="ratio" title="ratio"><?php echo $kdratio ?></span>		
+			<span id="deaths-total" title="deaths">{{ stats.deaths }}</span><br>
+			<span id="ratio" title="ratio">{{ stats.ratio }}</span>		
 		</div>
--->
 	
 	</div>
 </div>

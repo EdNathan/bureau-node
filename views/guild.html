@@ -1,0 +1,95 @@
+{% extends "./base.html" %}
+
+{% block title %}Guild{% endblock %}
+
+{% block main %}
+<!-- Kill Reports -->
+{% if reports.length > 0 %}
+<div id="kill-reports">
+	<h2>{{reports.length|default(0)}} Kill Report{% if reports.length != 1 %}s{% endif %} to process</h2>
+	{% for report in reports %}
+	<article class="killreport closed">
+		<form method="POST" action="guild.php">
+			<header>
+				{{report.sentence}}
+				<div class="processing-buttons">
+					<input type="submit" name="state" value="✓" class="tick">
+					<input type="submit" name="state" value="✖" class="cross">
+					<input type="hidden" name="action" value="killreportprocess">
+					{{form.t(token)}}
+					<input type="hidden" name="reportid" value="{{report._id}}">
+					<input type="hidden" name="gameid" value="{{report.gameid}}">
+					<input type="hidden" name="killerid" value="{{report.killer}}">
+					<input type="hidden" name="victimid" value="{{report.victim}}">
+				</div>
+			</header>
+			<section>
+				<div title="time">{{report.time}}</div>
+				{% if report.coords %}
+					<div class="mapcontainer" data-coords="{{report.coords}}"></div>
+				{% endif %}
+				<div title="place">{{report.place}}></div>
+				<div title="kill method">
+					{{report.killmethod.public}}
+					<div class="zone {{report.killmethod.zone}} ?>"></div>
+					<div class="rules" title="{{report.killmethod.public}} rules">{{report.killmethod.rules}}</div>
+				</div>
+				{% if report.killmethod.detailquestion %}
+					<div title="{{report.killmethod.detailquestion}}">{{report.methoddetail}}</div>
+				{% endif %}
+				<div title="report text">{{report.text}}</div>
+				<div title="guild comment">
+					<textarea name="guildcomment" placeholder="This will be seen by the user if you reject the kill."></textarea>
+				</div>
+			</section>
+		</form>
+	</article>
+	{% endfor %}
+</div>
+{% endif %}
+
+
+<!-- Address Change Requests -->
+{% if addressChangeRequests.length > 0 %}
+<div id="address-changes" class="container">
+	<h4>Address Changes</h4>
+	{% for a in addressChangeRequests %}
+	<div class="address-change">
+		<div class="display-picture" style="{% if a.imgname %}background-image: url({{assassin.imgname}}){% endif %}"></div>
+		<div class="name-row">{{a.forename}} {{a.surname}}</div>
+		<p title="Address">{{a.address}} <span class="arrow">=&gt;</span> {{a.detailsChangeRequest.address}}</p>
+		<p title="Course">{{a.course}} <span class="arrow">=&gt;</span> {{a.detailsChangeRequest.course}}</p>
+		<p title="Living In">{% if a.liverin %}Yes{% else %}No{% endif %} <span class="arrow">=&gt;</span> {% if a.detailsChangeRequest.liverin %}Yes{% else %}No{% endif %}</p>
+		
+		<form action="/guild" method="post">
+			{{form.t(token)}}
+			{{form.a('detailsprocess')}}
+			<input type="hidden" name="request-uid" value="{{a._id}}">
+			<div id="process_addr{{a._id}}" class="detailschange-actions">
+				<input type="radio" name="state" class="approved-radio" value="Approved">
+				<input type="radio" name="state" class="denied-radio" value="Denied">
+				<input type="text" name="message" class="detailschange-message" placeholder="message...">
+			</div>
+		</form>
+	</div>
+	{% endfor %}
+
+</div>
+{% endif %}
+
+<!-- Set Motd -->
+<div id="set-motd" class="container">
+	<h4>Set MotD for &nbsp;&nbsp;&nbsp;&nbsp; (current motd: {{gg.motd}}</h4>
+	<div id="motd-setter">
+		<form action="/guild" method="POST" id="motd-form">
+			{{form.t(token)}}
+			{{form.a('setmotd')}}
+			<input type="text" id="motd-input" class="bureau-textinput" name="motd-text" placeholder="Set MotD...">
+			<input type="submit" id="set-motd-button" name="motd-action" value="Set" disabled="">
+			<input type="submit" id="reset-motd-button" name="motd-action" value="Clear MotD">
+		</form>
+	</div>
+</div>
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB01yd9fWUD7iZU45t6Z7HJS6os-y2UCrA&sensor=false"></script>
+{% endblock %}

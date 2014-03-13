@@ -1,8 +1,8 @@
 var bureau = {
 	init: function() {
 		this.setupToolbar();
-		this.user.uid = parseInt($I('bureau-uid').value);
-		this.user.gamegroup = $I('bureau-gamegroup').value;
+		this.user.uid = $I('bureau-uid').value
+		this.user.gamegroup = $I('bureau-gamegroup').value
 		setup();
 		
 		switch (document.body.id) {

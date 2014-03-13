@@ -1,3 +1,7 @@
 {% macro t(token) %}
 	<input type="hidden" name="token" value="{{ token }}">
 {% endmacro %}
+
+{% macro a(action) %}
+	<input type="hidden" name="action" value="{{ action }}">
+{% endmacro %}

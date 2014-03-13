@@ -8,5 +8,8 @@
 	{% if isGuild %}
 	<li><a href="/guild" title="Guild">&#xe005;</a></li>
 	{% endif %}
+	{% if isAdmin %}
+	<li><a href="/admin" title="Admin">&#10083;</a></li>
+	{% endif %}
 	<li><a href="/goodbye" title="Goodbye">&#xe002;</a></li>
 </ul>
