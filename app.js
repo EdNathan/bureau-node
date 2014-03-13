@@ -274,6 +274,7 @@ var pages = {
 
 
 //Setup middleware
+app.use(express.compress())
 app.use(express.static('static'))
 app.use(express.bodyParser())
 app.use(express.cookieParser(password.cookieSecret))
