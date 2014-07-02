@@ -70,11 +70,9 @@
 					
 					<select name="gamegroup" class="half" placeholder="Game Group">
 						<option value="">Game Group</option>
-						<option value="DURHAM">Durham</option>
-						<option value="LEEDS">Leeds</option>
-						<option value="SHEFFIELD">Sheffield</option>
-						<option value="CAMBRIDGE">Cambridge</option>
-						<option value="NCAROLINA">North Carolina</option>
+					{% for gg in gamegroups %}
+						<option value="{{gg.ggid}}">{{gg.name}}</option>
+					{% endfor %}
 					</select>
 					<label for="consent" id="consent-label">Type "I Agree" below to confirm you have read your group's rules in their entirety and consent for other players to enter your room or address in accordance with said rules:</label>
 					<input type="text" id="consent-box" name="consent" placeholder="Do you agree?">

@@ -34,6 +34,11 @@ var bureau = {
 						break;
 				}
 				break;
+			case 'page-admin':
+				break;
+			case 'page-gamegroup':
+				this.setup.gamegroup();
+				break;
 			default:
 				applyColours();
 				break;
@@ -728,6 +733,15 @@ var bureau = {
 			$I('picture-form').onchange = function() {
 				$I('picture-form').submit();
 			}
+		},
+		
+		gamegroup: function() {
+			var a = [];
+			colourItems(a);
+			
+			//Setup player lists and search 
+			this.playerListToggle(true);
+			this.search();
 		}
 	},
 	

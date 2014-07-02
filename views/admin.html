@@ -4,4 +4,25 @@
 
 {% block main %}
 
+<h6>Gamegroups</h6>
+
+{% for gg in gamegroups %}
+
+<div class="gamegrouplink">
+<a href="/admin/{{gg.ggid|lower}}">{{gg.name}}</a>
+</div>
+
+{% endfor %}
+
+<div class="container" id="newgamegroup">
+	<h4>Add a new gamegroup</h4>
+	<form action="/admin" method="POST">
+		{{form.t(token)}}
+		{{form.a('newgamegroup')}}
+		<input type="text" name="name" placeholder="New Gamegroup Name">
+		<input type="submit" value="Create New Gamegroup">
+	</form>
+</div>
+
+{{form.t(token)}}
 {% endblock %}

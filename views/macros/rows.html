@@ -1,0 +1,51 @@
+{% macro removeGuildMember(a) %}
+<li class="player-row gamegroup-row" data-index="{{a.forename|lower}} {{a.surname|lower}} {{a.nickname|lower}}" data-membership="{{a.membership}}">
+	<section>
+		<header>
+			<div class="name">{{a.forename}} {{a.surname}}</div>
+			<div class="nickname-rank"><span class="nickname">{{a.nickname}}</span> Lethality: #lethality</div>
+<!-- 			<figure class="#mtype-icon"></figure> -->
+		</header>
+		<div class="membership-fields">
+			<div title="address" class="address-group">
+				<p>{{ a.address|replace(',', '<br>'|safe, 'g') }}</p>
+			</div>
+			<div class="academic-group">
+				<p title="college">{{ a.college }}</p>
+				<p title="course">{{ a.course }}</p>
+			</div>
+			<form action="" method="post">
+				{{form.a('changeguild')}}
+				{{form.t(token)}}
+				<input type="hidden" name="shouldBeGuild" value="{% if a.guild %}no{% else %}yes{% endif %}">
+				<input type="hidden" name="assassinuid" value="{{ a._id|safe }}">
+				<input type="submit" name="playeraction" value="Remove Guild">
+			</form>
+<!-- 		<div class="last-login">#ago</div> -->
+			
+		</div>
+		
+	</section>
+	<aside>
+		<div class="display-picture" style="background-image:url({{a.imgname}})"></div>
+	</aside>
+
+	<div>
+		
+	</div>
+</li>
+
+{% endmacro %}
+
+{% macro addGuildMember(a) %}
+<li class="addplayer-row" data-index="{{a.forename|lower}} {{a.surname|lower}} {{a.nickname|lower}}">
+	<div class="name">{{a.forename}} {{a.surname}}</div>
+	<form action="" method="post" class="addguild-form">
+		{{form.a('changeguild')}}
+		{{form.t(token)}}
+		<input type="hidden" name="shouldBeGuild" value="{% if a.guild %}no{% else %}yes{% endif %}">
+		<input type="hidden" name="assassinuid" value="{{ a._id|safe }}">
+		<input type="submit" name="playeraction" value="+">
+	</form>
+</li>
+{% endmacro %}

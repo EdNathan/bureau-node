@@ -1,0 +1,92 @@
+.gamegrouplink {
+	a {
+		display: block;
+		color: inherit;
+		text-decoration: none;
+		font-weight: 300;
+		direction: block;
+		width: 100%;
+		background: white;
+		margin: 5px 0;
+		padding: 10px 10px;
+		font-size: 1em;
+		box-shadow: 0 3px 2px rgba(0,0,0,0.1) !important;
+		text-align: left;
+		cursor: pointer;
+	}
+}
+
+
+
+#newgamegroup {
+	margin-top: 30px;
+	h4 {
+		margin-bottom: 0;
+	}
+	input {
+		margin: auto;
+		width: 100%;
+		max-width: 400px;
+		display: block;
+		
+		&[type="submit"] {
+			.appearance();
+			padding: 0;
+			border: none;
+			height: 40px;
+			background: silver;
+			color: #666;
+			text-indent: 0;
+			font-weight: 700;
+			.transition(0.3s ease);			
+			cursor: pointer; 
+			
+			&:hover {
+				background: rgba(0,0,0,0.3);
+				color: white;
+				.box-shadow(inset 0px 1px 5px rgba(0,0,0,0.2));
+			}
+		}
+	}
+}
+
+input[type="submit"] {
+	height: 40px;
+	width: 100%;
+	display: block;
+	background: none;
+	border: none;
+	padding: 0;
+	margin: 0;
+	outline: none;
+	line-height: 40px;
+	color:#666;
+	font-weight: 400;
+	font-size: 15px;
+	outline: 1px solid #888;
+	outline-offset: -3px;
+	cursor: pointer;
+}
+
+
+#guild-list {
+	input[type="submit"] {
+		color: @DUASred;
+		outline-color: @DUASred;
+	}
+}
+
+.addplayer-row {
+	input[type="submit"] {
+		outline: medium none;
+		background: none repeat scroll 0% 0% #2ECC71;
+		color: #FFF;
+		font-size: 200%;
+		height: 100%;
+		transition: all 0.25s ease 0s;
+		&:hover {
+			background: none repeat scroll 0% 0% #FFF;
+			color: #2ECC71;
+		}
+	}
+}

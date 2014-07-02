@@ -18,9 +18,13 @@ var pages = {
 					res.redirect('/home')
 					return;
 				}
-				res.render('login', {
-					loginErrors: []
+				Bureau.gamegroup.getGamegroups(function(err, gamegroups) {
+					res.render('login', {
+						loginErrors: [],
+						gamegroups: gamegroups
+					})
 				})
+				
 			},
 			goodbye: function(req, res) {
 				req.session.destroy()
@@ -119,14 +123,19 @@ var pages = {
 									Send email on successful signup
 									
 								*/
-								
-								res.render('login', {
-									success: true
+								Bureau.gamegroup.getGamegroups(function(err, gamegroups) {
+									res.render('login', {
+										success: true,
+										gamegroups: gamegroups
+									})
 								})
 							})
 						} else {
-							res.render('login', {
-								loginErrors: errors
+							Bureau.gamegroup.getGamegroups(function(err, gamegroups) {
+								res.render('login', {
+									loginErrors: errors,
+									gamegroups: gamegroups
+								})
 							})
 						}
 						
@@ -189,12 +198,42 @@ var pages = {
 				})
 				
 			},
-			admin: function(req, res) {
-				Bureau.gamegroup.getGamegroups(function(err, gamegroups) {
-					res.render('admin', {
-						gamegroups: gamegroups
+			admin: {
+				'/': function(req, res) {
+					if(!res.locals.isAdmin) {
+						res.redirect('/home')
+						return
+					}
+					Bureau.gamegroup.getGamegroups(function(err, gamegroups) {
+						res.render('admin', {
+							gamegroups: gamegroups
+						})
 					})
-				})
+				},
+				
+				':gamegroup': function(req, res) {
+					if(!res.locals.isAdmin) {
+						res.redirect('/home')
+						return
+					}
+					var ggid = req.params.gamegroup.toUpperCase()
+					Bureau.gamegroup.getGamegroup(ggid, function(err, gg) {
+						
+						if(err) {
+							res.write('No such gamegroup!')
+							return;
+						}
+						Bureau.gamegroup.getAssassins(ggid, function(err, assassins) {
+							console.log(assassins)
+							res.render('gamegroup', {
+								gamegroup: gg,
+								assassins: assassins
+							})
+						})
+					})
+					
+				}
+				
 			},
 			guild: {
 				'/': function(req, res) {
@@ -203,6 +242,41 @@ var pages = {
 			}
 		},
 		post: {
+			admin: {
+				'/': function(req, res) {
+					if(!res.locals.isAdmin) {
+						res.redirect('/home')
+						return
+					}
+					switch(req.body.action) {
+						case 'newgamegroup':
+							var ggname = req.body.name
+							if(!!ggname) {
+								Bureau.gamegroup.addGamegroup({
+									name: ggname,
+									ggid: ggname.replace(/[^\w\s]|_/g, "").replace(/\s+/g, "").toUpperCase()
+								}, function(err, gg) {
+									authPages.get.admin['/'](req,res)	
+								})
+							} else {
+								authPages.get.admin['/'](req,res)
+							}
+							break;
+					}
+				},
+				
+				':gamegroup': function(req, res) {
+					switch(req.body.action) {
+						case 'changeguild':
+							var uid = req.body.assassinuid,
+								shouldBeGuild = req.body.shouldBeGuild === 'yes'
+							Bureau.assassin.setGuild(uid, shouldBeGuild, function(err, doc) {
+								authPages.get.admin[':gamegroup'](req, res)
+							})
+					}
+				}
+			},
+			
 			personal: function(req, res) {
 				switch(req.body.action) {
 					case 'picturechange':

@@ -81,10 +81,41 @@ var Bureau = {
 			} else {
 				var objID = id(uid)
 				Bureau.db.collection('assassins').findOne({_id: objID}, function(err, doc) {
-					Bureau.assassin.cachedAssassins[uid] = doc
-					callback(err, doc)
+					Bureau.assassin.getLethality(uid, function(err, lethality) {
+						doc.lethality = lethality
+						Bureau.assassin.cachedAssassins[uid] = doc
+						callback(err, doc)
+					})
 				})
 			}
+		},
+		
+		getAssassins: function(filter, callback) {
+			if(empty(filter)) {
+				callback(null, [])
+				return
+			}
+			//Sadly this one always has to go to the db. Fuck.
+			Bureau.db.collection('assassins').find(filter, function(err, cursor) {
+				cursor.toArray(function(err, docs) {
+					if(err) {
+						callback(err, null)
+					}
+					var i = 0,
+						l = docs.length,
+						a,
+						arr = []
+					for(i;i<l;i++) {
+						a = docs[i]
+						//Cache them if we haven't already
+						if(!Bureau.assassin.cachedAssassins.hasOwnProperty(a._id)) {
+							Bureau.assassin.cachedAssassins[a._id] = a
+						}
+						arr.push(a)
+					}
+					callback(null, arr)
+				})
+			})
 		},
 		
 		updateAssassin: function(uid, stuff, callback) {
@@ -187,6 +218,12 @@ var Bureau = {
 			Bureau.assassin.updateAssassin(uid, {imgname: picture}, function(err, doc) {
 				callback(err, doc)
 			})
+		},
+		
+		setGuild: function(uid, shouldBeGuild, callback) {
+			Bureau.assassin.updateAssassin(uid, {guild: shouldBeGuild}, function(err, doc) {
+				callback(err, doc)
+			})
 		}
 	},
 	
@@ -195,19 +232,61 @@ var Bureau = {
 		
 		getGamegroups: function(callback) {
 			if(!empty(Bureau.gamegroup.cachedGamegroups)) {
-				callback(null, Bureau.assassin.cachedGamegroups)
+				callback(null, Bureau.gamegroup.cachedGamegroups)
 			} else {
+				console.log('Gamegroup cache empty - rebuilding cache')
 				Bureau.db.collection('gamegroups').find({}, function(err, cursor) {
 					cursor.toArray(function(err, ggs) {
 						var i = 0,
 							l = ggs.length,
 							o = Bureau.gamegroup.cachedGamegroups
 						for(i;i<l;i++) {
-							o[ggs[i]._id] = ggs[i]
+							o[ggs[i].ggid] = ggs[i]
 						}
 						callback(err, Bureau.gamegroup.cachedGamegroups)
 					})
 				})
+				console.log('Gamegroup cache rebuilt')
+			}
+		},
+		
+		getGamegroup: function(ggid, callback) {
+			if(Bureau.gamegroup.cachedGamegroups.hasOwnProperty(ggid)) {
+				callback(null, Bureau.gamegroup.cachedGamegroups[ggid])
+			} else {
+				Bureau.db.collection('gamegroups').findOne({ggid: ggid}, function(err, doc) {
+					Bureau.gamegroup.cachedGamegroups[ggid] = doc
+					callback(err, doc)
+				})
+			}
+		},
+		
+		getAssassins: function(ggid, callback) {
+			Bureau.assassin.getAssassins({gamegroup: ggid}, function(err, assassins) {
+				callback(err, assassins)
+			})
+		},
+		
+		getGuild: function(ggid, callback) {
+			Bureau.assassin.getAssassins({guild: true, gamegroup: ggid}, function(err, guild) {
+				callback(err, guild)
+			})
+		},
+		
+		getAssassinsCount: function(ggid, callback) {
+			Bureau.db.collection('assassins').count({gamegroup: ggid}, function(err, callback) {
+				callback(err, count)
+			})
+		},
+		
+		addGamegroup: function(data, callback) {
+			if(!Bureau.gamegroup.cachedGamegroups.hasOwnProperty(data.ggid)) {
+				Bureau.db.collection('gamegroups').insert(data, {safe: true}, function(err, docs) {
+					Bureau.gamegroup.cachedGamegroups = {}
+					callback(err, docs)
+				})
+			} else {
+				callback(new Error('Gamegroup already exists'), {})
 			}
 		}
 	}
