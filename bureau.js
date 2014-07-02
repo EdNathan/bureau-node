@@ -135,6 +135,11 @@ var Bureau = {
 			})
 		},
 		
+		updateLastHere: function(uid) {
+			var now = new Date()
+			Bureau.assassin.updateAssassin(uid, {lastonline: now}, function(){})
+		},
+		
 		getGamegroup: function(uid, callback) {
 			Bureau.assassin.getAssassin(uid, function(err, doc) {
 				callback(err, doc.gamegroup)

@@ -385,6 +385,8 @@ function checkAuth(req, res, next) {
 					req.session.assassin = assassin
 					req.session.token = utils.md5(assassin.joindate + password.tokenSecret)
 					res.locals.isGuild = assassin.guild
+					//Update when we last saw them
+					Bureau.assassin.updateLastHere(req.session.uid)
 					next()
 				})
 			} else {
@@ -395,6 +397,9 @@ function checkAuth(req, res, next) {
 		res.redirect('/goodbye')
 	} else {
 		Bureau.assassin.getAssassin(req.session.uid, function(err, assassin) {
+			//Update when we last saw them
+			Bureau.assassin.updateLastHere(req.session.uid)
+		
 			res.locals.isGuild = assassin.guild
 			res.locals.isAdmin = password.adminEmails.indexOf(assassin.email) > -1
 			res.locals.uid = req.session.uid

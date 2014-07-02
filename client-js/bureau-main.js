@@ -34,8 +34,10 @@ var bureau = {
 						break;
 				}
 				break;
-			case 'page-admin':
+			/*
+case 'page-admin':
 				break;
+*/
 			case 'page-gamegroup':
 				this.setup.gamegroup();
 				break;
