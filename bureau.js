@@ -28,6 +28,21 @@ function empty(obj) {
     return true;
 }
 
+function merge(o1, o2) {
+	var n = {}
+	for(key in o1) {
+		if(o1.hasOwnProperty(key)) {
+			n[key] = o1[key]
+		}
+	}
+	for(key in o2) {
+		if(o2.hasOwnProperty(key)) {
+			n[key] = o2[key]
+		}
+	}
+	return n
+}
+
 var Bureau = {
 	db: null,
 	init: function(callback) {
@@ -54,7 +69,6 @@ var Bureau = {
 			data.joindate = new Date()
 			data.guild = false
 			Bureau.db.collection('assassins').insert(data, {safe: true}, function(err, docs) {
-				console.log(docs)
 				callback(err, docs)
 			})
 		},
@@ -122,8 +136,26 @@ var Bureau = {
 			if(Bureau.assassin.cachedAssassins.hasOwnProperty(uid)) {
 				delete Bureau.assassin.cachedAssassins[uid]
 			}
-			var objID = id(uid)
-			Bureau.db.collection('assassins').update({_id: objID}, {$set: stuff}, function(err, doc) {
+			var objID = id(uid),
+				toUpdate = {$set: {}}
+				filters = {_id: objID}
+			
+			//Check if we have any special things	
+			for(key in stuff) {
+				if(key !== 'filter') {
+					if(stuff.hasOwnProperty(key) && key[0] === '$') {
+						//Special $key, we have to move it outside!
+						toUpdate[key] = stuff[key]
+					} else if(stuff.hasOwnProperty(key)) {
+						toUpdate.$set[key] = stuff[key]
+					}
+				} else {
+					//We want to apply some extra filters
+					filters = merge(filters, stuff.filter)
+				}
+			}
+			
+			Bureau.db.collection('assassins').update(filters, toUpdate, function(err, doc) {
 				if(!!doc) {
 					Bureau.assassin.getAssassin(uid, function(err, doc) {
 						callback(err, doc)
@@ -138,6 +170,26 @@ var Bureau = {
 		updateLastHere: function(uid) {
 			var now = new Date()
 			Bureau.assassin.updateAssassin(uid, {lastonline: now}, function(){})
+		},
+		
+		addNotification: function(uid, notification, priority) {
+			var now = new Date(),
+				n = {
+					added: now,
+					text: notification,
+					id: utils.md5(now+''+uid),
+					priority: !!priority
+				}
+			Bureau.assassin.updateAssassin(uid, {$push: {notifications: n}}, function(){})
+		},
+		
+		markNotificationRead: function(uid, notificationid, callback) {
+			Bureau.assassin.updateAssassin(uid, {
+				'notifications.$.read': true,
+				filter: {
+					'notifications.id': notificationid
+				}
+			}, callback)
 		},
 		
 		getGamegroup: function(uid, callback) {
@@ -198,7 +250,7 @@ var Bureau = {
 		
 		hasDetailsChangeRequest: function(uid, callback) {
 			Bureau.assassin.getAssassin(uid, function(err, doc) {
-				var hasReq = doc.hasOwnProperty('detailsChangeRequest')
+				var hasReq = doc.hasOwnProperty('detailsChangeRequest') && !empty(doc.detailsChangeRequest)
 				callback(err, hasReq)
 			})
 		},
@@ -264,6 +316,26 @@ var Bureau = {
 					callback(err, doc)
 				})
 			}
+		},
+		
+		updateGamegroup: function(ggid, stuff, callback) {
+			if(Bureau.gamegroup.cachedGamegroups.hasOwnProperty(ggid)) {
+				delete Bureau.gamegroup.cachedGamegroups[ggid]
+			}
+			Bureau.db.collection('gamegroups').update({ggid: ggid}, {$set: stuff}, function(err, doc) {
+				if(!!doc) {
+					Bureau.gamegroup.getGamegroup(ggid, function(err, doc) {
+						callback(err, doc)
+					})
+				} else {
+					throw err;
+					callback(err, {})
+				}
+			})
+		},
+		
+		setMotd: function(ggid, motd, callback) {
+			Bureau.gamegroup.updateGamegroup(ggid, {motd: motd}, callback)
 		},
 		
 		getAssassins: function(ggid, callback) {

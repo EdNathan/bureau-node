@@ -1516,6 +1516,7 @@ h6::after {
 .player-table {
   *zoom: 1;
   max-width: 960px;
+  list-style: none;
   padding: 0 0 0 60px;
   margin: 0 auto 50px;
 }
@@ -1530,8 +1531,7 @@ h6::after {
   clear: both;
 }
 .player-table ul,
-.player-table li,
-.player-table {
+.player-table li {
   list-style: none;
   padding: 0;
   margin: 0;

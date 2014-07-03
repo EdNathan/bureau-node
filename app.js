@@ -224,9 +224,8 @@ var pages = {
 							return;
 						}
 						Bureau.gamegroup.getAssassins(ggid, function(err, assassins) {
-							console.log(assassins)
 							res.render('gamegroup', {
-								gamegroup: gg,
+								gg: gg,
 								assassins: assassins
 							})
 						})
@@ -235,9 +234,18 @@ var pages = {
 				}
 				
 			},
+			
 			guild: {
 				'/': function(req, res) {
-					res.render('guild')
+					if(!res.locals.isGuild) {
+						res.redirect('/home')
+						return
+					}
+					Bureau.assassin.getAssassins({'detailsChangeRequest.state':'waiting'}, function(err, addressChangeRequests) {
+						res.render('guild', {
+							addressChangeRequests: addressChangeRequests
+						})
+					})
 				}
 			}
 		},
@@ -329,6 +337,7 @@ var pages = {
 						Bureau.assassin.hasDetailsChangeRequest(req.session.uid, function(err, hasRequest) {
 							if(!hasRequest) {
 								Bureau.assassin.submitDetailsChangeRequest(req.session.uid, req.body, function(err, doc) {
+									authPages.get.personal(req, res)
 								})
 							} else {
 								res.send('Error! You already have a pending address request')
@@ -340,6 +349,68 @@ var pages = {
 						break;
 				}
 				
+			},
+			
+			guild: {
+				'/': function(req, res) {
+					if(!res.locals.isGuild) {
+						res.redirect('/home')
+						return
+					}
+					switch(req.body.action) {
+						case 'setmotd':
+							var motd = req.body.motd
+							console.log('setting motd for '+res.locals.gamegroup.ggid+' to ' + motd)
+							Bureau.gamegroup.setMotd(res.locals.gamegroup.ggid, motd, function(err, doc) {
+								if(!err) {
+									//Manually update the locals, otherwise they'll have the previous value
+									res.locals.gamegroup = doc
+								}
+								authPages.get.guild['/'](req, res)
+							})
+							break;
+						case 'addresschange':
+							var uid = req.body.requester,
+								state = req.body.state,
+								message = req.body.message
+							
+							if(!state) {
+								authPages.get.guild['/'](req, res)
+								return
+							}
+							Bureau.assassin.getAssassin(uid, function(err, assassin) {
+								if(state == 'Approved') {
+									//Change the details around
+									Bureau.assassin.getAssassin(uid, function(err, assassin) {
+										var d = assassin.detailsChangeRequest
+										delete d.state
+										delete d.submitted
+										d.detailsChangeRequest = {}
+										Bureau.assassin.updateAssassin(uid, d, function(err, assassin) {
+											Bureau.assassin.addNotification(uid, 'Your details change request was approved.')
+											authPages.get.guild['/'](req, res)
+										})
+									})
+								} else {
+									//Delete the request
+									Bureau.assassin.updateAssassin(uid, {detailsChangeRequest:{}}, function(err, doc) {
+										var notificationString = 'Your details change request was rejected'
+										if(!!message) {
+											notificationString += ' with reason: '+message
+										}
+										Bureau.assassin.addNotification(uid, notificationString)
+										authPages.get.guild['/'](req, res)
+									})
+								}
+							})
+							
+							break;
+						default:
+							authPages.get.guild['/'](req, res)
+							break;
+							
+					}
+				}
 			}
 		}
 	},
@@ -395,16 +466,18 @@ function checkAuth(req, res, next) {
 		res.redirect('/goodbye')
 	} else {
 		Bureau.assassin.getAssassin(req.session.uid, function(err, assassin) {
-			//Update when we last saw them
-			Bureau.assassin.updateLastHere(req.session.uid)
-		
-			res.locals.isGuild = assassin.guild
-			res.locals.isAdmin = password.adminEmails.indexOf(assassin.email) > -1
-			res.locals.uid = req.session.uid
-			res.locals.gamegroup = req.session.gamegroup
-			res.locals.token = req.session.token
-			res.locals.assassin = assassin
-			next()
+			Bureau.gamegroup.getGamegroup(req.session.gamegroup, function(err, gamegroup) {
+				//Update when we last saw them
+				Bureau.assassin.updateLastHere(req.session.uid)
+			
+				res.locals.isGuild = assassin.guild
+				res.locals.isAdmin = password.adminEmails.indexOf(assassin.email) > -1
+				res.locals.uid = req.session.uid
+				res.locals.gamegroup = gamegroup
+				res.locals.token = req.session.token
+				res.locals.assassin = assassin
+				next()
+			})
 		})
 	}
 //	next()

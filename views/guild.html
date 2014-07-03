@@ -61,15 +61,17 @@
 		<p title="Course">{{a.course}} <span class="arrow">=&gt;</span> {{a.detailsChangeRequest.course}}</p>
 		<p title="Living In">{% if a.liverin %}Yes{% else %}No{% endif %} <span class="arrow">=&gt;</span> {% if a.detailsChangeRequest.liverin %}Yes{% else %}No{% endif %}</p>
 		
-		<form action="/guild" method="post">
+		<form action="" method="post">
 			{{form.t(token)}}
-			{{form.a('detailsprocess')}}
-			<input type="hidden" name="request-uid" value="{{a._id}}">
-			<div id="process_addr{{a._id}}" class="detailschange-actions">
+			{{form.a('addresschange')}}
+			<input type="hidden" name="requester" value="{{a._id|safe}}">
+			<div id="process_addr{{loop.index}}" class="detailschange-actions">
 				<input type="radio" name="state" class="approved-radio" value="Approved">
 				<input type="radio" name="state" class="denied-radio" value="Denied">
 				<input type="text" name="message" class="detailschange-message" placeholder="message...">
+				<input value="Process Request" type="submit">
 			</div>
+			<a href="#process_addr{{loop.index}}">Process change</a>
 		</form>
 	</div>
 	{% endfor %}
@@ -79,12 +81,12 @@
 
 <!-- Set Motd -->
 <div id="set-motd" class="container">
-	<h4>Set MotD for &nbsp;&nbsp;&nbsp;&nbsp; (current motd: {{gg.motd}}</h4>
+	<h4>Set MotD for &nbsp;&nbsp;&nbsp;&nbsp; (current motd: {{gamegroup.motd}})</h4>
 	<div id="motd-setter">
 		<form action="/guild" method="POST" id="motd-form">
 			{{form.t(token)}}
 			{{form.a('setmotd')}}
-			<input type="text" id="motd-input" class="bureau-textinput" name="motd-text" placeholder="Set MotD...">
+			<input type="text" id="motd-input" class="bureau-textinput" name="motd" placeholder="Set MotD...">
 			<input type="submit" id="set-motd-button" name="motd-action" value="Set" disabled="">
 			<input type="submit" id="reset-motd-button" name="motd-action" value="Clear MotD">
 		</form>
