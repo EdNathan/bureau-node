@@ -385,8 +385,6 @@ function checkAuth(req, res, next) {
 					req.session.assassin = assassin
 					req.session.token = utils.md5(assassin.joindate + password.tokenSecret)
 					res.locals.isGuild = assassin.guild
-					//Update when we last saw them
-					Bureau.assassin.updateLastHere(req.session.uid)
 					next()
 				})
 			} else {
