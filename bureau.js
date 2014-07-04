@@ -243,7 +243,6 @@ var Bureau = {
 						deaths: d,
 						ratio: isNaN(k/d) ? 0 : k/d
 					}
-					console.dir(s)
 					callback(err, s)
 				})
 			})
