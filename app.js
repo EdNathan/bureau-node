@@ -145,9 +145,13 @@ var pages = {
 					Bureau.register.loginAssassin(email, password, function(err, assassin) {
 						if(!assassin) {
 							errors.push('Incorrect email/password combination')
-							res.render('login', {
-								loginErrors: errors
+							Bureau.gamegroup.getGamegroups(function(err, gamegroups) {
+								res.render('login', {
+									loginErrors: errors,
+									gamegroups: gamegroups
+								})
 							})
+							
 						} else {
 							var uid = assassin._id
 							if(rememberme) {
