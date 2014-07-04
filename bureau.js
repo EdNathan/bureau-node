@@ -290,6 +290,12 @@ var Bureau = {
 			})
 		},
 		
+		setNickname: function(uid, nickname, callback) {
+			Bureau.assassin.updateAssassin(uid, {nickname: nickname}, function(err, doc) {
+				callback(err, doc)
+			})
+		},
+		
 		setGuild: function(uid, shouldBeGuild, callback) {
 			Bureau.assassin.updateAssassin(uid, {guild: shouldBeGuild}, function(err, doc) {
 				callback(err, doc)
