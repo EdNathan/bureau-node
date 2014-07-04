@@ -1227,8 +1227,115 @@ h6::after {
     padding-left: 15px;
   }
 }
+/* Grabber */
 /* Toolbar */
-#toolbar {
+#toolbar-notifications {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  height: 100%;
+  width: 60px;
+  max-width: 100%;
+  background: white;
+  z-index: 100002;
+  display: -webkit-box;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;
+  /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox;
+  /* TWEENER - IE 10 */
+  display: -webkit-flex;
+  /* NEW - Chrome */
+  display: flex;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  -webkit-transition: width 0.2s ease 0s;
+  -moz-transition: width 0.2s ease 0s;
+  -o-transition: width 0.2s ease 0s;
+  transition: width 0.2s ease 0s;
+}
+#toolbar-notifications #notification-template {
+  display: none;
+}
+#toolbar-notifications #notifications-title {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 60px;
+  height: 30px;
+  line-height: 30px;
+  font-size: 24px;
+  text-align: center;
+  color: #666;
+  font-weight: 300;
+  -webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+  z-index: 11;
+  overflow: hidden;
+}
+#toolbar-notifications #notifications {
+  position: absolute;
+  top: 30px;
+  left: 0;
+  right: 60px;
+  bottom: 0;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  background: #eee;
+}
+#toolbar-notifications #notifications li {
+  display: block;
+  min-height: 60px;
+  padding: 10px;
+  border-bottom: 1px solid #d0d0d0;
+  font-size: 13px;
+  cursor: pointer;
+  position: relative;
+  background: white;
+  /* 			width: 300px; */
+}
+#toolbar-notifications #notifications li.unread {
+  padding-left: 12px;
+}
+#toolbar-notifications #notifications li.unread::after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 8px;
+  height: 100%;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background: #888;
+  z-index: 10;
+}
+#toolbar-notifications #notifications li.unread::before {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  top: 27px;
+  top: -webkit-calc(50% - 3px);
+  top: calc(50% - 3px);
+  left: -8px;
+  bottom: 0;
+  background: white;
+  z-index: 11;
+  -webkit-transition: all 0.1s ease 0s;
+  -moz-transition: all 0.1s ease 0s;
+  -o-transition: all 0.1s ease 0s;
+  transition: all 0.1s ease 0s;
+}
+#toolbar-notifications #notifications li.unread:hover::before {
+  left: 1px;
+}
+#toolbar-notifications #toolbar {
   padding: 0;
   margin: 0;
   font-family: 'BureauToolbar';
@@ -1249,21 +1356,20 @@ h6::after {
   -o-transition: border-color 0.5s ease 0.5s, transform 0.3s ease-out 0s, left 0.3s ease-out 0s;
   transition: border-color 0.5s ease 0.5s, transform 0.3s ease-out 0s, left 0.3s ease-out 0s;
   list-style: none;
-  position: fixed;
-  top: 0;
-  left: 0;
   height: 100%;
-  z-index: 100002;
-  /* The toolbar is the big bossman, it should always be on top! */
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
 }
-#toolbar li {
+#toolbar-notifications #toolbar li {
   width: 50px;
   height: 50px;
   line-height: 50px;
   position: relative;
   overflow: hidden;
 }
-#toolbar li a {
+#toolbar-notifications #toolbar li a {
   display: block;
   width: 100%;
   height: 100%;
@@ -1280,7 +1386,7 @@ h6::after {
   -o-transition: color 0.25s ease 0.5s, background-color 0.3s ease;
   transition: color 0.25s ease 0.5s, background-color 0.3s ease;
 }
-#toolbar li a::after {
+#toolbar-notifications #toolbar li a::after {
   content: attr(title);
   position: absolute;
   bottom: 0px;
@@ -1296,60 +1402,86 @@ h6::after {
   transition: all 0.25s ease 0s;
   font-family: 'Lato', Calibri, Arial, sans-serif;
 }
-#toolbar li a:hover {
+#toolbar-notifications #toolbar li a:hover {
   -webkit-transition: color 0.5s ease 0s, background-color 0.3s ease;
   -moz-transition: color 0.5s ease 0s, background-color 0.3s ease;
   -o-transition: color 0.5s ease 0s, background-color 0.3s ease;
   transition: color 0.5s ease 0s, background-color 0.3s ease;
 }
-#toolbar li a:hover::after {
+#toolbar-notifications #toolbar li a:hover::after {
   left: 0%;
 }
-/* Grabber */
-#grabber {
-  position: fixed;
-  z-index: 100001;
-  top: 2px;
-  left: 0;
-  width: 45px;
-  word-break: break-all;
-  font-weight: 300;
-  text-align: center;
-  cursor: pointer;
-  padding-left: 4px;
-  color: #666;
-  -webkit-transition: border-color 0.5s ease 0.5s, transform 0.3s ease-out 0s, left 0.3s ease-out 0s;
-  -moz-transition: border-color 0.5s ease 0.5s, transform 0.3s ease-out 0s, left 0.3s ease-out 0s;
-  -o-transition: border-color 0.5s ease 0.5s, transform 0.3s ease-out 0s, left 0.3s ease-out 0s;
-  transition: border-color 0.5s ease 0.5s, transform 0.3s ease-out 0s, left 0.3s ease-out 0s;
-  background: white;
-  /*box-shadow: 0px 0px 5px 5px white;*/
-  height: 43px;
+#toolbar-notifications #toolbar #grabber {
   display: none;
+  text-align: center;
+  line-height: 45px;
+  -webkit-transition: all 1s ease ease 0s;
+  -moz-transition: all 1s ease ease 0s;
+  -o-transition: all 1s ease ease 0s;
+  transition: all 1s ease ease 0s;
+  -webkit-transform: translateX(40px);
+  -moz-transform: translateX(40px);
+  -o-transform: translateX(40px);
+  -ms-transform: translateX(40px);
+  transform: translateX(40px);
 }
-#grabber svg {
-  position: relative;
-  cursor: pointer;
-  top: 9px;
+#toolbar-notifications #toolbar #grabber svg {
+  vertical-align: middle;
 }
-#grabber::after {
-  content: "";
+#toolbar-notifications #toolbar #unread-count {
+  display: block;
   position: absolute;
-  top: 0;
-  left: 100%;
-  bottom: 0;
-  width: 30px;
-  background: -moz-linear-gradient(left, #ffffff 0%, rgba(255, 255, 255, 0) 100%);
-  background: -webkit-linear-gradient(left, #ffffff 0%, rgba(255, 255, 255, 0) 100%);
-  background: -ms-linear-gradient(left, #ffffff 0%, rgba(255, 255, 255, 0) 100%);
-  background: linear-gradient(left, #ffffff 0%, rgba(255, 255, 255, 0) 100%);
-  pointer-events: none;
-  -ms-touch-action: none;
+  top: 50%;
+  left: 50%;
+  min-width: 18px;
+  height: 18px;
+  font-size: 12px;
+  font-weight: 600;
+  -webkit-border-radius: 9px;
+  -moz-border-radius: 9px;
+  border-radius: 9px;
+  text-align: center;
+  line-height: 14px;
+  background: white;
+  border: 2px solid #d0d0d0;
+  color: #d0d0d0;
+  -webkit-transition: color 0.25s ease 0.5s, border 0.3s ease 0.5s, opacity 0.4s ease 0.5s;
+  -moz-transition: color 0.25s ease 0.5s, border 0.3s ease 0.5s, opacity 0.4s ease 0.5s;
+  -o-transition: color 0.25s ease 0.5s, border 0.3s ease 0.5s, opacity 0.4s ease 0.5s;
+  transition: color 0.25s ease 0.5s, border 0.3s ease 0.5s, opacity 0.4s ease 0.5s;
+  opacity: 1;
 }
-.dragging {
-  -webkit-transition: none !important;
-  transition: none !important;
-  -ms-touch-action: none;
+#toolbar-notifications #toolbar #unread-count:empty {
+  opacity: 0;
+}
+#toolbar-notifications.open {
+  width: 360px;
+}
+#toolbar-notifications.open #grabber {
+  -webkit-transform: translateX(0px) !important;
+  -moz-transform: translateX(0px) !important;
+  -o-transform: translateX(0px) !important;
+  -ms-transform: translateX(0px) !important;
+  transform: translateX(0px) !important;
+}
+/* Some fixes for loading on phones and tablets. */
+@media screen and (max-width: 500px) {
+  body {
+    padding-right: 0px;
+    padding-left: 45px;
+    padding-top: 55px !important;
+    padding-left: 0;
+  }
+  #toolbar-notifications {
+    left: -60px;
+  }
+  #toolbar-notifications.open {
+    left: 0;
+    width: 100%;
+  }
+  #toolbar-notifications #grabber {
+    display: block !important;
+  }
 }
 /* Cards */
 .player-card {
@@ -4031,54 +4163,65 @@ h6::after {
     margin-bottom: 10px;
     box-shadow: 0 3px 2px rgba(0, 0, 0, 0.1);
   }
-  #toolbar {
-    width: 95px;
-    display: block;
-    border-left-width: 0px;
-    border-right: 5px solid #d0d0d0;
-    left: -100px;
-  }
-  #toolbar > li {
-    display: inline-block;
-    width: 100%;
-    list-style-type: none;
-    float: left;
-  }
-  #toolbar > li > a {
-    text-align: left;
-    padding-left: 10px;
-  }
-  #toolbar > li > a::after {
-    position: absolute;
-    left: 40px;
-    height: 100%;
-    top: 0;
-    line-height: 50px;
-  }
-  #toolbar > li > a:hover::after {
-    left: 40px;
-  }
-  #grabber {
-    display: block;
-  }
+  /*
+	#toolbar {
+		width: 95px;
+		display: block;
+		border-left-width: 0px;
+		border-right: 5px solid #d0d0d0;
+		left: -100px;
+	}
+	
+	#toolbar > li {
+		display: inline-block;
+		width: 100%;
+		list-style-type: none;
+		float: left;
+	}
+	
+	#toolbar >li > a {
+		text-align: left;
+		padding-left: 10px;
+	}
+	
+	#toolbar > li > a::after {
+		position: absolute;
+		left: 40px;
+		height: 100%;
+		top: 0;
+		line-height: 50px;
+	}
+	
+	#toolbar > li > a:hover::after {
+		left: 40px;
+	}
+	
+	#grabber {
+		display: block;
+	}
+*/
 }
 @media screen and (max-height: 400px) and (orientation: landscape) {
-  #toolbar {
-    width: 95px;
-    height: 100%;
-    display: block;
-    border-left-width: 0px;
-    border-right: 5px solid #d0d0d0;
-  }
-  #toolbar > li {
-    display: inline-block;
-    width: 47px;
-    list-style-type: none;
-    float: left;
-  }
-  #toolbar > li > a::after {
-    display: none;
-  }
+  /*
+#toolbar {
+		width: 95px;
+		height: 100%;
+		display: block;
+		border-left-width: 0px;
+		border-right: 5px solid #d0d0d0;	
+	}
+	
+	#toolbar > li {
+		display: inline-block;
+		width: 47px;
+		list-style-type: none;
+		float: left;
+	}
+	
+	#toolbar > li > a::after {
+		display: none;
+	}
+*/
   body {
     padding-right: 0px;
     padding-left: 0px;

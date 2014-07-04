@@ -53,7 +53,10 @@ var Bureau = {
 			} else {
 				//We have a db reference! Sweet
 				Bureau.db = db
-				callback(undefined, db)
+				//Fetch and cache gamegroups
+				Bureau.gamegroup.getGamegroups(function(err, ggs) {
+					callback(undefined, db)
+				})
 			}
 		})
 	},
@@ -170,6 +173,16 @@ var Bureau = {
 		updateLastHere: function(uid) {
 			var now = new Date()
 			Bureau.assassin.updateAssassin(uid, {lastonline: now}, function(){})
+		},
+		
+		getNotifications: function(uid, limit, callback) {
+			Bureau.assassin.getAssassin(uid, function(err, a) {
+				if(a.notifications && a.notifications.length > 0) {
+					callback(err, a.notifications.reverse().slice(0,limit))
+				} else {
+					callback(err, [])
+				}
+			})
 		},
 		
 		addNotification: function(uid, notification, priority) {

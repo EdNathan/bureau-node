@@ -1,7 +1,7 @@
 /* Grabber Class */
 function SidebarGrabber() {
 	this.el = $I('grabber');
-	var toolbar = $I('toolbar');
+	var toolbar = $I('toolbar-notifications');
 	var maxdx = 100;
 	
 	//State management
@@ -43,7 +43,7 @@ function SidebarGrabber() {
 						toolbar.style[self.__transformProperty] = self.el.style[self.__transformProperty] = 'translateX(0px)';
 					} else {
 						self.el.style.left = '0px';
-						toolbar.style.left = -100+'px';
+						toolbar.classList.remove('open')
 					}
 				} else {
 					console.log('opening');
@@ -52,7 +52,7 @@ function SidebarGrabber() {
 						toolbar.style[self.__transformProperty] = self.el.style[self.__transformProperty] = 'translateX('+maxdx+'px)';
 					} else {
 						self.el.style.left = maxdx+'px';
-						toolbar.style.left = -100+maxdx+'px';
+						toolbar.classList.add('open')
 					}
 				}
 				self.dx = 0;
@@ -92,7 +92,7 @@ function SidebarGrabber() {
 	this.el.addEventListener(down, function(e) {
 		self.dragging = true;
 		self.start = new Point(e.pageX,e.pageY);
-		toolbar.className = self.el.className = 'dragging';
+		//toolbar.className = self.el.className = 'dragging';
 		stopEvent(e);
 	}, false);
 	

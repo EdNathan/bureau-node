@@ -204,9 +204,10 @@ var pages = {
 						res.redirect('/home')
 						return
 					}
-					Bureau.gamegroup.getGamegroups(function(err, gamegroups) {
+					Bureau.gamegroup.getGamegroups(function(err, ggs) {
+						console.log(ggs)
 						res.render('admin', {
-							gamegroups: gamegroups
+							ggs: ggs
 						})
 					})
 				},
@@ -411,6 +412,34 @@ var pages = {
 							
 					}
 				}
+			},
+			
+			api: {
+				read: {
+					notifications: function(req, res) {
+						var uid = req.body.uid,
+							limit = req.body.data.limit
+						Bureau.assassin.getNotifications(uid, limit, function(err, notifications) {
+							res.json({
+								notifications: notifications
+							})
+						})
+					}
+				},
+				write: {
+					readNotification: function(req, res) {
+						var uid = req.body.uid,
+							id = req.body.data.id
+						console.log(id)
+						Bureau.assassin.markNotificationRead(uid, id, function(err) {
+							Bureau.assassin.getNotifications(uid, 20, function(err, notifications) {
+								res.json({
+									notifications: notifications
+								})
+							})
+						})
+					}
+				}
 			}
 		}
 	},
@@ -487,6 +516,7 @@ function checkAuth(req, res, next) {
 function checkToken(req, res, next) {
 	var seshtoken = req.session.token,
 		formtoken = req.body.token
+
 	if(!seshtoken) { 
 		res.send('Error! No session token :( Try <a href="/goodbye">logging in again</a>.')
     } else if(!formtoken) {

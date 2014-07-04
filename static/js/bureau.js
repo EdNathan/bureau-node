@@ -1,8 +1,12 @@
 var bureau = {
 	init: function() {
-		this.setupToolbar();
-		this.user.uid = $I('bureau-uid').value
-		this.user.gamegroup = $I('bureau-gamegroup').value
+		if(!!$I('bureau-uid').value) {
+			this.user.uid = $I('bureau-uid').value
+			this.user.gamegroup = $I('bureau-gamegroup').value
+			this.user.token = $I('bureau-token').value
+			this.setupToolbar()
+			this.setupNotifications()
+		}
 		setup();
 		
 		switch (document.body.id) {
@@ -34,10 +38,6 @@ var bureau = {
 						break;
 				}
 				break;
-			/*
-case 'page-admin':
-				break;
-*/
 			case 'page-gamegroup':
 				this.setup.gamegroup();
 				break;
@@ -50,16 +50,22 @@ case 'page-admin':
 	user: {
 		uid: 0,
 		gamegroup: '',
+		token: ''
 	},
+	
+	notifications: [],
 	
 	setupToolbar: function() {
 		if($I('toolbar')) {
-			var d = document.createElement('div');
+			var d = $I('grabber');
 			d.innerHTML = '<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="30px" height="23px" viewBox="0 0 30 23" enable-background="new 0 0 30 23" xml:space="preserve"> <rect fill-rule="evenodd" clip-rule="evenodd" fill="#888888" width="30" height="3"/> <rect y="10" fill-rule="evenodd" clip-rule="evenodd" fill="#888888" width="30" height="3"/><rect y="20" fill-rule="evenodd" clip-rule="evenodd" fill="#888888" width="30" height="3"/></svg>';
-			d.id = 'grabber';
-			document.body.appendChild(d);
 			
-			GRABBER = new SidebarGrabber();
+			//setup notification drawer
+			var drawer = $I('toolbar-notifications')
+			$('#notifications-btn, #grabber').on('click', function(e) {
+				stopEvent(e)
+				drawer.classList.toggle('open')
+			})
 		}
 		
 		var m = document.createElement('meta');
@@ -74,17 +80,87 @@ case 'page-admin':
 		document.head.appendChild(m2);
 	},
 	
-	api: function(uid, method, api, data, callback, debug) {
-		var j = {
-			api: {
-				uid: uid,
-				api: api,
-				method: method
-			},
+	setupNotifications: function() {
+		var cachedNotifications = retrieveObj('notifications')
+		if(!!cachedNotifications) {
+			bureau.notifications = cachedNotifications.map(function(n) {
+				n.added = new Date(n.added)
+				if(n.seen) {
+					n.seen = new Date(n.seen)
+				}
+				return n
+			})
+			bureau.displayNotifications()
+		}
+		//Now go off and get the latest ones
+		bureau.api(bureau.user.uid, 'read', 'notifications', {limit: 20}, function(err, response) {
+			var notifications = response.notifications
+			storeObj('notifications', notifications)
+			bureau.notifications = notifications.map(function(n) {
+				n.added = new Date(n.added)
+				if(n.seen) {
+					n.seen = new Date(n.seen)
+				}
+				return n
+			})
+			bureau.displayNotifications()
+		})
+	},
+	
+	cacheNotifications: function() {
+		storeObj('notifications', bureau.notifications)
+	},
+	
+	displayNotifications: function() {
+		var list = $I('notifications'),
+			tpl = $I('notification-template').innerHTML,
+			out = swig.render(tpl, { locals: {
+				notifications: bureau.notifications
+			}})
+
+		list.innerHTML = out
+		
+		var unreadCount = bureau.notifications.reduce(function(previousValue, currentValue, index, array){
+			return previousValue + (currentValue.read?0:1);
+		}, 0)
+	
+		$I('unread-count').innerHTML = unreadCount>0?unreadCount:''
 			
+		$(list).children().on('click', function(e) {
+			stopEvent(e)
+			var link = this.getAttribute('data-link'),
+				id = this.id.replace('notification-','')
+			if(this.className.indexOf('unread') > -1) {
+				//Use api to mark unread
+				bureau.api(bureau.user.uid, 'write', 'readNotification', {id: id}, function(err, response) {
+					var i = 0,
+						l = bureau.notifications.length
+					for(i;i<l;i++) {
+						if(bureau.notifications[i].id == id) {
+							bureau.notifications[i].read = true
+							break
+						}
+					}
+					bureau.cacheNotifications()
+					bureau.displayNotifications()
+				})
+			}
+		})
+	},
+	
+	
+	api: function(uid, method, endpoint, data, callback, debug) {
+	
+		//method 	- read/write
+		//endpoint 	- the api to be accessed
+		//data 		- a JSON object to be sent with the request
+		
+		var j = {
+			uid: uid,
+			token: bureau.user.token,
 			data: data
 		}
-		var req = new XMLHttpRequest();
+		var req = new XMLHttpRequest()
 		req.onload = function() {
 			if(this.status === 200) {
 				if(debug) {
@@ -93,17 +169,23 @@ case 'page-admin':
 	 				console.log(req.responseText);
 	 				console.log(JSON.parse(req.responseText));
 				}
+				
 				if(callback) {
-					callback(JSON.parse(req.responseText));
+					var response = JSON.parse(req.responseText)
+					callback(null, response)
 				}
 			} else {
-				console.error(this.status, this.statusText);
+				console.error(this.status, this.statusText)
+				if(callback) {
+					callback(this.statusText, null)
+				}
 			}
 		}
-		var apiUrl = window.location.pathname.replace(/\/bureau\/.*/,'/bureau/api/');
-		req.open('POST', apiUrl);
-		req.setRequestHeader('Content-type', 'application/json');
-		req.send(JSON.stringify(j));
+		//var apiUrl = window.location.pathname.replace(/\/bureau\/.*/,'/bureau/api/');
+		var apiUrl = '/api/'+method+'/'+endpoint
+		req.open('POST', apiUrl)
+		req.setRequestHeader('Content-type', 'application/json')
+		req.send(JSON.stringify(j))
 	},
 	
 	setup: {
@@ -283,8 +365,7 @@ case 'page-admin':
 		guildAllReports: function() {
 			//Add the confirmation dialog to approving and rejecting reports
 			$('.processing-buttons input[type="submit"]').on('click', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
+				stopEvent(e)
 				
 				var message = 'Are you sure you want to retroactively ' + this.className + ' this kill report? Please check to make sure that taking this action is in line with the game\'s mechanics!';
 				if(confirm(message)) {
@@ -521,8 +602,7 @@ case 'page-admin':
 			
 			//Attach confirmation dialogs to the archive buttons
 			$('.archive-form input[type=submit]').on('click', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
+				stopEvent(e)
 				var shouldArchive = confirm('Are you sure you want to archive \''+this.getAttribute('data-name')+'\'?');
 				if(shouldArchive) {
 					HTMLFormElement.prototype.submit.call(this.parentNode);
@@ -577,8 +657,7 @@ case 'page-admin':
 				$('#coords-btn').on('click', function(e) {
 					var btn = $(this);
 					btn.addClass('loading');
-					e.preventDefault();
-					e.stopPropagation();
+					stopEvent(e);
 					navigator.geolocation.getCurrentPosition(function(position) {
 						var geocoder = new google.maps.Geocoder(),
 							latlng = new google.maps.LatLng(position.coords.latitude,position.coords.longitude);
@@ -877,6 +956,9 @@ function colourItems(items) {
 	
 	items.unshift(makeColourItem(document.querySelector('h1'), 'color'));
 	items.unshift(makeColourItem(document.querySelector('h1'), 'borderColor'));
+	items.unshift(makeColourItem(document.querySelector('#notifications-title'), 'color'));
+	items.unshift(makeColourItem(document.querySelector('#unread-count'), 'color'));
+	items.unshift(makeColourItem(document.querySelector('#unread-count'), 'borderColor'));
 	
 	var i = 0,
 		l = items.length,
@@ -893,6 +975,33 @@ function colourItems(items) {
 		}
 	}
 }
+//Store and retrieve from localStorage
+
+function store(key, s) {
+	window.localStorage.setItem(key, s)
+}
+
+function storeObj(key, stuff) {
+	store(key, JSON.stringify(stuff))
+}
+
+function retrieve(key) {
+	return window.localStorage.getItem(key)
+}
+
+function retrieveObj(key) {
+	var item = retrieve(key)
+	if(!item) {
+		return
+	}
+	try {
+		var o = JSON.parse(item)
+		return o
+	} catch(e) {
+		return
+	}
+}
+
 
 //Just in case a particular page doesn't care about colouring anything or have its own applyColours() method then we'll specify a default here which can be overwritten
 function applyColours() {
@@ -1203,7 +1312,7 @@ ProgressivePrinter.prototype = {
 /* Grabber Class */
 function SidebarGrabber() {
 	this.el = $I('grabber');
-	var toolbar = $I('toolbar');
+	var toolbar = $I('toolbar-notifications');
 	var maxdx = 100;
 	
 	//State management
@@ -1245,7 +1354,7 @@ function SidebarGrabber() {
 						toolbar.style[self.__transformProperty] = self.el.style[self.__transformProperty] = 'translateX(0px)';
 					} else {
 						self.el.style.left = '0px';
-						toolbar.style.left = -100+'px';
+						toolbar.classList.remove('open')
 					}
 				} else {
 					console.log('opening');
@@ -1254,7 +1363,7 @@ function SidebarGrabber() {
 						toolbar.style[self.__transformProperty] = self.el.style[self.__transformProperty] = 'translateX('+maxdx+'px)';
 					} else {
 						self.el.style.left = maxdx+'px';
-						toolbar.style.left = -100+maxdx+'px';
+						toolbar.classList.add('open')
 					}
 				}
 				self.dx = 0;
@@ -1294,7 +1403,7 @@ function SidebarGrabber() {
 	this.el.addEventListener(down, function(e) {
 		self.dragging = true;
 		self.start = new Point(e.pageX,e.pageY);
-		toolbar.className = self.el.className = 'dragging';
+		//toolbar.className = self.el.className = 'dragging';
 		stopEvent(e);
 	}, false);
 	

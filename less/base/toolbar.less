@@ -1,63 +1,230 @@
-#toolbar {
-	padding: 0;
-	margin: 0;
-	font-family:'BureauToolbar';
-	speak: none;
-	font-weight: normal;
-	font-variant: normal;
-	text-transform: none;
-	line-height: 1;
-	-webkit-font-smoothing: antialiased;
-	background: white;
-	width:60px;
-	border-left: 10px solid #d0d0d0;
-	.box-shadow(0 3px 2px rgba(0, 0, 0, 0.1));
-	.multi-transition(~"border-color 0.5s ease 0.5s, transform 0.3s ease-out 0s, left 0.3s ease-out 0s");
-	list-style: none;
+#toolbar-notifications {
 	position: fixed;
 	top:0;
-	left: 0;
+	left:0;
+	bottom:0;
 	height: 100%;
+	width: 60px;
+	max-width: 100%;
+	background: white;
 	z-index: 100002;
-	/* The toolbar is the big bossman, it should always be on top! */
-	li {
-		width: 50px;
-		height:50px;
-		line-height: 50px;
-		position: relative;
+	.flex-container();
+	.transition(0.2s, ease, width);
+	
+	#notification-template {
+		display: none;
+	}
+	
+	@titleheight: 30px;
+	
+	#notifications-title {
+		position: absolute;
+		top:0;
+		left: 0;
+		right: 60px;
+		height: @titleheight;
+		line-height: @titleheight;
+		font-size: @titleheight*0.8;
+		text-align: center;
+		color: #666;
+		font-weight: 300;
+		.box-shadow(0 2px 2px fade(black, 30%));
+		z-index: 11;
 		overflow: hidden;
-		a {
+	}
+	
+	#notifications {
+		position: absolute;
+		top:@titleheight;
+		left:0;
+		right: 60px;
+		bottom: 0;
+		height: 100%;
+		padding: 0;
+		margin: 0;
+		list-style: none;
+		overflow-y: scroll;
+		overflow-x: hidden;
+		background: #eee;
+		
+		li {
 			display: block;
-			width: 100%;
-			height: 100%;
-			color: #d0d0d0;
-			text-decoration: none;
-			text-align: center;
-			line-height: 50px;
-			font-size: 20px;
-			text-shadow: 0 1px 2px #eeeeee;
+			min-height: 60px;
+			padding: 10px;
+			border-bottom: 1px solid @dust;
+			font-size: 13px;
 			cursor: pointer;
-			background-color: white;
-			.multi-transition(~"color 0.25s ease 0.5s, background-color 0.3s ease");
-			&::after {
-				content: attr(title);
-				position: absolute;
-				bottom: 0px;
-				width: 100%;
-				left: -150%;
-				font-size: 12px;
-				z-index: 100;
-				height: 14px;
-				line-height: 14px;
-				.transition(0.25s);
-				.font();
-			}
-			&:hover {
-				.multi-transition(~"color 0.5s ease 0s, background-color 0.3s ease");
+			position: relative;		
+			background: white;
+/* 			width: 300px; */
+			
+			&.unread {
+				padding-left: 12px;
 				&::after {
-					left: 0%;
+					content: "";
+					display: block;
+					position: absolute;
+					width: 8px;
+					height: 100%;
+					top:0;
+					left:0;
+					bottom: 0;
+					background: #888;
+					z-index: 10;
+				}
+				&::before {
+					content: "";
+					display: block;
+					position: absolute;
+					width: 6px;
+					height: 6px;
+					top: 27px;
+					top: ~"-webkit-calc(50% - 3px)";
+					top: ~"calc(50% - 3px)";
+					left:-8px;
+					bottom: 0;
+					background: white;
+					z-index: 11;
+					.transition(0.1s);
+				}
+				
+				&:hover {
+					&::before {
+						left: 1px;
+					}
 				}
 			}
+		}
+		
+	}
+	
+	#toolbar {
+		padding: 0;
+		margin: 0;
+		font-family:'BureauToolbar';
+		speak: none;
+		font-weight: normal;
+		font-variant: normal;
+		text-transform: none;
+		line-height: 1;
+		-webkit-font-smoothing: antialiased;
+		background: white;
+		width:60px;
+		border-left: 10px solid #d0d0d0;
+		.box-shadow(0 3px 2px rgba(0, 0, 0, 0.1));
+		.multi-transition(~"border-color 0.5s ease 0.5s, transform 0.3s ease-out 0s, left 0.3s ease-out 0s");
+		list-style: none;
+		height: 100%;
+		position: absolute;
+		top:0;
+		right:0;
+		bottom: 0;
+
+		li {
+			width: 50px;
+			height:50px;
+			line-height: 50px;
+			position: relative;
+			overflow: hidden;
+			a {
+				display: block;
+				width: 100%;
+				height: 100%;
+				color: #d0d0d0;
+				text-decoration: none;
+				text-align: center;
+				line-height: 50px;
+				font-size: 20px;
+				text-shadow: 0 1px 2px #eeeeee;
+				cursor: pointer;
+				background-color: white;
+				.multi-transition(~"color 0.25s ease 0.5s, background-color 0.3s ease");
+				&::after {
+					content: attr(title);
+					position: absolute;
+					bottom: 0px;
+					width: 100%;
+					left: -150%;
+					font-size: 12px;
+					z-index: 100;
+					height: 14px;
+					line-height: 14px;
+					.transition(0.25s);
+					.font();
+				}
+				&:hover {
+					.multi-transition(~"color 0.5s ease 0s, background-color 0.3s ease");
+					&::after {
+						left: 0%;
+					}
+				}
+			}
+		}
+		
+		#grabber {
+			display: none;
+			text-align: center;
+			line-height: 45px;
+			.transition(1s ease);
+			.transform(translateX(40px));
+			svg {
+				vertical-align: middle
+			}
+		}
+		
+		#unread-count {
+			display: block;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			min-width: 18px;
+			height: 18px;
+			font-size: 12px;
+			font-weight: 600;
+			.border-radius(9px);
+			text-align: center;
+			line-height: 14px;
+			background: white;
+			border: 2px solid #d0d0d0;
+			color: #d0d0d0;
+			.multi-transition(~"color 0.25s ease 0.5s, border 0.3s ease 0.5s, opacity 0.4s ease 0.5s");
+			opacity: 1;
+			
+			&:empty {
+				opacity: 0;
+			}			
+		}
+	}
+	
+	&.open {
+		width: 360px;
+		
+		#grabber {
+			.transform(~"translateX(0px) !important");
+		}
+		
+	}
+
+}
+
+/* Some fixes for loading on phones and tablets. */
+@media screen and (max-width: 500px) {
+	body {
+		padding-right: 0px;
+		padding-left: 45px;
+		padding-top: 55px !important;
+		padding-left: 0;
+	}
+	
+
+	#toolbar-notifications {
+		left: -60px;
+		&.open {
+			left: 0;
+			width: 100%;
+		}
+		#grabber {
+			display: block !important;
 		}
 	}
 }
