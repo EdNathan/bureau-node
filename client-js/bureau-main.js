@@ -114,8 +114,12 @@ var bureau = {
 	displayNotifications: function() {
 		var list = $I('notifications'),
 			tpl = $I('notification-template').innerHTML,
+			n = bureau.notifications.map(function(x) {
+				x.ago = timeSince(x.added)
+				return x
+			}),
 			out = swig.render(tpl, { locals: {
-				notifications: bureau.notifications
+				notifications: n
 			}})
 
 		list.innerHTML = out
@@ -975,6 +979,35 @@ function colourItems(items) {
 		}
 	}
 }
+
+// XXX time ago
+function timeSince(date) {
+    var seconds = Math.floor((new Date() - date) / 1000);
+
+    var interval = Math.floor(seconds / 31536000);
+
+    if (interval > 1) {
+        return interval + " years";
+    }
+    interval = Math.floor(seconds / 2592000);
+    if (interval > 1) {
+        return interval + " months";
+    }
+    interval = Math.floor(seconds / 86400);
+    if (interval > 1) {
+        return interval + " days";
+    }
+    interval = Math.floor(seconds / 3600);
+    if (interval > 1) {
+        return interval + " hours";
+    }
+    interval = Math.floor(seconds / 60);
+    if (interval > 1) {
+        return interval + " minutes";
+    }
+    return Math.floor(seconds) + " seconds";
+}
+
 //Store and retrieve from localStorage
 
 function store(key, s) {

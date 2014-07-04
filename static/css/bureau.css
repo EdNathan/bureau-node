@@ -1297,10 +1297,25 @@ h6::after {
   cursor: pointer;
   position: relative;
   background: white;
-  /* 			width: 300px; */
+  opacity: 0.7;
+  color: #666;
+  -webkit-transition: all 0.2s ease 0s;
+  -moz-transition: all 0.2s ease 0s;
+  -o-transition: all 0.2s ease 0s;
+  transition: all 0.2s ease 0s;
+}
+#toolbar-notifications #notifications li .ago {
+  display: block;
+  font-size: 10px;
+  color: #d0d0d0;
+  text-align: center;
+}
+#toolbar-notifications #notifications li:hover {
+  opacity: 1;
 }
 #toolbar-notifications #notifications li.unread {
   padding-left: 12px;
+  opacity: 1;
 }
 #toolbar-notifications #notifications li.unread::after {
   content: "";
