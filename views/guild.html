@@ -3,6 +3,15 @@
 {% block title %}Guild{% endblock %}
 
 {% block main %}
+
+<nav style="color: rgb(158, 84, 189);" id="guild-nav">
+	<a href="/guild/allreports/">Kill Reports</a>
+	<a href="/guild/newgame/">New Game</a>
+	<a href="/guild/gamestate/">Game State</a>
+	<a href="#members">Membership</a>
+<!-- 	<a href="resetpassword.php">Reset Passwords</a> -->
+</nav>
+
 <!-- Kill Reports -->
 {% if reports.length > 0 %}
 <div id="kill-reports">
@@ -92,6 +101,15 @@
 		</form>
 	</div>
 </div>
+
+
+<!-- Members -->
+<h6 id="members">Members</h6>
+<ul id="membership-list" data-search="search members" class="player-table searchable membership">
+ {% for m in members %}
+ {{rows.member(m)}}
+ {% endfor %}
+</ul>
 
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB01yd9fWUD7iZU45t6Z7HJS6os-y2UCrA&sensor=false"></script>
 {% endblock %}

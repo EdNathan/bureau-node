@@ -177,7 +177,8 @@ var pages = {
 	authPages = {
 		get: {
 			home: function (req, res) {
-				res.render('template')
+				console.log(res.locals)
+				res.render('home')
 			},
 			personal: function(req, res) {
 				var uid = req.session.uid
@@ -247,8 +248,12 @@ var pages = {
 						return
 					}
 					Bureau.assassin.getAssassins({'detailsChangeRequest.state':'waiting'}, function(err, addressChangeRequests) {
-						res.render('guild', {
-							addressChangeRequests: addressChangeRequests
+						Bureau.gamegroup.getAssassins(res.locals.gamegroup.ggid, function(err, members) {
+							res.render('guild', {
+								addressChangeRequests: addressChangeRequests,
+								members: members,
+								pageErrors: ['bacon']
+							})
 						})
 					})
 				}
@@ -484,11 +489,10 @@ function checkAuth(req, res, next) {
 		Bureau.assassin.getSalt(cUID, function(err, salt) {
 			if(cTOK === salt) {
 				Bureau.assassin.getAssassin(cUID, function(err, assassin) {
-					req.session.uid = assassin._id
+					req.session.uid = assassin._id+'' //Force it to be a string so we don't get crashes...
 					req.session.gamegroup = assassin.gamegroup
 					req.session.assassin = assassin
 					req.session.token = utils.md5(assassin.joindate + password.tokenSecret)
-					res.locals.isGuild = assassin.guild
 					next()
 				})
 			} else {
@@ -498,22 +502,27 @@ function checkAuth(req, res, next) {
 	} else if(!req.session.uid || !req.session.gamegroup || !req.session.token) {
 		res.redirect('/goodbye')
 	} else {
-		Bureau.assassin.getAssassin(req.session.uid, function(err, assassin) {
-			Bureau.gamegroup.getGamegroup(req.session.gamegroup, function(err, gamegroup) {
-				//Update when we last saw them
-				Bureau.assassin.updateLastHere(req.session.uid)
-			
-				res.locals.isGuild = assassin.guild
-				res.locals.isAdmin = password.adminEmails.indexOf(assassin.email) > -1
-				res.locals.uid = req.session.uid
-				res.locals.gamegroup = gamegroup
-				res.locals.token = req.session.token
-				res.locals.assassin = assassin
-				next()
-			})
-		})
+		next()
 	}
 //	next()
+}
+
+function addLocals(req, res, next) {
+	Bureau.assassin.getAssassin(req.session.uid, function(err, assassin) {
+		Bureau.gamegroup.getGamegroup(req.session.gamegroup, function(err, gamegroup) {
+			//Update when we last saw them
+			Bureau.assassin.updateLastHere(req.session.uid)
+		
+			res.locals.isGuild = assassin.guild
+			res.locals.isAdmin = password.adminEmails.indexOf(assassin.email) > -1
+			res.locals.uid = req.session.uid
+			res.locals.gamegroup = gamegroup
+			res.locals.token = req.session.token
+			res.locals.assassin = assassin
+			res.locals.pageErrors = []
+			next()
+		})
+	})
 }
 
 //For post requests
@@ -549,9 +558,9 @@ app.map = function (a, route, method, auth) { //Returns an array of mapped urls
 				key = glue = ''
 			}
 			if(auth && method == 'post') {
-				app[method](route+glue+key, checkAuth, checkToken, a[!key?'/':key])
+				app[method](route+glue+key, checkAuth, addLocals, checkToken, a[!key?'/':key])
 			} else if(auth) {
-				app[method](route+glue+key, checkAuth, a[!key?'/':key])
+				app[method](route+glue+key, checkAuth, addLocals, a[!key?'/':key])
 			} else {
 				app[method](route+glue+key, a[!key?'/':key])
 			}

@@ -96,7 +96,7 @@ var Bureau = {
 			if(Bureau.assassin.cachedAssassins.hasOwnProperty(uid)) {
 				callback(null, Bureau.assassin.cachedAssassins[uid])
 			} else {
-				var objID = id(uid)
+				var objID = id(uid+'')
 				Bureau.db.collection('assassins').findOne({_id: objID}, function(err, doc) {
 					Bureau.assassin.getLethality(uid, function(err, lethality) {
 						doc.lethality = lethality

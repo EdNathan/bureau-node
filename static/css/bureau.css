@@ -4149,6 +4149,13 @@ h6::after {
   line-height: 18px;
   font-size: 14px;
 }
+#page-errors {
+  background: #f06060;
+  color: white;
+  list-style: none;
+  margin: 0px -30px 20px;
+  padding: 0;
+}
 /* Some fixes for loading on phones and tablets. */
 @media screen and (max-width: 500px) {
   body {
@@ -4163,6 +4170,10 @@ h6::after {
     top: 0;
     left: 0;
     right: 0;
+  }
+  #page-errors {
+    margin-top: 80px;
+    margin-bottom: 0;
   }
   .settings-page .container {
     border-width: 0px 0px 0px 0px;

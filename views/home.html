@@ -1,0 +1,16 @@
+{% extends "./base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block main %}
+	<div class="" id="welcome-message" style="opacity: 1;"><a href="playground.php" style="color:inherit;text-decoration:none;">.</a></div>
+
+<script type="text/javascript">var displayName = '{% if isAdmin %}Sir.{% else %}{{assassin.nickname|default(assassin.forename)}}{% endif %}'</script>
+
+	<div id="game-title" class="container">
+		<h2>{{game.title|default('No Games Running')}}</h2> <!--  The game title goes here -->
+		<div id="motd">{{gamegroup.motd|default('Do you have a guild approved nickname? &nbsp;Use it to sign in instead of your email!')}}</div> <!-- MotD goes in here! -->
+	</div>
+
+{{form.t(token)}}
+{% endblock %}

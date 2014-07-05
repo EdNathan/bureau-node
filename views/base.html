@@ -18,6 +18,16 @@
 <h1>{% block title %}Bureau{% endblock %}</h1>
 {% endif %}
 
+{% if pageErrors.length > 0 %}
+<ul id="page-errors">
+	{% for e in pageErrors %}
+	
+	<li class="page-error"><span>{{e}}</span><div class="errorClose"></div></li>
+	
+	{% endfor %}
+</ul>
+{% endif %}
+
 {% include "./includes/navbar.html" %}
 {% block main %}{% endblock %}
 
