@@ -64,7 +64,7 @@
 	<h4>Address Changes</h4>
 	{% for a in addressChangeRequests %}
 	<div class="address-change">
-		<div class="display-picture" style="{% if a.imgname %}background-image: url({{assassin.imgname}}){% endif %}"></div>
+		<div class="display-picture" style="{% if a.imgname %}background-image: url({{a.imgname}}){% endif %}"></div>
 		<div class="name-row">{{a.forename}} {{a.surname}}</div>
 		<p title="Address">{{a.address}} <span class="arrow">=&gt;</span> {{a.detailsChangeRequest.address}}</p>
 		<p title="Course">{{a.course}} <span class="arrow">=&gt;</span> {{a.detailsChangeRequest.course}}</p>

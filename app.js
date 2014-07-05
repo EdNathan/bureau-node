@@ -177,7 +177,6 @@ var pages = {
 	authPages = {
 		get: {
 			home: function (req, res) {
-				console.log(res.locals)
 				res.render('home')
 			},
 			personal: function(req, res) {
@@ -210,7 +209,6 @@ var pages = {
 						return
 					}
 					Bureau.gamegroup.getGamegroups(function(err, ggs) {
-						console.log(ggs)
 						res.render('admin', {
 							ggs: ggs
 						})
@@ -439,7 +437,7 @@ var pages = {
 					readNotification: function(req, res) {
 						var uid = req.body.uid,
 							id = req.body.data.id
-						console.log(id)
+
 						Bureau.assassin.markNotificationRead(uid, id, function(err) {
 							Bureau.assassin.getNotifications(uid, 20, function(err, notifications) {
 								res.json({
