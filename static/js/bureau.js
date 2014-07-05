@@ -260,16 +260,25 @@ var bureau = {
 		},
 		
 		guild: function() {
-			var a = [];
-			a.push(makeColourItem($I('kill-reports'), 'color'));
-			a.push(makeColourItem($I('guild-nav'), 'color'));
-			a.push(makeColourItem($I('motd-input'), 'outlineColor'));
-			var commenttextareas = document.querySelectorAll('.killreport textarea');
+			var a = [],
+				membershipRows = document.querySelectorAll('.member-row'),
+				commenttextareas = document.querySelectorAll('.killreport textarea')
+				
+			a.push(makeColourItem($I('kill-reports'), 'color'))
+			a.push(makeColourItem($I('guild-nav'), 'color'))
+			a.push(makeColourItem($I('motd-input'), 'outlineColor'))
+
 			for(var i=0; i<commenttextareas.length; i++) {
-				a.push(makeColourItem(commenttextareas[i], 'color'));
-				a.push(makeColourItem(commenttextareas[i], 'outline-color'));
+				a.push(makeColourItem(commenttextareas[i], 'color'))
+				a.push(makeColourItem(commenttextareas[i], 'outline-color'))
 			}
-			colourItems(a);
+				
+			for(i=0; i<membershipRows.length; i++) {
+				a.unshift(makeColourItem(membershipRows[i].querySelector('.name'), 'color'));
+				a.unshift(makeColourItem(membershipRows[i].querySelector('.nickname-rank'), 'borderColor'))
+				a.unshift(makeColourItem(membershipRows[i], 'borderColor'))
+			}
+			colourItems(a)
 			
 			if(location.hash !== '') {
 				location.hash = '';
