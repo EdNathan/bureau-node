@@ -4150,11 +4150,30 @@ h6::after {
   font-size: 14px;
 }
 #page-errors {
-  background: #f06060;
   color: white;
   list-style: none;
-  margin: 0px -30px 20px;
+  margin: 0px -30px 20px -20px;
   padding: 0;
+}
+#page-errors::before {
+  content: "Errors";
+  display: block;
+  text-align: center;
+  font-size: 11px;
+  color: #f06060;
+  margin-bottom: 5px;
+}
+#page-errors .page-error {
+  display: block;
+  margin: 0 0 5px;
+  min-height: 30px;
+  padding: 0 20px;
+  line-height: 30px;
+  text-align: center;
+  background: #f06060;
+  -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.3);
 }
 /* Some fixes for loading on phones and tablets. */
 @media screen and (max-width: 500px) {
@@ -4172,8 +4191,10 @@ h6::after {
     right: 0;
   }
   #page-errors {
-    margin-top: 80px;
-    margin-bottom: 0;
+    margin: 60px 0 0s;
+  }
+  #page-guild #page-errors {
+    margin: 60px 0 -30px;
   }
   .settings-page .container {
     border-width: 0px 0px 0px 0px;

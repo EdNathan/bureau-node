@@ -249,8 +249,7 @@ var pages = {
 						Bureau.gamegroup.getAssassins(res.locals.gamegroup.ggid, function(err, members) {
 							res.render('guild', {
 								addressChangeRequests: addressChangeRequests,
-								members: members,
-								pageErrors: ['bacon']
+								members: members
 							})
 						})
 					})
