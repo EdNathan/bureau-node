@@ -91,7 +91,7 @@
 
 <!-- Set Motd -->
 <div id="set-motd" class="container">
-	<h4>Set MotD for &nbsp;&nbsp;&nbsp;&nbsp; (current motd: {{gamegroup.motd}})</h4>
+	<h4>Set MotD for {{gamegroup.name}} (current motd: {{gamegroup.motd}})</h4>
 	<div id="motd-setter">
 		<form action="/guild" method="POST" id="motd-form">
 			{{form.t(token)}}
