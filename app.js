@@ -444,16 +444,16 @@ var pages = {
 								rules = req.body.methodrules,
 								errs = []								
 							
-							if(!name || name.length < 3) {
+							if(!name || name.trim().length < 3) {
 								errs.push('Invalid name specified')
 							}
 							if(!zone) {
 								errs.push('No zone specified')
 							}
-							if(hasDetail && (!detail || detail.length < 6)) {
+							if(hasDetail && (!detail || detail.trim().length < 6)) {
 								errs.push('No detail question specified!')
 							}
-							if(!verb || verb.length < 6) {
+							if(!verb || verb.trim().length < 6) {
 								errs.push('Invalid kill sentence!')
 							} else if(verb.indexOf('#k') < 0) {
 								errs.push('Add #k to your kill sentence so the killer shows up!')
@@ -462,7 +462,7 @@ var pages = {
 							} else if(hasDetail && verb.indexOf('#d') < 0) {
 								errs.push('Add #d to your kill sentence so the detail shows up!')
 							}
-							if(!rules || rules.length < 11) {
+							if(!rules || rules.trim().length < 11) {
 								errs.push('Please specify rules')
 							}
 							
@@ -475,13 +475,13 @@ var pages = {
 							
 							var method = {
 									id: name.toLowerCase().replace(/\s+/, ''),
-									name: name,
-									zone: zone,
-									verb: verb,
-									rules: rules
+									name: name.trim(),
+									zone: zone.trim(),
+									verb: verb.trim(),
+									rules: rules.trim()
 								}
 							if(hasDetail) {
-								method.detailquestion = detail
+								method.detailquestion = detail.trim()
 							}
 							
 							Bureau.gamegroup.addKillMethod(res.locals.gamegroup.ggid, method, function(err, methods) {
@@ -494,6 +494,69 @@ var pages = {
 							})
 							
 							break;
+						case 'editkillmethod':
+							var id = req.body.methodid,
+								detail = req.body.methoddetailquestion,
+								verb = req.body.methodverb,
+								rules = req.body.methodrules,
+								errs = []
+							
+							Bureau.gamegroup.getKillMethod(res.locals.gamegroup.ggid, id, function(err, method) {
+								if(err) {
+									res.locals.pageErrors.push('Invalid kill method id')
+									authPages.get.guild.killmethods(req, res)
+									return
+								} else {
+									var hasDetail = !!method.detailquestion
+									
+									if(hasDetail && (!detail || detail.trim().length < 6)) {
+										errs.push('No detail question specified!')
+									}
+									if(!verb || verb.trim().length < 6) {
+										errs.push('Invalid kill sentence!')
+									} else if(verb.indexOf('#k') < 0) {
+										errs.push('Add #k to your kill sentence so the killer shows up!')
+									} else if(verb.indexOf('#v') < 0) {
+										errs.push('Add #v to your kill sentence so the victim shows up!')
+									} else if(hasDetail && verb.indexOf('#d') < 0) {
+										errs.push('Add #d to your kill sentence so the detail shows up!')
+									}
+									if(!rules || rules.trim().length < 11) {
+										errs.push('Please specify rules')
+									}
+									res.locals.pageErrors = errs
+									
+									if(errs.length > 0) {
+										authPages.get.guild.killmethods(req, res)
+										return
+									}
+									
+									
+									var m = {
+										verb: verb,
+										rules: rules
+									}
+									
+									if(hasDetail) {
+										m.detailquestion = detail
+									}
+									
+									console.log(m)
+									
+									Bureau.gamegroup.updateKillMethod(res.locals.gamegroup.ggid, id, m, function(err, methods) {
+										if(err) {
+											res.locals.pageErrors.push('Error editing the killmethod "'+method.name+'": '+err)
+										} else {
+											res.locals.gamegroup.killmethods = methods
+										}
+										authPages.get.guild.killmethods(req, res)
+									})
+								}
+								
+							})
+							
+							break;
+							
 						default:
 							authPages.get.guild.killmethods(req, res)
 							break;

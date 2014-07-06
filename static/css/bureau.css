@@ -3866,6 +3866,143 @@ h6::after {
   height: 0px;
   opacity: 0;
 }
+#page-killmethods #killmethods-list {
+  -webkit-column-width: 400px;
+  -moz-column-width: 400px;
+  column-width: 400px;
+}
+#page-killmethods #killmethods-list li {
+  list-style: none;
+  display: block;
+  margin: 10px;
+  padding: 10px 0px 20px 30px;
+  background: white;
+  position: relative;
+  -webkit-transition: all 0.2s ease 0s;
+  -moz-transition: all 0.2s ease 0s;
+  -o-transition: all 0.2s ease 0s;
+  transition: all 0.2s ease 0s;
+  -webkit-column-break-inside: avoid;
+  -moz-column-break-inside: avoid;
+  column-break-inside: avoid;
+}
+#page-killmethods #killmethods-list li label {
+  margin-bottom: 20px;
+  font-size: 12px;
+  text-align: left;
+  display: block;
+}
+#page-killmethods #killmethods-list li input[type="text"],
+#page-killmethods #killmethods-list li input[type="text"]:disabled {
+  border: none;
+  height: 35px;
+  padding: 0 0 0 8px;
+  font-size: 20px;
+  display: inline-block;
+  width: 100%;
+  background: white;
+  outline-width: 0px;
+  outline-style: solid;
+  color: #666 !important;
+  cursor: default;
+  opacity: 1;
+  pointer-events: none;
+}
+#page-killmethods #killmethods-list li textarea,
+#page-killmethods #killmethods-list li .rules {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding: 0 8px;
+  margin: 0;
+  border: none;
+  background: white;
+  font-size: 20px;
+  color: #666;
+  display: block;
+  width: 100%;
+  resize: none;
+  outline: none;
+  cursor: default;
+  line-height: normal;
+  text-align: left;
+}
+#page-killmethods #killmethods-list li textarea {
+  display: none;
+}
+#page-killmethods #killmethods-list li button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: white;
+  background: #f06060;
+  display: block;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 10px;
+  font-size: 20px;
+  border: none;
+  margin: 0;
+  opacity: 0;
+  -webkit-transition: all 0.2s ease 0s;
+  -moz-transition: all 0.2s ease 0s;
+  -o-transition: all 0.2s ease 0s;
+  transition: all 0.2s ease 0s;
+}
+#page-killmethods #killmethods-list li:hover button {
+  opacity: 1;
+}
+#page-killmethods #killmethods-list li.red .name,
+#page-killmethods #killmethods-list li.red label {
+  color: #f06060;
+  border-color: #f06060;
+}
+#page-killmethods #killmethods-list li.orange .name,
+#page-killmethods #killmethods-list li.orange label {
+  color: orange;
+  border-color: orange;
+}
+#page-killmethods #killmethods-list li.yellow .name,
+#page-killmethods #killmethods-list li.yellow label {
+  color: #fcd04b;
+  border-color: #fcd04b;
+}
+#page-killmethods #killmethods-list li.green .name,
+#page-killmethods #killmethods-list li.green label {
+  color: #2ecc71;
+  border-color: #2ecc71;
+}
+#page-killmethods #killmethods-list li .name {
+  font-size: 35px;
+  margin-bottom: 10px;
+  font-weight: 300;
+}
+#page-killmethods #killmethods-list li input[type="submit"] {
+  display: none;
+}
+#page-killmethods #killmethods-list li.editing {
+  background: #f0f0f0 !important;
+}
+#page-killmethods #killmethods-list li.editing textarea {
+  display: block;
+}
+#page-killmethods #killmethods-list li.editing .rules {
+  display: none;
+}
+#page-killmethods #killmethods-list li.editing input[type="submit"] {
+  display: block;
+}
+#page-killmethods #killmethods-list li.editing button {
+  display: none;
+}
+#page-killmethods #killmethods-list li.editing input[type="text"],
+#page-killmethods #killmethods-list li.editing textarea {
+  cursor: text;
+  pointer-events: all;
+}
 #page-me {
   height: 100%;
   padding-bottom: 0;

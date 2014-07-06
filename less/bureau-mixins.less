@@ -96,3 +96,15 @@
 	-ms-flex-direction: column;
 	flex-direction: column;
 }
+
+.column-no-break() {
+	-webkit-column-break-inside: avoid;
+	-moz-column-break-inside: avoid;
+	column-break-inside: avoid;
+}
+
+.column-width(@width) {
+	-webkit-column-width:@width;
+	-moz-column-width:@width;
+	column-width:@width;
+}

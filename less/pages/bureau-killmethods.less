@@ -163,3 +163,146 @@ input[type="submit"] {
 	}
 	
 }
+
+
+#killmethods-list {
+	.column-width(400px);
+
+	li {
+		list-style: none;
+		display: block;
+		margin: 10px;
+		padding: 10px 0px 20px 30px;
+		//border: 2px solid @dust;
+		background: white;
+		position: relative;
+		.transition(0.2s);
+		
+		label {
+			margin-bottom: 20px;
+			font-size: 12px;
+			text-align: left;
+			display: block;
+		}
+		
+		input[type="text"], input[type="text"]:disabled {
+			border: none;
+			height: 35px;
+			padding: 0 0 0 8px;
+			font-size: 20px;
+			display: inline-block;
+			width: 100%;
+			background: white;
+			outline-width: 0px;
+			outline-style: solid;
+			color: #666 !important;
+			cursor: default;
+			opacity: 1;
+			pointer-events: none;
+		}
+		
+		textarea, .rules {
+			border: none;
+			.appearance();
+			padding: 0 8px;
+			margin: 0;
+			border: none;
+			background: white;
+			font-size: 20px;
+			color: #666;
+			display: block;
+			width: 100%;
+			resize: none;
+			outline: none;
+			cursor: default;
+			line-height: normal;
+			text-align: left;
+		}
+		
+		textarea {
+			display: none;
+		}
+		
+		button {
+			.appearance();
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			color: white;
+			background: @red;
+			display: block;
+			height: 40px;
+			line-height: 40px;
+			padding: 0 10px;
+			font-size: 20px;
+			border: none;
+			margin: 0;
+			opacity: 0;
+			.transition(0.2s);
+		}
+		
+		&:hover {
+			button {
+				opacity: 1;
+			}
+		}
+		
+		.column-no-break();
+		
+		&.red {
+			.name, label {
+				color: @red;
+				border-color: @red;
+			}
+		}
+		&.orange {
+			.name, label {
+				color: orange;
+				border-color: orange;
+			}
+		}
+		&.yellow {
+			.name, label {
+				color: @yellow;
+				border-color: @yellow;
+			}
+		}
+		&.green {
+			.name, label {
+				color: @green;
+				border-color: @green;
+			}
+		}
+		
+		.name {
+			font-size: 35px;
+			margin-bottom: 10px;
+			font-weight: 300;
+		}
+		
+		input[type="submit"] {
+			display: none;
+		}
+		
+		&.editing {
+			background: #f0f0f0 !important;
+			
+			textarea {
+				display: block;
+			}
+			.rules {
+				display: none;
+			}
+			input[type="submit"] {
+				display: block;
+			}
+			button {
+				display: none;
+			}
+			input[type="text"], textarea {
+				cursor: text;
+				pointer-events: all;
+			}
+		}
+	}
+}

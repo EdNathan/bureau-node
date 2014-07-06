@@ -197,7 +197,7 @@ var bureau = {
 	
 	setup: {
 		search: function() {
-			$('.player-table.searchable').each(function() {
+			$('.searchable').each(function() {
 				var f = document.createDocumentFragment(),
 					i = document.createElement('input'),
 					id = this.id,
@@ -810,7 +810,6 @@ var bureau = {
 				i = 0,
 				l = fields.length,
 				f;
-			console.log(fields)
 			for(i;i<l;i++) {
 				f = fields[i];
 				validate.results[f.name] = false;
@@ -853,6 +852,19 @@ var bureau = {
 					document.forms[0].submit();
 				}
 			}, false);
+			
+			
+			//Setup killmethod editing
+			$('.killmethod button').on('click', function(e) {
+				stopEvent(e)
+				$(this.parentNode).find('textarea').autogrow()
+				$(this.parentNode).find('input').removeAttr('disabled')
+				this.parentNode.classList.add('editing')
+			})
+			
+			
+			//Setup search
+			this.search();
 		},
 		
 		personal: function() {

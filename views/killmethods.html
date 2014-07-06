@@ -49,9 +49,33 @@
 </div>
 
 <h6>Kill Methods</h6>
+<ul id="killmethods-list" class="searchable" data-search="search kill methods">
 {% for k in gamegroup.killmethods %}
-	<div>{{k|json}}</div>
+	<li class="killmethod {{k.zone}} light-container" data-index="{{k.name|lower}} {{k.zone}}">
+		<button>edit</button>
+		<form action="" method="post">
+			{{form.t(token)}}
+			{{form.a('editkillmethod')}}
+			<input type="hidden" name="methodid" value="{{k.id}}">
+			
+			<div class="name">{{k.name}}</div>
+			{% if k.detailquestion %}
+			<input type="text" id="detailquestion-{{k.id}}" name="methoddetailquestion" value="{{k.detailquestion}}" disabled="true">
+			<label for="detailquestion-{{k.id}}">detail question</label>
+			{% endif %}
+	
+			<input type="text" id="verb-{{k.id}}" name="methodverb" value="{{k.verb}}" disabled="true">
+			<label for="verb-{{k.id}}">verb</label>
+			
+			<div class="rules">{{k.rules}}</div>
+			<textarea type="text" id="rules-{{k.id}}" name="methodrules">{{k.rules}}</textarea>
+			<label for="rules-{{k.id}}">rules</label>
+			
+			<input type="submit" value="save changes">
+		</form>
+	</li>
 {% endfor %}
+</ul>
 
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB01yd9fWUD7iZU45t6Z7HJS6os-y2UCrA&sensor=false"></script>
 {% endblock %}

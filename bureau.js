@@ -382,6 +382,20 @@ var Bureau = {
 			})
 		},
 		
+		getKillMethod: function(ggid, methodid, callback) {
+			Bureau.gamegroup.getKillMethods(ggid, function(err, killmethods) {
+				var m = killmethods.filter(function(el) {
+					return el.id === methodid
+				})
+				
+				if(m[0]) {
+					callback(null, m[0])
+				} else {
+					callback('Kill method ' + methodid + ' does not exist', null)
+				}
+			})
+		},
+		
 		addKillMethod: function(ggid, method, callback) {
 			//Check if method exists before adding it
 			Bureau.gamegroup.getKillMethods(ggid, function(err, methods) {
@@ -399,6 +413,28 @@ var Bureau = {
 				}
 			})
 			
+		},
+		
+		updateKillMethod: function(ggid, methodid, stuff, callback) {
+			var o = {
+				filter: {
+					'killmethods.id': methodid
+				}
+			}
+			
+			//'killmethods.$.read': true
+			
+			for(key in stuff) {
+				if(stuff.hasOwnProperty(key)) {
+					o['killmethods.$.'+key] = stuff[key]
+				}
+			}
+			
+			Bureau.gamegroup.updateGamegroup(ggid, o, function(err, gg) {
+				Bureau.gamegroup.getKillMethods(ggid, function(err, killmethods) {
+					callback(err, killmethods)
+				})
+			})
 		},
 		
 		setMotd: function(ggid, motd, callback) {
