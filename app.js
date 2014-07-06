@@ -253,6 +253,16 @@ var pages = {
 							})
 						})
 					})
+				},
+				
+				killmethods: function(req, res) {
+					if(!res.locals.isGuild) {
+						res.redirect('/home')
+						return
+					}
+					res.render('killmethods', {
+						
+					})
 				}
 			}
 		},
@@ -416,6 +426,77 @@ var pages = {
 							authPages.get.guild['/'](req, res)
 							break;
 							
+					}
+				},
+				
+				killmethods: function(req, res) {
+					if(!res.locals.isGuild) {
+						res.redirect('/home')
+						return
+					}
+					switch(req.body.action) {
+						case 'newkillmethod':
+							var name = req.body.methodname,
+								zone = req.body.methodzone,
+								hasDetail = req.body.methoddetailneeded,
+								detail = req.body.methoddetailquestion,
+								verb = req.body.methodverb,
+								rules = req.body.methodrules,
+								errs = []								
+							
+							if(!name || name.length < 3) {
+								errs.push('Invalid name specified')
+							}
+							if(!zone) {
+								errs.push('No zone specified')
+							}
+							if(hasDetail && (!detail || detail.length < 6)) {
+								errs.push('No detail question specified!')
+							}
+							if(!verb || verb.length < 6) {
+								errs.push('Invalid kill sentence!')
+							} else if(verb.indexOf('#k') < 0) {
+								errs.push('Add #k to your kill sentence so the killer shows up!')
+							} else if(verb.indexOf('#v') < 0) {
+								errs.push('Add #v to your kill sentence so the victim shows up!')
+							} else if(hasDetail && verb.indexOf('#d') < 0) {
+								errs.push('Add #d to your kill sentence so the detail shows up!')
+							}
+							if(!rules || rules.length < 11) {
+								errs.push('Please specify rules')
+							}
+							
+							res.locals.pageErrors = errs
+							
+							if(errs.length > 0) {
+								authPages.get.guild.killmethods(req, res)
+								return
+							}
+							
+							var method = {
+									id: name.toLowerCase().replace(/\s+/, ''),
+									name: name,
+									zone: zone,
+									verb: verb,
+									rules: rules
+								}
+							if(hasDetail) {
+								method.detailquestion = detail
+							}
+							
+							Bureau.gamegroup.addKillMethod(res.locals.gamegroup.ggid, method, function(err, methods) {
+								if(err) {
+									res.locals.pageErrors.push('Error adding the new killmethod "'+name+'": '+err)
+								} else {
+									res.locals.gamegroup.killmethods = methods
+								}
+								authPages.get.guild.killmethods(req, res)
+							})
+							
+							break;
+						default:
+							authPages.get.guild.killmethods(req, res)
+							break;
 					}
 				}
 			},

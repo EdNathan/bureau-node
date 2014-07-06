@@ -13,7 +13,7 @@
 <title>Bureau</title>
 </head>
 
-<body id="page-{% filter lower %}{% block title %}{% endblock %}{% endfilter %}">
+<body id="page-{% filter lower %}{% filter replace('\s', '', 'g') %}{% block title %}{% endblock %}{% endfilter %}{% endfilter %}">
 {% if not hideHeader %}
 <h1>{% block title %}Bureau{% endblock %}</h1>
 {% endif %}

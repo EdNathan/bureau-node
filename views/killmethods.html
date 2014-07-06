@@ -1,0 +1,57 @@
+{% extends "./base.html" %}
+
+{% block title %}Kill Methods{% endblock %}
+
+{% block main %}
+
+<h6>New Kill Method</h6>
+<div id="new-kill-method">
+	<form action="" method="post">
+		{{form.t(token)}}
+		{{form.a('newkillmethod')}}
+		<section>
+			<input type="text" id="methodname" name="methodname" placeholder="Dart Gun">
+			<label for="methodname">Kill Method Name</label>
+		</section>
+		
+		<section id="zone-select">
+			<div class="clearfix">
+				<input type="radio" name="methodzone" value="green">
+				<input type="radio" name="methodzone" value="yellow">
+				<input type="radio" name="methodzone" value="orange">
+				<input type="radio" name="methodzone" value="red" checked="true">
+			</div>
+			<label>Zone</label>
+		</section>
+		
+		<section>
+			<input type="checkbox" id="methoddetailneeded" name="methoddetailneeded" value="yes">
+			<label for="methoddetailneeded">Do you need to know specific details? (e.g. gun type)</label>
+		</section>
+		
+		<section id="detail-section" class="nodetail">
+			<input type="text" id="methoddetailquestion" name="methoddetailquestion" placeholder="What gun did you use?">
+			<label for="methoddetailquestion">Detail question</label>
+		</section>
+		
+		<section>
+			<input type="text" id="methodverb" name="methodverb" placeholder="#k killed #v with ...">
+			<label for="methodverb">Kill Sentence (#v = victim, #k = killer, #d=detail)</label>
+		</section>
+		
+		<section>
+			<textarea name="methodrules" id="methodrules" placeholder="Rules for the kill method"></textarea>
+			<label for="methodrules">Rules</label>
+		</section>
+		
+		<input type="submit" id="submit-button" name="newkillmethod" value="Create New Kill Method">
+	</form>
+</div>
+
+<h6>Kill Methods</h6>
+{% for k in gamegroup.killmethods %}
+	<div>{{k|json}}</div>
+{% endfor %}
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB01yd9fWUD7iZU45t6Z7HJS6os-y2UCrA&sensor=false"></script>
+{% endblock %}

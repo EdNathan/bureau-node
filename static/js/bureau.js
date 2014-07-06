@@ -41,6 +41,9 @@ var bureau = {
 			case 'page-gamegroup':
 				this.setup.gamegroup();
 				break;
+			case 'page-killmethods':
+				this.setup.killmethods();
+				break;
 			default:
 				applyColours();
 				break;
@@ -760,6 +763,92 @@ var bureau = {
 			
 			//Finally add the listener to the button for submitting the report
 			$I('submit-button').addEventListener('click', function(e) {
+				if(this.className.indexOf('disabled') === -1) {
+					document.forms[0].submit();
+				}
+			}, false);
+		},
+		
+		killmethods: function() {
+			colourItems([])
+			//Autoexpand the textarea
+			$('#methodrules').autogrow()
+			$('#methoddetailneeded').on('change', function(e) {
+				$I('detail-section').className = this.checked?'':'nodetail'
+			})
+			
+			//Field validtion
+			var validate = {
+				results:{},
+				checks: {
+					def: function(){return true},
+					
+					methodname: function(val) {
+						val = val.trim()
+						return (!!val && val.length > 2)
+					},
+					methoddetailquestion: function(val) {
+						val = val.trim()
+						if($I('methoddetailneeded').checked) {
+							return (!!val && val.length > 5)
+						} else {
+							return true
+						}
+					},
+					methodverb: function(val) {
+						val = val.trim()
+						return (!!val && val.length > 5)
+					},
+					methodrules: function(val) {
+						val = val.trim()
+						return (!!val && val.length > 10)
+					}					
+					
+				}
+			},
+				fields = document.querySelectorAll('#new-kill-method input, #new-kill-method textarea'),
+				i = 0,
+				l = fields.length,
+				f;
+			console.log(fields)
+			for(i;i<l;i++) {
+				f = fields[i];
+				validate.results[f.name] = false;
+				switch (f.name) {
+					default:
+						$(f).on('keyup', function(){updateValidation()});
+						break;
+				}
+				
+			}
+			
+			function updateValidation() {
+				var f,n,el,canSubmit=true;
+				for(i=0;i<l;i++) {
+					f = fields[i];
+					n = validate.checks.hasOwnProperty(f.name)?f.name:'def';
+					validate.results[f.name] = validate.checks[n](f.value);
+				}
+				
+				for(key in validate.results) {
+					el = $('#'+key);
+					if(!validate.results[key]) {
+						el.parent().addClass('problem')
+						canSubmit = false;
+					} else {
+						el.parent().removeClass('problem')
+					}
+				}
+				
+				$I('submit-button').className = canSubmit ? '' : 'disabled';
+				$I('submit-button').disabled = !canSubmit;
+			}
+			
+			updateValidation();
+			
+			//Finally add the listener to the button for submitting the report
+			$I('submit-button').addEventListener('click', function(e) {
+				stopEvent(e)
 				if(this.className.indexOf('disabled') === -1) {
 					document.forms[0].submit();
 				}

@@ -140,7 +140,7 @@ var Bureau = {
 				delete Bureau.assassin.cachedAssassins[uid]
 			}
 			var objID = id(uid),
-				toUpdate = {$set: {}}
+				toUpdate = {$set: {}},
 				filters = {_id: objID}
 			
 			//Check if we have any special things	
@@ -340,7 +340,27 @@ var Bureau = {
 			if(Bureau.gamegroup.cachedGamegroups.hasOwnProperty(ggid)) {
 				delete Bureau.gamegroup.cachedGamegroups[ggid]
 			}
-			Bureau.db.collection('gamegroups').update({ggid: ggid}, {$set: stuff}, function(err, doc) {
+			
+			var toUpdate = {$set: {}},
+				filters = {ggid: ggid}
+			
+			//Check if we have any special things	
+			for(key in stuff) {
+				if(key !== 'filter') {
+					if(stuff.hasOwnProperty(key) && key[0] === '$') {
+						//Special $key, we have to move it outside!
+						toUpdate[key] = stuff[key]
+					} else if(stuff.hasOwnProperty(key)) {
+						toUpdate.$set[key] = stuff[key]
+					}
+				} else {
+					//We want to apply some extra filters
+					filters = merge(filters, stuff.filter)
+				}
+			}
+
+			
+			Bureau.db.collection('gamegroups').update(filters, toUpdate, function(err, doc) {
 				if(!!doc) {
 					Bureau.gamegroup.getGamegroup(ggid, function(err, doc) {
 						callback(err, doc)
@@ -350,6 +370,35 @@ var Bureau = {
 					callback(err, {})
 				}
 			})
+		},
+		
+		getKillMethods: function(ggid, callback) {
+			Bureau.gamegroup.getGamegroup(ggid, function(err, gg) {
+				if(!gg.killmethods) {
+					callback(err, [])
+				} else {
+					callback(err, gg.killmethods)
+				}
+			})
+		},
+		
+		addKillMethod: function(ggid, method, callback) {
+			//Check if method exists before adding it
+			Bureau.gamegroup.getKillMethods(ggid, function(err, methods) {
+			
+				var methodExistsAlready = methods.filter(function(el) {
+					return el.id === method.id
+				}).length > 0;
+				
+				if(methodExistsAlready) {
+					callback('The kill method already exists')
+				} else {
+					Bureau.gamegroup.updateGamegroup(ggid, {$push: {killmethods: method}}, function(err, gg){
+						callback(err, gg.killmethods)
+					})
+				}
+			})
+			
 		},
 		
 		setMotd: function(ggid, motd, callback) {
