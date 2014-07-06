@@ -140,6 +140,9 @@
 			line-height: 50px;
 			position: relative;
 			overflow: hidden;
+			
+			
+			
 			a {
 				display: block;
 				width: 100%;
@@ -171,6 +174,25 @@
 					&::after {
 						left: 0%;
 					}
+				}
+			}
+			
+			&#personal-toolbar-pic {
+				padding: 3px;
+				a {
+					background-color: white;
+					background-position: center;
+					background-repeat: no-repeat;
+					background-size: cover;
+					.border-radius(50%);
+					width: 44px;
+					height: 44px;
+					.box-shadow(~"0 0 0 1px white, 0px 5px 5px -5px rgba(0, 0, 0, 1)");
+					
+					&::after {
+						display: none;
+					}
+					
 				}
 			}
 		}
