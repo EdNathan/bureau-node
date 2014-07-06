@@ -150,6 +150,9 @@ var bureau = {
 					}
 					bureau.cacheNotifications()
 					bureau.displayNotifications()
+					if(!!link) {
+						window.location = link
+					}
 				})
 			}
 		})

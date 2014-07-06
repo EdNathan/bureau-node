@@ -71,6 +71,24 @@ var Bureau = {
 		registerNewAssassin: function(data, callback) {
 			data.joindate = new Date()
 			data.guild = false
+			
+			var now = new Date()
+			
+			//Add some welcome notifications
+			data.notifications = [{
+					added: now,
+					text: 'Welcome to Bureau! Have a look around!',
+					id: utils.md5(now+'bacon'),
+					priority: false
+				},
+				{
+					added: now,
+					text: 'Try heading to the personal page and changing your profile picture!',
+					link: '/personal',
+					id: utils.md5(now+'cheese'),
+					priority: false
+				}]
+			
 			Bureau.db.collection('assassins').insert(data, {safe: true}, function(err, docs) {
 				callback(err, docs)
 			})
