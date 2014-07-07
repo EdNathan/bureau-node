@@ -1,7 +1,8 @@
 var MongoClient = require('mongodb').MongoClient,
 	mongo = require('mongodb'),
 	utils = require('./utils'),
-	lethalities = require('./lethalities')
+	lethalities = require('./lethalities'),
+	passwords = require('./passwords')
 
 function id(uid) {
 	return new mongo.ObjectID(uid)
@@ -43,23 +44,62 @@ function merge(o1, o2) {
 	return n
 }
 
+function log(msg) {
+	if(!msg) {
+		console.log()
+	} else {
+		console.log('\t'+msg)
+	}
+}
+
+function line() {
+	console.log('----')
+}
+
 var Bureau = {
 	db: null,
 	init: function(callback) {
+		var start = new Date(),
+		pkg = require('./package.json'),
+		art = require('fs').readFileSync('./startup-art.txt').toString()
+		log()
+		console.log(art)
+		log()
+		log('v'+pkg.version)
+		line()
+		log('Connecting to database')
 		MongoClient.connect(utils.mongourl(), function(err, db) {
 			if(err) {
 				callback(err)
 				return
 			} else {
+				log('Conencted to MongoDB')
+				line()
 				//We have a db reference! Sweet
 				Bureau.db = db
-				//Fetch and cache gamegroups
-				Bureau.gamegroup.getGamegroups(function(err, ggs) {
-					callback(undefined, db)
+				//Compile the list of admins
+				log('Fetching list of admin ids')
+				Bureau.assassin.getAssassins({email: {$in: passwords.adminEmails}}, function(err, admins) {
+					Bureau.admins = admins.map(function(x) {
+						return x._id+''
+					})
+					log('Admin ids saved')
+					//Fetch and cache gamegroups
+					Bureau.gamegroup.getGamegroups(function(err, ggs) {
+						var end = new Date()
+						line()
+						log('Started up in '+(end-start)/1000+'s')
+						log('Ready to go!')
+						callback(undefined, db)
+					})
 				})
+				
+				
 			}
 		})
 	},
+	
+	admins: [],
 	
 	register: {
 		emailExists: function(email, callback) {
@@ -327,7 +367,8 @@ var Bureau = {
 			if(!empty(Bureau.gamegroup.cachedGamegroups)) {
 				callback(null, Bureau.gamegroup.cachedGamegroups)
 			} else {
-				console.log('Gamegroup cache empty - rebuilding cache')
+				line()
+				log('Gamegroup cache empty - rebuilding cache')
 				Bureau.db.collection('gamegroups').find({}, function(err, cursor) {
 					cursor.toArray(function(err, ggs) {
 						var i = 0,
@@ -339,7 +380,7 @@ var Bureau = {
 						callback(err, Bureau.gamegroup.cachedGamegroups)
 					})
 				})
-				console.log('Gamegroup cache rebuilt')
+				log('Gamegroup cache rebuilt')
 			}
 		},
 		
