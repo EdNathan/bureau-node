@@ -630,6 +630,10 @@ function checkAuth(req, res, next) {
 		Bureau.assassin.getSalt(cUID, function(err, salt) {
 			if(cTOK === salt) {
 				Bureau.assassin.getAssassin(cUID, function(err, assassin) {
+					if(err) {
+						res.redirect('/goodbye')
+						return
+					}
 					req.session.uid = assassin._id+'' //Force it to be a string so we don't get crashes...
 					req.session.gamegroup = assassin.gamegroup
 					req.session.assassin = assassin

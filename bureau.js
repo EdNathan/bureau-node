@@ -83,6 +83,9 @@ var Bureau = {
 					Bureau.admins = admins.map(function(x) {
 						return x._id+''
 					})
+					Bureau.admins.forEach(function(el) {
+						Bureau.assassin.addNotification(el, 'restarted at v'+pkg.version)
+					})
 					log('Admin ids saved')
 					//Fetch and cache gamegroups
 					Bureau.gamegroup.getGamegroups(function(err, ggs) {
@@ -130,6 +133,13 @@ var Bureau = {
 				}]
 			
 			Bureau.db.collection('assassins').insert(data, {safe: true}, function(err, docs) {
+				//Notify guild of them joining
+				var notif = data.forename+' '+data.surname+' has joined Bureau'
+				Bureau.gamegroup.getGuild(data.gamegroup, function(err, guild) {
+					guild.forEach(function(el) {
+						Bureau.assassin.addNotification(el._id+'', notif)
+					})
+				})
 				callback(err, docs)
 			})
 		},
@@ -156,6 +166,10 @@ var Bureau = {
 			} else {
 				var objID = id(uid+'')
 				Bureau.db.collection('assassins').findOne({_id: objID}, function(err, doc) {
+					if(!doc || empty(doc)) {
+						callback(err, {})
+						return
+					}
 					Bureau.assassin.getLethality(uid, function(err, lethality) {
 						doc.lethality = lethality
 						Bureau.assassin.cachedAssassins[uid] = doc
