@@ -3890,11 +3890,14 @@ h6::after {
   -webkit-column-width: 400px;
   -moz-column-width: 400px;
   column-width: 400px;
+  -webkit-column-gap: 0px;
+  -moz-column-gap: 0px;
+  column-gap: 0px;
 }
 #page-killmethods #killmethods-list li {
   list-style: none;
   display: block;
-  margin: 10px;
+  margin: 10px 5px;
   padding: 10px 0px 20px 30px;
   background: white;
   position: relative;

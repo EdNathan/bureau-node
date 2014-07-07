@@ -199,7 +199,7 @@ var bureau = {
 	},
 	
 	setup: {
-		search: function() {
+		search: function(important) {
 			$('.searchable').each(function() {
 				var f = document.createDocumentFragment(),
 					i = document.createElement('input'),
@@ -218,9 +218,9 @@ var bureau = {
 						return;
 					}
 					if(inclusive) {
-						searchStyle.innerHTML = '#'+id+'.searchable > li[data-index*=\"' + this.value.toLowerCase() + '\"] { display: block; }';
+						searchStyle.innerHTML = '#'+id+'.searchable > li[data-index*=\"' + this.value.toLowerCase() + '\"] { display: block'+(!!important?' !important':'')+'; }';
 					} else {
-						searchStyle.innerHTML = '#'+id+'.searchable > li:not([data-index*=\"' + this.value.toLowerCase() + '\"]) { display: none; }';
+						searchStyle.innerHTML = '#'+id+'.searchable > li:not([data-index*=\"' + this.value.toLowerCase() + '\"]) { display: none'+(!!important?' !important':'')+'; }';
 					}
 				});
 				this.parentNode.insertBefore(f, this);
@@ -867,7 +867,7 @@ var bureau = {
 			
 			
 			//Setup search
-			this.search();
+			this.search(true);
 		},
 		
 		personal: function() {
