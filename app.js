@@ -541,8 +541,6 @@ var pages = {
 										m.detailquestion = detail
 									}
 									
-									console.log(m)
-									
 									Bureau.gamegroup.updateKillMethod(res.locals.gamegroup.ggid, id, m, function(err, methods) {
 										if(err) {
 											res.locals.pageErrors.push('Error editing the killmethod "'+method.name+'": '+err)

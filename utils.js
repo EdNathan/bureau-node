@@ -2,6 +2,7 @@ var crypto = require('crypto'),
 	passwords = require('./passwords')
 
 var utils = {
+	production: process.env.PLATFORM === 'nodejitsu',
 	mongourl: function() {
 		if(process.env.VCAP_SERVICES){
 		    var env = JSON.parse(process.env.VCAP_SERVICES);

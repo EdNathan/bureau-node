@@ -83,9 +83,11 @@ var Bureau = {
 					Bureau.admins = admins.map(function(x) {
 						return x._id+''
 					})
-					Bureau.admins.forEach(function(el) {
-						Bureau.assassin.addNotification(el, 'restarted at v'+pkg.version)
-					})
+					if(utils.production) {
+						Bureau.admins.forEach(function(el) {
+							Bureau.assassin.addNotification(el, 'restarted at v'+pkg.version)
+						})
+					}
 					log('Admin ids saved')
 					//Fetch and cache gamegroups
 					Bureau.gamegroup.getGamegroups(function(err, ggs) {
@@ -403,8 +405,14 @@ var Bureau = {
 				callback(null, Bureau.gamegroup.cachedGamegroups[ggid])
 			} else {
 				Bureau.db.collection('gamegroups').findOne({ggid: ggid}, function(err, doc) {
-					Bureau.gamegroup.cachedGamegroups[ggid] = doc
-					callback(err, doc)
+					if(err) {
+						callback(err, null)
+					} else if(!doc || empty(doc)) {
+						callback('The gamegroup '+ggid+' does not exist', null)
+					} else {
+						Bureau.gamegroup.cachedGamegroups[ggid] = doc
+						callback(null, doc)
+					}
 				})
 			}
 		},
@@ -541,6 +549,82 @@ var Bureau = {
 			} else {
 				callback(new Error('Gamegroup already exists'), {})
 			}
+		}
+	},
+	
+	game: {
+		getGamesInGamegroup: function(ggid, callback) {
+			Bureau.gamegroup.getGamegroup(ggid, function(err, gamegroup) {
+				var games = {}
+				if(err) {
+					callback(err, {})
+				} else if(!gamegroup.games) {
+					callback(null, {})
+				} else {
+					gamegroup.games.forEach(function(x) {
+						games[x.gameid] = x
+					})
+					callback(err, games)
+				}
+				
+			})	
+		},
+		
+		getGames: function(callback) {
+			Bureau.gamegroup.getGamegroups(function(err, gamegroups) {
+				var games = {}
+				
+				for(var gg in gamegroups) {
+					if(gamegroups.hasOwnProperty(gg)) {
+						if(gamegroups[gg].games) {
+							gamegroups[gg].games.forEach(function(x) {
+								games[x.gameid] = x
+							})
+						}
+					}
+				}
+				
+				callback(null, games)
+			})
+		},
+		
+		getGamesWithPlayer: function(id, callback) {
+			//Note: error not thrown if players does not exist
+			Bureau.game.getGames(function(err, games) {
+				var gamesWithPlayer = {}
+				for(var gid in games) {
+					if(games.hasOwnProperty(gid)) {
+						if(games[gid].players[id]) {
+							gamesWithPlayer[gid] = games[gid]
+						}
+					}
+				}
+				callback(null, gamesWithPlayer)
+			})
+		},
+		
+		getGame: function(gameid, callback) {
+			Bureau.game.getGames(function(err, games) {
+				if(!err && games[gameid]) {
+					callback(err, games[gameid])
+				} else if(err) {
+					callback(err, {})
+				} else {
+					callback('Invalid game id', {})
+				}
+			})
+		},
+	
+		getPlayers: function(gameid, callback) {
+			Bureau.game.getGame(gameid, function(err, game) {
+				if(err) {
+					callback(err, {})
+				} else if(game.players) {
+					callback(null, game.players)
+				} else {
+					callback(null, {})
+				}
+			})
 		}
 	}
 }
