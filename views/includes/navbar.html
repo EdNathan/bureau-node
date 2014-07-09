@@ -3,8 +3,8 @@
 		{% raw %}
 		{% for n in notifications %}
 		<li id="notification-{{n.id}}" class="{% if !n.read %}unread{% endif %}" data-link="{{n.link|default('')}}">
-			{{n.text|safe}}
-			<span class="ago">{{n.ago}} ago</span>
+			<span class="message">{{n.text|safe}}</span>
+			<span class="ago">{{n.ago}} ago {% if n.source && n.source.length > 0 %}- {{n.source}}{% endif %}</span>
 		</li>
 		{% endfor %}
 		{% endraw %}

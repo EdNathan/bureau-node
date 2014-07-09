@@ -103,6 +103,20 @@
 	</div>
 </div>
 
+<!-- Notify Members -->
+<h6>Notify Members</h6>
+<div id="notify-gamegroup" class="">
+	<form action="" method="post" class="line">
+		{{form.t(token)}}
+		{{form.a('notifymembers')}}
+		<section>
+			<input type="text" id="notifytext" name="notifytext" placeholder="Message will be displayed exactly as typed">
+			<label for="notifytext">Notification message</label>
+		</section>
+		<input type="submit" id="submit-button" name="newkillmethod" value="Send Notification to all Members of {{gamegroup.name}}">
+	</form>
+</div>
+
 
 <!-- Members -->
 <h6>Members</h6>

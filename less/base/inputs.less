@@ -207,3 +207,128 @@ textarea {
 		
 	}
 }
+
+//Line art form style
+
+form.line {
+	width: 600px;
+	max-width: 100%;
+	margin: 10px auto 30px;
+	
+	section {
+		border: 1px solid #888;
+		background: transparent;
+		.transition(0.5s);
+		margin-bottom: 10px;
+		overflow: hidden;
+		position: relative;
+		
+		&::before {
+			content: "";
+			display: block;
+			position: absolute;
+			left: 0;
+			top:0;
+			width: 5px;
+			height: 100%;
+			background: transparent;
+		}
+		
+		&.problem {
+			&::before {
+				background: @DUASred;
+			}
+		}
+				
+		&:focus, &:active, &:hover {
+			background: white;
+			color: #333;
+		}
+		
+		
+		
+		label {
+			display: block;
+			padding: 0px 0px 5px 10px;
+			color: #666;
+		}
+		
+		input {
+			outline: none;
+			&:focus, &:active, &:hover {
+				outline: none;
+			}
+		}
+		
+		input[type="text"] {
+			background: none;
+		}
+		
+		input[type="radio"] {
+			.appearance();
+			display: block;
+			width: 25%;
+			margin: 0;
+			padding: 0;
+			border: none;
+			background: none;
+			height: 20px;
+			float: left;
+			position: relative;
+			opacity: 0.5;
+			.transition(0.3s, ease, all, 0.3s);
+			cursor: pointer;
+			
+			&::after {
+				content: attr(value);
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				color: white;
+				text-align: center;
+			}
+			
+			&[value="green"] {
+				background: @green;
+			}
+			&[value="yellow"] {
+				background: @yellow;
+			}
+			&[value="orange"] {
+				background: orange;
+			}
+			&[value="red"] {
+				background: @red;
+			}
+			
+			&:hover {
+				height: 25px;
+				.transition(0.3s);
+			}
+			
+			&:checked {
+				height: 40px;
+				opacity: 1;
+				.transition(0.3s);
+			}
+		}
+		
+		input[type="checkbox"] {
+			float: none;
+			margin-left: 10px;
+			display: block;
+		}
+		
+		textarea {
+			width: 100%;
+			resize: none;
+			background: none;
+			outline: none;
+			border: none;
+			padding: 10px;
+			display: block;
+		}
+		
+	}	
+}

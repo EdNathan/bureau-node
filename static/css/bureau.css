@@ -1036,6 +1036,127 @@ textarea {
   -ms-transform: translate3d(0%, 0, 0);
   transform: translate3d(0%, 0, 0);
 }
+form.line {
+  width: 600px;
+  max-width: 100%;
+  margin: 10px auto 30px;
+}
+form.line section {
+  border: 1px solid #888;
+  background: transparent;
+  -webkit-transition: all 0.5s ease 0s;
+  -moz-transition: all 0.5s ease 0s;
+  -o-transition: all 0.5s ease 0s;
+  transition: all 0.5s ease 0s;
+  margin-bottom: 10px;
+  overflow: hidden;
+  position: relative;
+}
+form.line section::before {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 5px;
+  height: 100%;
+  background: transparent;
+}
+form.line section.problem::before {
+  background: #ba2025;
+}
+form.line section:focus,
+form.line section:active,
+form.line section:hover {
+  background: white;
+  color: #333;
+}
+form.line section label {
+  display: block;
+  padding: 0px 0px 5px 10px;
+  color: #666;
+}
+form.line section input {
+  outline: none;
+}
+form.line section input:focus,
+form.line section input:active,
+form.line section input:hover {
+  outline: none;
+}
+form.line section input[type="text"] {
+  background: none;
+}
+form.line section input[type="radio"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  display: block;
+  width: 25%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  height: 20px;
+  float: left;
+  position: relative;
+  opacity: 0.5;
+  -webkit-transition: all 0.3s ease 0.3s;
+  -moz-transition: all 0.3s ease 0.3s;
+  -o-transition: all 0.3s ease 0.3s;
+  transition: all 0.3s ease 0.3s;
+  cursor: pointer;
+}
+form.line section input[type="radio"]::after {
+  content: attr(value);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  color: white;
+  text-align: center;
+}
+form.line section input[type="radio"][value="green"] {
+  background: #2ecc71;
+}
+form.line section input[type="radio"][value="yellow"] {
+  background: #fcd04b;
+}
+form.line section input[type="radio"][value="orange"] {
+  background: orange;
+}
+form.line section input[type="radio"][value="red"] {
+  background: #f06060;
+}
+form.line section input[type="radio"]:hover {
+  height: 25px;
+  -webkit-transition: all 0.3s ease 0s;
+  -moz-transition: all 0.3s ease 0s;
+  -o-transition: all 0.3s ease 0s;
+  transition: all 0.3s ease 0s;
+}
+form.line section input[type="radio"]:checked {
+  height: 40px;
+  opacity: 1;
+  -webkit-transition: all 0.3s ease 0s;
+  -moz-transition: all 0.3s ease 0s;
+  -o-transition: all 0.3s ease 0s;
+  transition: all 0.3s ease 0s;
+}
+form.line section input[type="checkbox"] {
+  float: none;
+  margin-left: 10px;
+  display: block;
+}
+form.line section textarea {
+  width: 100%;
+  resize: none;
+  background: none;
+  outline: none;
+  border: none;
+  padding: 10px;
+  display: block;
+}
 /* h1 - h6 */
 h1 {
   /* Page Titles */
@@ -1303,6 +1424,10 @@ h6::after {
   -moz-transition: all 0.2s ease 0s;
   -o-transition: all 0.2s ease 0s;
   transition: all 0.2s ease 0s;
+}
+#toolbar-notifications #notifications li .message {
+  min-height: 25px;
+  display: block;
 }
 #toolbar-notifications #notifications li .ago {
   display: block;
@@ -3757,122 +3882,6 @@ h6::after {
   width: 600px;
   max-width: 100%;
   margin: 10px auto 30px;
-}
-#page-killmethods #new-kill-method section {
-  border: 1px solid #888;
-  background: transparent;
-  -webkit-transition: all 0.5s ease 0s;
-  -moz-transition: all 0.5s ease 0s;
-  -o-transition: all 0.5s ease 0s;
-  transition: all 0.5s ease 0s;
-  margin-bottom: 10px;
-  overflow: hidden;
-  position: relative;
-}
-#page-killmethods #new-kill-method section::before {
-  content: "";
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 5px;
-  height: 100%;
-  background: transparent;
-}
-#page-killmethods #new-kill-method section.problem::before {
-  background: #ba2025;
-}
-#page-killmethods #new-kill-method section:focus,
-#page-killmethods #new-kill-method section:active,
-#page-killmethods #new-kill-method section:hover {
-  background: white;
-  color: #333;
-}
-#page-killmethods #new-kill-method section label {
-  display: block;
-  padding: 0px 0px 5px 10px;
-  color: #666;
-}
-#page-killmethods #new-kill-method section input {
-  outline: none;
-}
-#page-killmethods #new-kill-method section input:focus,
-#page-killmethods #new-kill-method section input:active,
-#page-killmethods #new-kill-method section input:hover {
-  outline: none;
-}
-#page-killmethods #new-kill-method section input[type="text"] {
-  background: none;
-}
-#page-killmethods #new-kill-method section input[type="radio"] {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  display: block;
-  width: 25%;
-  margin: 0;
-  padding: 0;
-  border: none;
-  background: none;
-  height: 20px;
-  float: left;
-  position: relative;
-  opacity: 0.5;
-  -webkit-transition: all 0.3s ease 0.3s;
-  -moz-transition: all 0.3s ease 0.3s;
-  -o-transition: all 0.3s ease 0.3s;
-  transition: all 0.3s ease 0.3s;
-  cursor: pointer;
-}
-#page-killmethods #new-kill-method section input[type="radio"]::after {
-  content: attr(value);
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  color: white;
-  text-align: center;
-}
-#page-killmethods #new-kill-method section input[type="radio"][value="green"] {
-  background: #2ecc71;
-}
-#page-killmethods #new-kill-method section input[type="radio"][value="yellow"] {
-  background: #fcd04b;
-}
-#page-killmethods #new-kill-method section input[type="radio"][value="orange"] {
-  background: orange;
-}
-#page-killmethods #new-kill-method section input[type="radio"][value="red"] {
-  background: #f06060;
-}
-#page-killmethods #new-kill-method section input[type="radio"]:hover {
-  height: 25px;
-  -webkit-transition: all 0.3s ease 0s;
-  -moz-transition: all 0.3s ease 0s;
-  -o-transition: all 0.3s ease 0s;
-  transition: all 0.3s ease 0s;
-}
-#page-killmethods #new-kill-method section input[type="radio"]:checked {
-  height: 40px;
-  opacity: 1;
-  -webkit-transition: all 0.3s ease 0s;
-  -moz-transition: all 0.3s ease 0s;
-  -o-transition: all 0.3s ease 0s;
-  transition: all 0.3s ease 0s;
-}
-#page-killmethods #new-kill-method section input[type="checkbox"] {
-  float: none;
-  margin-left: 10px;
-  display: block;
-}
-#page-killmethods #new-kill-method section textarea {
-  width: 100%;
-  resize: none;
-  background: none;
-  outline: none;
-  border: none;
-  padding: 10px;
-  display: block;
 }
 #page-killmethods #new-kill-method #detail-section {
   height: 69px;

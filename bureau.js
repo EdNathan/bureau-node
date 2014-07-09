@@ -44,16 +44,22 @@ function merge(o1, o2) {
 	return n
 }
 
-function log(msg) {
+function strcopy(str, times) {
+	return new Array(times+1).join(str)
+}
+
+function log(msg, indent) {
+	indent = indent!=undefined?indent:1
 	if(!msg) {
 		console.log()
 	} else {
-		console.log('\t'+msg)
+		console.log(strcopy('        ', indent)+msg)
 	}
 }
 
-function line() {
-	console.log('----')
+function line(indent) {
+	indent = indent!=undefined?indent:0
+	console.log(strcopy('        ', indent)+'----')
 }
 
 var Bureau = {
@@ -63,7 +69,7 @@ var Bureau = {
 		pkg = require('./package.json'),
 		art = require('fs').readFileSync('./startup-art.txt').toString()
 		log()
-		console.log(art)
+		log(art,0)
 		log()
 		log('v'+pkg.version)
 		line()
@@ -89,12 +95,20 @@ var Bureau = {
 						})
 					}
 					log('Admin ids saved')
+					
+					//Load Games
+					line()
+					log('Loading games')
+					Bureau.loadGames()
+					log('Finished loading games')
+					
 					//Fetch and cache gamegroups
 					Bureau.gamegroup.getGamegroups(function(err, ggs) {
 						var end = new Date()
 						line()
 						log('Started up in '+(end-start)/1000+'s')
 						log('Ready to go!')
+						log(strcopy('-', 50), 0)
 						callback(undefined, db)
 					})
 				})
@@ -102,6 +116,22 @@ var Bureau = {
 				
 			}
 		})
+	},
+	
+	loadGames: function() {
+		var fs = require('fs'),
+			gameFiles = fs.readdirSync('./games').filter(function(x) {
+				return /(\w+)\.js\b/.test(x)
+			})
+		log('Found ' + gameFiles.length + ' game file'+(gameFiles.length!=1?'s':''))
+		gameFiles.forEach(function(x) {
+			var title = x.replace('.js','')
+			line(1)
+			log('Found game '+title,2)
+			Bureau.games[title] = require('./games/'+x)
+			log('Finished loading game '+title,2)
+		})
+		line(1)
 	},
 	
 	admins: [],
@@ -154,6 +184,9 @@ var Bureau = {
 				],
 				password: utils.md5(password)
 			}).toArray(function(err, docs) {
+				if(docs.length > 0) {
+					log(docs[0].forename+' '+docs[0].surname+' logged in')
+				}
 				callback(err, docs.length > 0 ? docs[0] : false)
 			})
 		}
@@ -198,10 +231,8 @@ var Bureau = {
 						arr = []
 					for(i;i<l;i++) {
 						a = docs[i]
-						//Cache them if we haven't already
-						if(!Bureau.assassin.cachedAssassins.hasOwnProperty(a._id)) {
-							Bureau.assassin.cachedAssassins[a._id] = a
-						}
+						//Cache them!
+						Bureau.assassin.cachedAssassins[a._id] = a
 						arr.push(a)
 					}
 					callback(null, arr)
@@ -244,6 +275,37 @@ var Bureau = {
 			})
 		},
 		
+		updateAssassins: function(filter, stuff, callback) {
+			//We don't need to invalidate the whole cache, we'll refetch the assassins after we update them
+					
+			var toUpdate = {$set: {}}
+			
+			//Check if we have any special things	
+			for(key in stuff) {
+				if(key !== 'filter') {
+					if(stuff.hasOwnProperty(key) && key[0] === '$') {
+						//Special $key, we have to move it outside!
+						toUpdate[key] = stuff[key]
+					} else if(stuff.hasOwnProperty(key)) {
+						toUpdate.$set[key] = stuff[key]
+					}
+				} else {
+					//We want to apply some extra filters
+					filter = merge(filter, stuff.filter)
+				}
+			}
+			
+			Bureau.db.collection('assassins').update(filter, toUpdate, function(err, docs) {
+				Bureau.assassin.getAssassins(filter, function(err, assassins) {
+					if(err) {
+						callback(err, [])
+					} else {
+						callback(null, assassins)
+					}
+				})
+			})
+		},
+		
 		updateLastHere: function(uid) {
 			var now = new Date()
 			Bureau.assassin.updateAssassin(uid, {lastonline: now}, function(){})
@@ -259,7 +321,7 @@ var Bureau = {
 			})
 		},
 		
-		addNotification: function(uid, notification, priority) {
+		addNotification: function(uid, notification, source, priority) {
 			var now = new Date(),
 				n = {
 					added: now,
@@ -267,6 +329,9 @@ var Bureau = {
 					id: utils.md5(now+''+uid),
 					priority: !!priority
 				}
+			if(!!source) {
+				n.source = source
+			}
 			Bureau.assassin.updateAssassin(uid, {$push: {notifications: n}}, function(){})
 		},
 		
@@ -518,7 +583,30 @@ var Bureau = {
 			})
 		},
 		
+		notifyGamegroup: function(ggid, notification, source, priority, callback) {
+			var now = new Date(),
+				n = {
+					added: now,
+					text: notification,
+					id: utils.md5(now+''+ggid),
+					priority: !!priority
+				}
+			if(!!source) {
+				n.source = source
+			}
+			line()
+			log('Sending Notification: "'+notification+'" to all '+ggid)
+
+			Bureau.assassin.updateAssassins({gamegroup: ggid}, {$push: {notifications: n}}, function(err, assassins){
+				if(callback) {
+					log('Notification: "'+notification+'" sent to all '+ggid)
+					callback(err, assassins)
+				}
+			})
+		},
+		
 		setMotd: function(ggid, motd, callback) {
+			log('setting motd for '+ggid+' to ' + motd)
 			Bureau.gamegroup.updateGamegroup(ggid, {motd: motd}, callback)
 		},
 		
@@ -551,6 +639,8 @@ var Bureau = {
 			}
 		}
 	},
+	
+	games: {},
 	
 	game: {
 		getGamesInGamegroup: function(ggid, callback) {

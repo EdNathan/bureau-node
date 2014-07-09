@@ -153,7 +153,7 @@ var pages = {
 							})
 							
 						} else {
-							var uid = assassin._id
+							var uid = assassin._id+''
 							if(rememberme) {
 								res.cookie('BAC', uid+'sheepworks'+utils.md5(uid+'~'+assassin.joindate), {
 									//Set the cookie for 2 weeks
@@ -377,7 +377,6 @@ var pages = {
 					switch(req.body.action) {
 						case 'setmotd':
 							var motd = req.body.motd
-							console.log('setting motd for '+res.locals.gamegroup.ggid+' to ' + motd)
 							Bureau.gamegroup.setMotd(res.locals.gamegroup.ggid, motd, function(err, doc) {
 								if(!err) {
 									//Manually update the locals, otherwise they'll have the previous value
@@ -420,6 +419,19 @@ var pages = {
 									})
 								}
 							})
+							
+							break;
+						case 'notifymembers':
+							var msg = req.body.notifytext
+							if(!msg || msg.trim().length < 10) {
+								res.locals.pageErrors.push('Your message was too short! (less than 10 chars)')
+								authPages.get.guild['/'](req, res)
+								return
+							}
+							Bureau.gamegroup.notifyGamegroup(res.locals.gamegroup.ggid, msg.trim(), 'from '+res.locals.gamegroup.name+' Guild', false, function(err, assassins) {
+								authPages.get.guild['/'](req, res)
+							})
+							
 							
 							break;
 						default:
