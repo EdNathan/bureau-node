@@ -96,7 +96,7 @@ var bureau = {
 			bureau.displayNotifications()
 		}
 		//Now go off and get the latest ones
-		bureau.api(bureau.user.uid, 'read', 'notifications', {limit: 20}, function(err, response) {
+		bureau.api(bureau.user.uid, 'read', 'notifications', {limit: window.innerHeight/60 + 5}, function(err, response) {
 			var notifications = response.notifications
 			storeObj('notifications', notifications)
 			bureau.notifications = notifications.map(function(n) {

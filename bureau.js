@@ -128,7 +128,9 @@ var Bureau = {
 			var title = x.replace('.js','')
 			line(1)
 			log('Found game '+title,2)
-			Bureau.games[title] = require('./games/'+x)
+			var g = Bureau.games[title] = require('./games/'+x)
+			g.Bureau = Bureau
+			g.init()
 			log('Finished loading game '+title,2)
 		})
 		line(1)
@@ -295,7 +297,7 @@ var Bureau = {
 				}
 			}
 			
-			Bureau.db.collection('assassins').update(filter, toUpdate, function(err, docs) {
+			Bureau.db.collection('assassins').update(filter, toUpdate, {multi: true}, function(err, docs) {
 				Bureau.assassin.getAssassins(filter, function(err, assassins) {
 					if(err) {
 						callback(err, [])
