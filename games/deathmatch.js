@@ -22,7 +22,19 @@ var deathmatchgame = {
 	
 	//Given killer, victim, kill method, time and everything else in the report if needed, determine whether the kill is valid
 	checkKillValid: function(game, killerid, victimid, killmethod, time, report, callback) {
-		
+		this.Bureau.assassin.hasKilledPlayerInGame(killerid, victimid, game.gameid, true, function(err, hasKilled) {
+			if(err) {
+				callback(err)
+			} else {
+				this.Bureau.assassin.hasKilledPlayerInGame(victimid, killerid, game.gameid, true, function(err, hasBeenKilled) {
+					if(err) {
+						callback(err)
+					} else {
+						callback(null, hasKilled || hasBeenKilled)
+					}
+				})
+			}
+		})
 	},
 	
 	//Given killer, victim, kill method and the report, handle the kill
