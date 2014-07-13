@@ -2201,6 +2201,7 @@ h6::after {
   font-size: 18px;
   font-weight: 400;
   color: #666;
+  text-align: left;
 }
 .player-table.membership .player-row section .name {
   height: 45px;
