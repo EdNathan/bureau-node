@@ -782,6 +782,47 @@ var Bureau = {
 				}
 			})
 		},
+		
+		updateGame: function(gameid, stuff, callback) {
+			var toUpdate = {$set: {}},
+				filters = {'games.gameid': gameid}
+			
+			//Check if we have any special things	
+			for(key in stuff) {
+				if(key !== 'filter') {
+					if(stuff.hasOwnProperty(key) && key[0] === '$') {
+						//Special $key, we have to move it outside!
+						toUpdate[key] = {}
+						//Loop through subkey of stuff and modify things...
+						for(subkey in stuff[key]) {
+							if(stuff[key].hasOwnProperty(subkey)) {
+								toUpdate[key]['games.$.'+subkey] = stuff[key][subkey]
+							}
+						}
+					} else if(stuff.hasOwnProperty(key)) {
+						toUpdate.$set['games.$.'+key] = stuff[key]
+					}
+				} else {
+					//We want to apply some extra filters
+					filters = merge(filters, stuff.filter)
+				}
+			}
+
+			
+			Bureau.db.collection('gamegroups').update(filters, toUpdate, function(err, doc) {
+				if(!!doc) {
+					if(Bureau.gamegroup.cachedGamegroups.hasOwnProperty(doc.ggid)) {
+						delete Bureau.gamegroup.cachedGamegroups[doc.ggid]
+					}
+					Bureau.gamegroup.getGamegroup(doc.ggid, function(err, doc) {
+						callback(err, doc)
+					})
+				} else {
+					throw err;
+					callback(err, {})
+				}
+			})
+		},
 	
 		getPlayers: function(gameid, callback) {
 			Bureau.game.getGame(gameid, function(err, game) {
@@ -817,6 +858,18 @@ var Bureau = {
 					callback(null, 0)
 				}
 			})
+		},
+		
+		setScore: function(gameid, playerid, score, callback) {
+			var o = {}
+			o['players.'+playerid+'.score'] = score
+			Bureau.game.updateGame(gameid, o, callback)
+		},
+		
+		changeScore: function(gameid, playerid, delta, callback) {
+			var o = {}
+			o['players.'+playerid+'.score'] = delta
+			Bureau.game.updateGame(gameid, {$inc: o}, callback)
 		}
 	}
 }
