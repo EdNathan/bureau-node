@@ -460,7 +460,7 @@ var bureau = {
 				if(!!gtype) {
 					el.children[0].innerHTML = 'Loading '+gtype+' setup...';
 					el.className = 'fragment-loading';
-					bureau.api(bureau.user.uid, 'read', 'guild', 'gamesetupfragment:'+gtype, function(j) {
+					bureau.api(bureau.user.uid, 'read', 'gamesetupfragment', {gametype:gtype}, function(j) {
 						el.className = '';
 						el.children[0].innerHTML = j['gamesetupfragment:'+gtype];
 					});

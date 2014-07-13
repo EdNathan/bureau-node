@@ -584,6 +584,11 @@ var pages = {
 								notifications: notifications
 							})
 						})
+					},
+					gamesetupfragment: function(req, res) {
+						var uid = req.body.uid,
+							gametype = req.body.data.gametype
+						res.json({gamesetupfragment: Bureau.games[gametype].getGameSetupFragment()})
 					}
 				},
 				write: {
