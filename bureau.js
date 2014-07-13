@@ -221,11 +221,8 @@ var Bureau = {
 						callback(err, {})
 						return
 					}
-					Bureau.assassin.getLethality(uid, function(err, lethality) {
-						doc.lethality = lethality
-						Bureau.assassin.cachedAssassins[uid] = doc
-						callback(err, doc)
-					})
+					Bureau.assassin.cachedAssassins[uid] = doc
+					callback(err, doc)
 				})
 			}
 		},
@@ -378,18 +375,6 @@ var Bureau = {
 			})
 		},
 		
-		getLethality: function(uid, callback) {
-			Bureau.assassin.totalKills(uid, function(err, count) {
-				var lethality,
-					i = 0
-				while(!lethality) {
-					lethality = lethalities[i].kills <= count ? lethalities[i].name : false
-					i++
-				}
-				callback(err, lethality)
-			})
-		},
-		
 		hasDetailsChangeRequest: function(uid, callback) {
 			Bureau.assassin.getAssassin(uid, function(err, doc) {
 				var hasReq = doc.hasOwnProperty('detailsChangeRequest') && !empty(doc.detailsChangeRequest)
@@ -439,9 +424,14 @@ var Bureau = {
 					if(!assassin.kills) {
 						callback(null, [])
 					} else {
-						callback(null, assassin.kills.filter(function(x) {
-							x.state !== 'rejected' 
-						}))
+						var kills = assassin.kills.filter(function(x) {
+							if(includePending) {
+								return x.state !== 'rejected'
+							} else {
+								return x.state === 'approved'
+							}
+						})
+						callback(null, kills)
 					}
 				}
 			})
@@ -453,11 +443,7 @@ var Bureau = {
 					callback(err, [])
 				} else {
 					var fromGame = kills.filter(function(x) {
-						if(includePending) {
-							return x.state !== 'rejected'
-						} else {
-							return x.state === 'approved'
-						}
+						return x.gameid+'' === gameid+''
 					})
 					callback(null, fromGame)
 				}
@@ -491,9 +477,12 @@ var Bureau = {
 		},
 		
 		totalKills: function(uid, callback) {
-			Bureau.assassin.getKills(uid, function(err, kills) {
-				console.log(kills)
-				callback(err, kills.length)
+			Bureau.assassin.getKills(uid, false, function(err, kills) {
+				if(err) {
+					callback(err, 0)
+				} else {
+					callback(null, kills.length)
+				}
 			})
 		},
 		
@@ -513,6 +502,18 @@ var Bureau = {
 					}
 					callback(err, s)
 				})
+			})
+		},
+		
+		getLethality: function(uid, callback) {
+			Bureau.assassin.totalKills(uid, function(err, count) {
+				var lethality,
+					i = 0
+				while(!lethality) {
+					lethality = lethalities[i].kills <= count ? lethalities[i].name : false
+					i++
+				}
+				callback(err, lethality)
 			})
 		},
 		
