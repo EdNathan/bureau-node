@@ -181,13 +181,9 @@ var pages = {
 			},
 			personal: function(req, res) {
 				var uid = req.session.uid
-				console.log('personal page')
 				Bureau.assassin.getAssassin(uid, function(err, assassin) {
-					console.log('getting assassin')
 					Bureau.assassin.stats(uid, function(err, stats) {
-						console.log('getting stats')
 						Bureau.assassin.getLethality(uid, function(err, lethality) {
-							console.log('getting lethality')
 							Bureau.assassin.hasDetailsChangeRequest(uid, function(err, hasRequest) {
 								if(hasRequest) {
 									for(var key in assassin.detailsChangeRequest) {
