@@ -29,20 +29,6 @@ function empty(obj) {
     return true;
 }
 
-function unique(arr) {
-	//Reduces array to unique values
-	var u = arr.reduce(function(last, current) {
-		if(last.indexOf(current) < 0) {
-			last.push(current)
-			return last
-		} else {
-			return last
-		}
-	},[])
-	
-	return u
-}
-
 function merge(o1, o2) {
 	var n = {}
 	for(key in o1) {
@@ -378,6 +364,31 @@ var Bureau = {
 			})
 		},
 		
+		totalKills: function(uid, callback) {
+			Bureau.db.collection('reports').count({killer: uid}, function(err, count) {
+				callback(err, count)	
+			})
+		},
+		
+		totalDeaths: function(uid, callback) {
+			Bureau.db.collection('reports').count({victim: uid}, function(err, count) {
+				callback(err, count)	
+			})
+		},
+		
+		stats: function(uid, callback) {
+			Bureau.assassin.totalKills(uid, function(err, k) {
+				Bureau.assassin.totalDeaths(uid, function(err, d) {
+					var s = {
+						kills: k,
+						deaths: d,
+						ratio: isNaN(k/d) ? 0 : k/d
+					}
+					callback(err, s)
+				})
+			})
+		},
+		
 		getLethality: function(uid, callback) {
 			Bureau.assassin.totalKills(uid, function(err, count) {
 				var lethality,
@@ -429,93 +440,7 @@ var Bureau = {
 			Bureau.assassin.updateAssassin(uid, {guild: shouldBeGuild}, function(err, doc) {
 				callback(err, doc)
 			})
-		},
-		
-		getKills: function(uid, includePending, callback) {
-			Bureau.assassin.getAssassin(uid, function(err, assassin) {
-				if(err) {
-					callback(err, [])
-				} else {
-					if(!assassin.kills) {
-						callback(null, [])
-					} else {
-						callback(null, assassin.kills.filter(function(x) {
-							x.state !== 'rejected' 
-						}))
-					}
-				}
-			})
-		},
-		
-		getKillsFromGame: function(uid, gameid, includePending, callback) {
-			Bureau.assassin.getKills(uid, includePending, function(err, kills) {
-				if(err) {
-					callback(err, [])
-				} else {
-					var fromGame = kills.filter(function(x) {
-						if(includePending) {
-							return x.state !== 'rejected'
-						} else {
-							return x.state === 'approved'
-						}
-					})
-					callback(null, fromGame)
-				}
-			})
-		},
-		
-		getPlayersKilled: function(uid, includePending, callback) {
-			Bureau.assassin.getKills(uid, includePending, function(err, kills) {
-				var playersKilled = unique(kills.map(function(x) {
-					return x.victimid
-				}))
-			})
-		},
-		
-		getPlayersKilledFromGame: function(uid, gameid, includePending, callback) {
-			Bureau.assassin.getKillsFromGame(uid, gameid, includePending, function(err, kills) {
-				var playersKilled = unique(kills.map(function(x) {
-					return x.victimid
-				}))
-			})
-		},
-		
-		hasKilledPlayerInGame: function(uid, victimid, gameid, includePending, callback) {
-			Bureau.assassin.getPlayersKilledFromGame(uid, gameid, includePending, function(err, playersKilled) {
-				if(err) {
-					callback(err, false)
-				} else {
-					return playersKilled.indexOf(victimid) > -1
-				}
-			})
-		},
-		
-		totalKills: function(uid, callback) {
-			Bureau.assassin.getKills(uid, function(err, kills) {
-				console.log(kills)
-				callback(err, kills.length)
-			})
-		},
-		
-		totalDeaths: function(uid, callback) {
-			Bureau.db.collection('reports').count({victim: uid}, function(err, count) {
-				callback(err, count)	
-			})
-		},
-		
-		stats: function(uid, callback) {
-			Bureau.assassin.totalKills(uid, function(err, k) {
-				Bureau.assassin.totalDeaths(uid, function(err, d) {
-					var s = {
-						kills: k,
-						deaths: d,
-						ratio: isNaN(k/d) ? 0 : k/d
-					}
-					callback(err, s)
-				})
-			})
-		},
-		
+		}
 	},
 	
 	gamegroup: {
@@ -790,30 +715,6 @@ var Bureau = {
 					callback(null, game.players)
 				} else {
 					callback(null, {})
-				}
-			})
-		},
-		
-		getPlayer: function(gameid, playerid, callback) {
-			Bureau.game.getPlayers(gameid, function(err, players) {
-				if(err) {
-					callback(err, {})
-				} else if(players.hasOwnProperty(playerid)) {
-					callback(null,players[playerid])
-				} else {
-					callback('The player '+playerid+' is not in the game '+gameid, {})
-				}
-			})
-		},
-		
-		getScore: function(gameid, playerid, callback) {
-			Bureau.game.getPlayer(gameid, playerid, function(err, player) {
-				if(err) {
-					callback(err, {})
-				} else if(player.hasOwnProperty(score)) {
-					callback(null,player.score)
-				} else {
-					callback(null, 0)
 				}
 			})
 		}
