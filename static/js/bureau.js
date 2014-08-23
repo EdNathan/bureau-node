@@ -44,6 +44,8 @@ var bureau = {
 			case 'page-killmethods':
 				this.setup.killmethods();
 				break;
+			case 'page-newgame':
+				this.setup.guildNewGame();
 			default:
 				applyColours();
 				break;
@@ -175,6 +177,7 @@ var bureau = {
 			if(this.status === 200) {
 				if(debug) {
 	 				console.log(this);
+	 				console.log(callback?'has callback':'no callback')
 	 				console.log(this.responseText);
 	 				console.log(req.responseText);
 	 				console.log(JSON.parse(req.responseText));
@@ -460,10 +463,14 @@ var bureau = {
 				if(!!gtype) {
 					el.children[0].innerHTML = 'Loading '+gtype+' setup...';
 					el.className = 'fragment-loading';
-					bureau.api(bureau.user.uid, 'read', 'gamesetupfragment', {gametype:gtype}, function(j) {
-						el.className = '';
-						el.children[0].innerHTML = j['gamesetupfragment:'+gtype];
-					});
+					
+					bureau.api(bureau.user.uid, 'read', 'gamesetupfragment', {gametype:gtype}, function(err, j) {
+						if(!err) {
+							el.className = ''
+							console.log(j)
+							el.children[0].innerHTML = j.gamesetupfragment
+						}
+					})
 				} else {
 					el.className = 'empty';
 					el.children[0].innerHTML = '';
@@ -542,6 +549,7 @@ var bureau = {
 					document.forms[0].submit();
 				}
 			}, false);
+			this.search()
 		},
 		
 		guildGameState: function() {

@@ -3,7 +3,7 @@ var deathmatchgame = {
 	init: function(Bureau) {
 		
 	},
-	
+	label: 'Deathmatch',
 	//This should output html/text for displaying when setting up a game. Use form fields for extra parameters when setting up
 	getGameSetupFragment: function() {
 		return 'Standard pair locking deathmatch'

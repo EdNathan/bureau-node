@@ -90,3 +90,10 @@
 </li>
 
 {% endmacro %}
+
+{% macro possiblePlayer(a) %}
+<li class="addplayer-row addplayer-row-newgame" data-index="{{a.forename|lower}} {{a.surname|lower}} {{a.nickname|lower}}">
+	<div class="name">{{ a.forename }} {{ a.surname }}</div>
+	<input type="checkbox" name="uids[]" value="{{ a._id|safe }}" {% if a.autoinclude %}checked{% endif %}>
+</li>
+{% endmacro %}

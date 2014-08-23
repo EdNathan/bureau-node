@@ -2856,9 +2856,6 @@ h6::after {
     transform: scale(0.6);
   }
 }
-#page-guild {
-  padding-top: 0px !important;
-}
 #page-guild #guild-nav {
   display: -webkit-box;
   /* OLD - iOS 6-, Safari 3.1-6 */
@@ -3446,207 +3443,6 @@ h6::after {
 #page-guild .game-state .gamedate-form.archive-form input[type="submit"]:hover {
   background: rgba(186, 32, 37, 0.9);
   color: white;
-}
-#page-guild .new-game-container {
-  text-align: center;
-  min-height: 100%;
-  overflow: hidden;
-  max-width: 1000px;
-  margin: auto;
-}
-#page-guild .new-game-container ~ #grabber {
-  top: 10px;
-  position: absolute;
-}
-#page-guild .new-game-container ~ #grabber::after {
-  display: none;
-}
-#page-guild .new-game-top-decor {
-  height: 10px;
-  background-color: #ddd;
-  background-image: url(../images/bg-stripes.svg);
-  background-repeat: repeat;
-  background-position: center center;
-  background-attachment: fixed;
-  background-size: 10px;
-  -webkit-transition: background-color 0.5s ease 0.5s;
-  transition: background-color 0.5s ease 0.5s;
-}
-#page-guild .new-game-inner {
-  color: #888;
-  -webkit-transition: color 0.5s ease 0.5s;
-  transition: color 0.5s ease 0.5s;
-}
-@media (max-width:480px) {
-  #page-guild .new-game-inner form > header span {
-    padding-left: 45px;
-  }
-}
-#page-guild .new-game-inner header figure {
-  padding: 30px 0 0;
-  overflow: hidden;
-}
-#page-guild .new-game-inner header figure .player-card {
-  margin: auto;
-  border: 0;
-  border: 1px solid #eee;
-  border-color: #eee !;
-  text-align: left;
-}
-#page-guild .new-game-inner header span {
-  font-size: 3em;
-  font-variant: small-caps;
-  text-transform: lowercase;
-  font-weight: 300;
-  padding-bottom: 10px;
-  display: block;
-  background: white;
-  box-shadow: 0 3px 2px rgba(0, 0, 0, 0.1) !important;
-}
-#page-guild .new-game-inner section {
-  *zoom: 1;
-  margin: 30px 0;
-  background: white;
-  padding: 10px 0px;
-  font-size: 2em;
-  box-shadow: 0 3px 2px rgba(0, 0, 0, 0.1) !important;
-  text-align: left;
-  padding-left: 30px;
-  position: relative;
-}
-#page-guild .new-game-inner section::before,
-#page-guild .new-game-inner section::after {
-  content: " ";
-  /* 1 */
-  display: table;
-  /* 2 */
-}
-#page-guild .new-game-inner section::after {
-  clear: both;
-}
-#page-guild .new-game-inner section::before {
-  content: "";
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 5px;
-  height: 100%;
-  background: white;
-}
-#page-guild .new-game-inner section.problem::before {
-  background: #ba2025;
-}
-@media (max-width:480px) {
-  #page-guild .new-game-inner section {
-    font-size: 1.5em;
-  }
-}
-#page-guild .new-game-inner section span {
-  font-variant: small-caps;
-  text-transform: lowercase;
-  font-weight: 300;
-  display: block;
-  line-height: 40px;
-  padding-bottom: 3px;
-}
-#page-guild .new-game-inner section select {
-  background: none;
-  border: none;
-  margin: 0;
-  padding: 0;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
-  color: inherit;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  font-weight: 400;
-  font-size: 1em;
-  display: inline-block;
-  /* 		border-bottom: 1px dashed; */
-  text-align: right;
-  vertical-align: middle;
-  float: right;
-  height: 40px;
-  line-height: 1em;
-  margin-right: 30px;
-}
-#page-guild .new-game-inner section input {
-  background: none;
-  border: none;
-  padding: 0;
-  margin: 0;
-  text-indent: 0;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
-  color: inherit;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  font-weight: 400;
-  font-size: 1em;
-  line-height: 1em;
-  display: inline-block;
-  vertical-align: middle;
-  /* 		border-bottom: 1px dashed; */
-  text-align: right;
-  width: auto;
-  float: right;
-  padding-right: 30px;
-}
-#page-guild .new-game-inner section#game-setup-fragment-container {
-  -webkit-transition: all 0.8s ease 0s;
-  -moz-transition: all 0.8s ease 0s;
-  -o-transition: all 0.8s ease 0s;
-  transition: all 0.8s ease 0s;
-  opacity: 1;
-}
-#page-guild .new-game-inner section#game-setup-fragment-container.empty {
-  opacity: 0;
-  -webkit-transition: all 0 ease 0s;
-  -moz-transition: all 0 ease 0s;
-  -o-transition: all 0 ease 0s;
-  transition: all 0 ease 0s;
-}
-#page-guild .new-game-inner section#game-setup-fragment-container.fragment-loading {
-  text-align: center;
-  color: #888 !important;
-}
-#page-guild .new-game-inner .addplayer-search {
-  margin-top: 20px;
-}
-#page-guild .new-game-inner #newgame-addplayers input[type="checkbox"]::before {
-  content: "✓";
-}
-@media (min-width:900px) {
-  #page-guild .new-game-inner #newgame-addplayers {
-    display: -webkit-box;
-    /* OLD - iOS 6-, Safari 3.1-6 */
-    display: -moz-box;
-    /* OLD - Firefox 19- (buggy but mostly works) */
-    display: -ms-flexbox;
-    /* TWEENER - IE 10 */
-    display: -webkit-flex;
-    /* NEW - Chrome */
-    display: flex;
-    /* NEW, Spec - Opera 12.1, Firefox 20+ */
-    -webkit-flex-wrap: wrap;
-    -moz-flex-wrap: wrap;
-    flex-wrap: wrap;
-  }
-  #page-guild .new-game-inner #newgame-addplayers li {
-    width: 100%;
-    height: 100%;
-    height: 50px;
-    margin-right: 5px;
-    white-space: nowrap;
-    -webkit-flex: 1 0 300px;
-    -moz-flex: 1 0 300px;
-    flex: 1 0 300px;
-  }
 }
 #page-guild figure[class*="-icon"] {
   text-align: center;
@@ -4462,6 +4258,210 @@ h6::after {
 #page-gamegroup .addplayer-row input[type="submit"]:hover {
   background: none repeat scroll 0% 0% #FFF;
   color: #2ECC71;
+}
+#page-newgame {
+  padding-top: 0px !important;
+}
+#page-newgame .new-game-container {
+  text-align: center;
+  min-height: 100%;
+  overflow: hidden;
+  max-width: 1000px;
+  margin: auto;
+}
+#page-newgame .new-game-container ~ #grabber {
+  top: 10px;
+  position: absolute;
+}
+#page-newgame .new-game-container ~ #grabber::after {
+  display: none;
+}
+#page-newgame .new-game-top-decor {
+  height: 10px;
+  background-color: #ddd;
+  background-image: url(../images/bg-stripes.svg);
+  background-repeat: repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  background-size: 10px;
+  -webkit-transition: background-color 0.5s ease 0.5s;
+  transition: background-color 0.5s ease 0.5s;
+}
+#page-newgame .new-game-inner {
+  color: #888;
+  -webkit-transition: color 0.5s ease 0.5s;
+  transition: color 0.5s ease 0.5s;
+}
+@media (max-width:480px) {
+  #page-newgame .new-game-inner form > header span {
+    padding-left: 45px;
+  }
+}
+#page-newgame .new-game-inner header figure {
+  padding: 30px 0 0;
+  overflow: hidden;
+}
+#page-newgame .new-game-inner header figure .player-card {
+  margin: auto;
+  border: 0;
+  border: 1px solid #eee;
+  border-color: #eee !;
+  text-align: left;
+}
+#page-newgame .new-game-inner header span {
+  font-size: 3em;
+  font-variant: small-caps;
+  text-transform: lowercase;
+  font-weight: 300;
+  padding-bottom: 10px;
+  display: block;
+  background: white;
+  box-shadow: 0 3px 2px rgba(0, 0, 0, 0.1) !important;
+}
+#page-newgame .new-game-inner section {
+  *zoom: 1;
+  margin: 30px 0;
+  background: white;
+  padding: 10px 0px;
+  font-size: 2em;
+  box-shadow: 0 3px 2px rgba(0, 0, 0, 0.1) !important;
+  text-align: left;
+  padding-left: 30px;
+  position: relative;
+}
+#page-newgame .new-game-inner section::before,
+#page-newgame .new-game-inner section::after {
+  content: " ";
+  /* 1 */
+  display: table;
+  /* 2 */
+}
+#page-newgame .new-game-inner section::after {
+  clear: both;
+}
+#page-newgame .new-game-inner section::before {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 5px;
+  height: 100%;
+  background: white;
+}
+#page-newgame .new-game-inner section.problem::before {
+  background: #ba2025;
+}
+@media (max-width:480px) {
+  #page-newgame .new-game-inner section {
+    font-size: 1.5em;
+  }
+}
+#page-newgame .new-game-inner section span {
+  font-variant: small-caps;
+  text-transform: lowercase;
+  font-weight: 300;
+  display: block;
+  line-height: 40px;
+  padding-bottom: 3px;
+}
+#page-newgame .new-game-inner section select {
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  color: inherit;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  font-weight: 400;
+  font-size: 1em;
+  display: inline-block;
+  /* 		border-bottom: 1px dashed; */
+  text-align: right;
+  vertical-align: middle;
+  float: right;
+  height: 40px;
+  line-height: 1em;
+  margin-right: 30px;
+}
+#page-newgame .new-game-inner section input {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  text-indent: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  color: inherit;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  font-weight: 400;
+  font-size: 1em;
+  line-height: 1em;
+  display: inline-block;
+  vertical-align: middle;
+  /* 		border-bottom: 1px dashed; */
+  text-align: right;
+  width: auto;
+  float: right;
+  padding-right: 30px;
+}
+#page-newgame .new-game-inner section#game-setup-fragment-container {
+  -webkit-transition: all 0.8s ease 0s;
+  -moz-transition: all 0.8s ease 0s;
+  -o-transition: all 0.8s ease 0s;
+  transition: all 0.8s ease 0s;
+  opacity: 1;
+}
+#page-newgame .new-game-inner section#game-setup-fragment-container.empty {
+  opacity: 0;
+  -webkit-transition: all 0 ease 0s;
+  -moz-transition: all 0 ease 0s;
+  -o-transition: all 0 ease 0s;
+  transition: all 0 ease 0s;
+}
+#page-newgame .new-game-inner section#game-setup-fragment-container.fragment-loading {
+  text-align: center;
+  color: #888 !important;
+}
+#page-newgame .new-game-inner .addplayer-search {
+  margin-top: 20px;
+}
+#page-newgame .new-game-inner #newgame-addplayers input[type="checkbox"]::before {
+  content: "✓";
+}
+@media (min-width:900px) {
+  #page-newgame .new-game-inner #newgame-addplayers {
+    display: -webkit-box;
+    /* OLD - iOS 6-, Safari 3.1-6 */
+    display: -moz-box;
+    /* OLD - Firefox 19- (buggy but mostly works) */
+    display: -ms-flexbox;
+    /* TWEENER - IE 10 */
+    display: -webkit-flex;
+    /* NEW - Chrome */
+    display: flex;
+    /* NEW, Spec - Opera 12.1, Firefox 20+ */
+    -webkit-flex-wrap: wrap;
+    -moz-flex-wrap: wrap;
+    flex-wrap: wrap;
+  }
+  #page-newgame .new-game-inner #newgame-addplayers li {
+    width: 100%;
+    height: 100%;
+    height: 50px;
+    margin-right: 5px;
+    white-space: nowrap;
+    -webkit-flex: 1 0 300px;
+    -moz-flex: 1 0 300px;
+    flex: 1 0 300px;
+  }
 }
 #recent-commits {
   margin-bottom: 20px;

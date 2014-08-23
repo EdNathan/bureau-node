@@ -2,7 +2,8 @@ var MongoClient = require('mongodb').MongoClient,
 	mongo = require('mongodb'),
 	utils = require('./utils'),
 	lethalities = require('./lethalities'),
-	passwords = require('./passwords')
+	passwords = require('./passwords'),
+	moment = require('moment')
 
 function id(uid) {
 	return new mongo.ObjectID(uid)
@@ -144,6 +145,7 @@ var Bureau = {
 			log('Found game '+title,2)
 			var g = Bureau.games[title] = require('./games/'+x)
 			g.Bureau = Bureau
+			g.title = title
 			g.init()
 			log('Finished loading game '+title,2)
 		})
@@ -683,6 +685,28 @@ var Bureau = {
 			})
 		},
 		
+		notifyGuild: function(ggid, notification, source, priority, callback) {
+			var now = new Date(),
+				n = {
+					added: now,
+					text: notification,
+					id: utils.md5(now+''+ggid),
+					priority: !!priority
+				}
+			if(!!source) {
+				n.source = source
+			}
+			line()
+			log('Sending Notification: "'+notification+'" to guild for '+ggid)
+
+			Bureau.assassin.updateAssassins({gamegroup: ggid, guild: true}, {$push: {notifications: n}}, function(err, assassins){
+				if(callback) {
+					log('Notification: "'+notification+'" sent to guild for '+ggid)
+					callback(err, assassins)
+				}
+			})
+		},
+		
 		setMotd: function(ggid, motd, callback) {
 			log('setting motd for '+ggid+' to ' + motd)
 			Bureau.gamegroup.updateGamegroup(ggid, {motd: motd}, callback)
@@ -715,12 +739,20 @@ var Bureau = {
 			} else {
 				callback(new Error('Gamegroup already exists'), {})
 			}
+		},
+		
+		getPlayersForNextGame: function(ggid) {
+			
 		}
 	},
 	
 	games: {},
 	
 	game: {
+		isGameType: function(gtype) {
+			return Bureau.games.hasOwnProperty(gtype)
+		},
+	
 		getGamesInGamegroup: function(ggid, callback) {
 			Bureau.gamegroup.getGamegroup(ggid, function(err, gamegroup) {
 				var games = {}
@@ -735,13 +767,56 @@ var Bureau = {
 					callback(err, games)
 				}
 				
-			})	
+			})
+		},
+		
+		getLastGameInGamegroup: function(ggid, callback) {
+			Bureau.gamegroup.getGamegroup(ggid, function(err, gamegroup) {
+				var games = {}
+				if(err) {
+					callback(err, {})
+				} else if(!gamegroup.games) {
+					callback(null, {})
+				} else {
+					callback(err, gamegroup.games.sort(function(a,b) {
+						return b.start - a.start
+					})[0])
+				}
+				
+			})
+		},
+		
+		getPlayersForNewGame: function(ggid, callback) {
+			//Fetch the details of the last game
+			Bureau.game.getLastGameInGamegroup(ggid, function(err, game) {
+				//Flag people who have logged in since the start of the last game to be auto included
+				var autoIncludeDate = empty(game) ? new Date(0) : game.start,
+				//Don't include people in the list who haven't logged in in the past 2 years
+					cutoffDate = moment().subtract(2,'years').toDate()
+				if(err) {
+					callback(err, [])
+					return
+				}
+				Bureau.gamegroup.getAssassins(ggid, function(err, assassins) {
+					if(err) {
+						callback(err, [])
+						return
+					}
+					var potentialPlayers = assassins.filter(function(player) {
+						return player.lastonline > cutoffDate
+					}).map(function(player) {
+						player.autoinclude = player.lastonline > autoIncludeDate
+						return player
+					})
+					
+					callback(null, potentialPlayers)
+				})
+			})
 		},
 		
 		getGames: function(callback) {
 			Bureau.gamegroup.getGamegroups(function(err, gamegroups) {
 				var games = {}
-				
 				for(var gg in gamegroups) {
 					if(gamegroups.hasOwnProperty(gg)) {
 						if(gamegroups[gg].games) {
@@ -771,6 +846,21 @@ var Bureau = {
 			})
 		},
 		
+		getCurrentGamesWithPlayer: function(id, callback) {
+			Bureau.game.getGamesWithPlayer(id, function(err, games) {
+				var currentGamesWithPlayer = {},
+					now = new Date()
+				for(var gid in games) {
+					if(games.hasOwnProperty(gid)) {
+						if(games[gid].start <= now && games[gid].end > now) {
+							currentGamesWithPlayer[gid] = games[gid]
+						}
+					}
+				}
+				callback(null, currentGamesWithPlayer)
+			})
+		},
+		
 		getGame: function(gameid, callback) {
 			Bureau.game.getGames(function(err, games) {
 				if(!err && games[gameid]) {
@@ -781,6 +871,41 @@ var Bureau = {
 					callback('Invalid game id', {})
 				}
 			})
+		},
+		
+		newGame: function(ggid, gameData, callback) {
+			if(!Bureau.game.isGameType(gameData.type)) {
+				callback('Invalid game type')
+				return
+			}
+			if(gameData.start > gameData.end) {
+				callback('Invalid game start date: game start date is after game end date')
+				return
+			}
+			gameData.gameid = utils.md5(new Date()+'')
+			
+			//Map the player array to an object
+			var playersArray = gameData.players,
+				playersObj = {}
+			
+			playersArray.forEach(function(player) {
+				playersObj[player] = {
+					score:0
+				}
+			})	
+			gameData.players = playersObj
+			
+			Bureau.games[gameData.type].constructGame(gameData, function(err, gameObj) {
+				if(err) {
+					callback(err)
+					return
+				}
+				
+				Bureau.gamegroup.updateGamegroup(ggid, {$push: {games: gameObj}}, function(err, gg){
+					callback(err, gameObj.id)
+				})
+			})
+			
 		},
 		
 		updateGame: function(gameid, stuff, callback) {

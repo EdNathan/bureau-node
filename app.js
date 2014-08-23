@@ -9,7 +9,8 @@ var Bureau = require('./bureau'),
 	fs = require('fs'),
 	app = express(),
 	validator = require('validator'),
-	MongoStore = require('connect-mongo')(express)
+	MongoStore = require('connect-mongo')(express),
+	moment = require('moment')
 
 var pages = {
 		get: {
@@ -260,6 +261,27 @@ var pages = {
 					res.render('killmethods', {
 						
 					})
+				},
+				
+				newgame: function(req, res) {
+					if(!res.locals.isGuild) {
+						res.redirect('/home')
+						return
+					}
+					Bureau.game.getPlayersForNewGame(res.locals.gamegroup.ggid, function(err, possiblePlayers) {
+						if(err) {
+							res.locals.pageErrors.push(err)
+						}
+						res.render('newgame', {
+							gameTypes: Bureau.games,
+							possiblePlayers: possiblePlayers,
+							startdate: utils.prettyTimestamp(moment(6,'H').
+										add(1,'days')),
+							enddate: utils.prettyTimestamp(moment(6,'H').
+										add(15,'days'))
+						})
+					})
+					
 				}
 			}
 		},
@@ -566,6 +588,78 @@ var pages = {
 							
 						default:
 							authPages.get.guild.killmethods(req, res)
+							break;
+					}
+				},
+				
+				newgame: function(req, res) {
+					
+					switch(req.body.action) {
+						case 'newgame':
+							var title = req.body.title,
+								playerIds = req.body.uids,
+								gametype = req.body.gametype,
+								start = utils.dateFromPrettyTimestamp(req.body.start),
+								end = utils.dateFromPrettyTimestamp(req.body.end),
+								now = new Date(),
+								ggid = res.locals.gamegroup.ggid,
+								errs = []
+							
+							if(!Bureau.game.isGameType(gametype)) {
+								errs.push('"'+gametype+'" is not a valid game type')
+							}
+							if(!title || title.length < 4) {
+								errs.push('Please specify a longer game title!')
+							}
+							if(!playerIds || !Array.isArray(playerIds) || playerIds.length < 2) {
+								errs.push('Please add some players to your game')
+							}
+							if (!(!!start && !isNaN(start.getMonth()) && start > now && req.body.start.length === 19 && utils.dateRegex.test(req.body.start))) {
+								errs.push('Invalid game start date')
+							}
+							if (!(!!end && !isNaN(end.getMonth()) && end > now && req.body.end.length === 19 && utils.dateRegex.test(req.body.end))) {
+								errs.push('Invalid game end date')
+							}
+							
+							
+							res.locals.pageErrors = errs
+							
+							if(errs.length > 0) {
+								authPages.get.guild.newgame(req, res)
+								return
+							}
+							
+							var gameData = {
+									name: title,
+									players: playerIds,
+									type: gametype,
+									start: start,
+									end: end
+								},
+								game = Bureau.games[gametype],
+								notificationString = res.locals.assassin.forename+' '+res.locals.assassin.surname+' created a new '+game.label+' game starting on '+moment(start).format('MMMM Do YYYY, h:mm:ss a')
+							
+							Bureau.game.newGame(ggid, gameData, function(err, game) {
+								if(!err) {
+									Bureau.gamegroup.notifyGuild(ggid, notificationString, '', false, function(err) {
+										if(err) {
+											//Don't fail completely if we only fail to send a notification
+											res.locals.pageErrors.push('Failed to send notification to guild about the new game')
+										}
+										
+										authPages.get.home(req, res)
+										
+									})
+								} else {
+									res.locals.pageErrors.push(err)
+									authPages.get.guild.newgame(req, res)
+								}
+							})
+							
+							break;
+							
+						default:
+							authPages.get.guild.newgame(req, res)
 							break;
 					}
 				}

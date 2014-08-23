@@ -1,0 +1,75 @@
+{% set hideHeader = true %}
+{% extends "./base.html" %}
+
+{% block title %}New Game{% endblock %}
+
+{% block main %}
+<div class="new-game-container">
+	<div class="new-game-top-decor"></div>
+	<div class="new-game-inner">
+		<form action="" method="post">
+			{{form.a('newgame')}}
+			{{form.t(token)}}
+			<header>
+				<span>Create New Game</span>
+			</header>
+			<section id="title">
+				<span>
+					<label for="title-input">game title</label>
+					<input id="title-input" type="text" name="title" value="" placeholder="Game Title">
+				</span>
+			</section>
+			<section id="start">
+				<span>
+					<label for="start-input">start time</label>
+					<input id="start-input" type="text" name="start" value="{{startdate}}">
+				</span>
+			</section>
+			<section id="end">
+				<span>
+					<label for="end-input">end time</label>
+					<input id="end-input" type="text" name="end" value="{{enddate}}">
+				</span>
+			</section>
+			
+			<section id="gametype" class="dropdown">
+				<span><label for="gametype-dropdown">game type</label>
+				<select id="gametype-dropdown" name="gametype" placeholder="Choose a game type...">
+				<option value="">Choose a game type...</option>
+				{% for gtype in gameTypes %}
+				<option value="{{gtype.title}}">{{gtype.label}}</option>
+				{% endfor %}
+				</select>
+				</span>
+			</section>
+			
+			<section id="game-setup-fragment-container" class="empty">
+				<span></span>
+			</section>
+			
+			<ul id="newgame-addplayers" data-search="search members" data-searchclass="addplayer-search" class="player-table searchable newgame">
+			{% for player in possiblePlayers -%}
+				{{ rows.possiblePlayer(player) }}
+			{%- endfor %}
+			</ul>
+<!--
+<?php
+	$addContent = '';
+	$newgameAddTemplate = file_get_contents('../templates/addplayer-row-newgame.html');
+	
+	foreach($possiblePlayers as $possiblePlayer) {
+		$addContent .= tokenize($possiblePlayer, $newgameAddTemplate);
+	}
+	
+	echo('<ul id="newgame-addplayers" data-search="search members" data-searchclass="addplayer-search" class="player-table searchable newgame">');
+	echo($addContent);
+	echo('</ul>');
+?>
+-->
+			
+			<div id="submit-button" class="fancy-submit" data-alt="Game">Create</div>
+		</form>
+	</div>
+</div>
+
+{% endblock %}

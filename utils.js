@@ -34,7 +34,25 @@ var utils = {
 	},
 	md5: function(str) {
 		return crypto.createHash('md5').update(str).digest("hex")
-	}
+	},
+	prettyTimestamp: function(date) {
+		var d = !!date ? (date._d ? date.toDate():date) : new Date(),
+			s = d.getFullYear()+'-'+this.date2Digits(d.getMonth()+1)+'-'+this.date2Digits(d.getDate())+' '+this.date2Digits(d.getHours())+':'+this.date2Digits(d.getMinutes())+':'+this.date2Digits(d.getSeconds());
+		return s;
+	},
+	dateFromPrettyTimestamp: function(d) {
+//			2014-01-06 06:00:00
+		var parts = d.split(' '),
+			dat = parts[0].split('-'),
+			tim = parts[1].split(':')
+			result = new Date (dat[0], dat[1]-1, dat[2], tim[0], tim[1], tim[2]);
+		return result;
+	},
+	dateRegex: /[0-9]{4}-[0-1][0-9]-[0-3][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9]/,
+	date2Digits: function(d) {
+		d = d+'';
+		return d.length>1?d:'0'+d;
+	},
 }
 
 
