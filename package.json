@@ -13,14 +13,14 @@
   },
   "dependencies": {
     "aws-sdk": "~2.0.0-rc10",
-    "connect-mongo": "~0.4.0",
+    "connect-mongo": "^0.4.1",
     "consolidate": "0.10.x",
     "express": "3.4.x",
     "gm": "~1.14.2",
     "moment": "^2.8.2",
     "mongodb": "^1.4.8",
     "swig": "^1.4.2",
-    "validator": "3.2.x"
+    "validator": "^3.17.0"
   },
   "author": "Ben Tattersley <ubershinysheep@gmail.com>",
   "license": "Copyright Ben Tattersley 2014",
