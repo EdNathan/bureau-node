@@ -5,8 +5,8 @@ var deathmatchgame = {
 	},
 	label: 'Deathmatch',
 	//This should output html/text for displaying when setting up a game. Use form fields for extra parameters when setting up
-	getGameSetupFragment: function() {
-		return 'Standard pair locking deathmatch'
+	getGameSetupFragment: function(callback) {
+		callback(null, 'Standard pair locking deathmatch')
 	},
 	//Passed all the form data from game setup, should modify the data and return a 'game' object for insertion into the database
 	constructGame: function(data, callback) {
@@ -16,8 +16,9 @@ var deathmatchgame = {
 	},
 	
 	//Given a player uid, construct a game state fragment for the player
-	getGameStateForUid: function(game, playerid) {
-		return ''
+	getGameStateForUid: function(game, playerid, callback) {
+		var err = null
+		callback(err, '')
 	},
 	
 	//Given killer, victim, kill method, time and everything else in the report if needed, determine whether the kill is valid
