@@ -1180,6 +1180,21 @@ function stopEvent(e) {
 	e.stopPropagation();
 }
 
+function unique(arr) {
+	//Reduces array to unique values
+	var u = arr.reduce(function(last, current) {
+		if(last.indexOf(current) < 0) {
+			last.push(current)
+			return last
+		} else {
+			return last
+		}
+	},[])
+	
+	return u
+}
+
+
 function empty(o) {
 	for(var i in o) {
 		if(o.hasOwnProperty(i)) {
