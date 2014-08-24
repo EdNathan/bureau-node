@@ -188,9 +188,9 @@ var bureau = {
 					callback(null, response)
 				}
 			} else {
-				console.error(this.status, this.statusText)
+				console.error(this.status, this.statusText, req.responseText)
 				if(callback) {
-					callback(this.statusText, null)
+					callback(req.responseText, null)
 				}
 			}
 		}
@@ -469,6 +469,8 @@ var bureau = {
 							el.className = ''
 							console.log(j)
 							el.children[0].innerHTML = j.gamesetupfragment
+						} else {
+							console.log(err)
 						}
 					})
 				} else {
