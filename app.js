@@ -679,7 +679,17 @@ var pages = {
 					gamesetupfragment: function(req, res) {
 						var uid = req.body.uid,
 							gametype = req.body.data.gametype
-						res.json({gamesetupfragment: Bureau.games[gametype].getGameSetupFragment()})
+						if(!Bureau.game.isGameType(gametype)) {
+							res.send(400, '"' + gametype + '" is not a valid game type')
+							return
+						}
+						Bureau.games[gametype].getGameSetupFragment(function(err, fragment) {
+							if(err) {
+								res.send(500, err)
+								return
+							}
+							res.json({gamesetupfragment: fragment})
+						})
 					}
 				},
 				write: {
