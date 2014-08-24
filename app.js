@@ -634,10 +634,19 @@ var pages = {
 									players: playerIds,
 									type: gametype,
 									start: start,
-									end: end
+									end: end,
+									custom: {}
 								},
 								game = Bureau.games[gametype],
 								notificationString = res.locals.assassin.forename+' '+res.locals.assassin.surname+' created a new '+game.label+' game starting on '+moment(start).format('MMMM Do YYYY, h:mm:ss a')
+							
+							//Attach all the extraneous form data that might be related to the new game. This is filthy dirty bad bad and possibly a vulnerability.
+							var exclude = ['title', 'uids', 'gametype', 'start', 'end', 'action', 'token', '']
+							for(var key in req.body) {
+								if(req.body.hasOwnProperty(key) && exclude.indexOf(key) < 0) {
+									gameData.custom[key] = req.body[key]
+								}
+							}
 							
 							Bureau.game.newGame(ggid, gameData, function(err, game) {
 								if(!err) {

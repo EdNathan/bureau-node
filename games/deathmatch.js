@@ -10,7 +10,8 @@ var deathmatchgame = {
 	},
 	//Passed all the form data from game setup, should modify the data and return a 'game' object for insertion into the database
 	constructGame: function(data, callback) {
-		var game = data
+		var game = data,
+			customData = data.custom
 		/* modifications if you're a more complicated game */
 		callback(null, game)
 	},
