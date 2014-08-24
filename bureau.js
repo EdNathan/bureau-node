@@ -961,6 +961,36 @@ var Bureau = {
 			})
 		},
 		
+		getPlayerIds: function(gameid, callback) {
+			Bureau.game.getPlayers(gameid, function(err, players) {
+				if(err) {
+					callback(err, [])
+				} else if(!empty(players)) {
+					callback(null, Object.keys(players))
+				} else {
+					callback(null, [])
+				}
+			})
+		},
+		
+		getAssassins: function(gameid, callback) {
+			Bureau.game.getPlayerIds(gameid, function(err, playerIds) {
+				if(err) {
+					callback(err, [])
+				} else if(!!playerIds && playerIds.length > 0) {
+					Bureau.assassin.getAssassins({_id: {$in: playerIds.map(id)}}, function(err, assassins) {
+						if(err) {
+							callback(err, [])
+						} else {
+							callback(null, assassins)
+						}
+					})
+				} else {
+					callback(null, [])
+				}
+			})
+		},
+		
 		getPlayer: function(gameid, playerid, callback) {
 			Bureau.game.getPlayers(gameid, function(err, players) {
 				if(err) {
