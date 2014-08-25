@@ -760,6 +760,7 @@ var pages = {
 							})
 						})
 					},
+					
 					gamesetupfragment: function(req, res) {
 						var uid = req.body.uid,
 							gametype = req.body.data.gametype
@@ -773,6 +774,30 @@ var pages = {
 								return
 							}
 							res.json({gamesetupfragment: fragment})
+						})
+					},
+					
+					gamestatefragment: function(req, res) {
+						var uid = req.body.data.uid,
+							gameid = req.body.data.gameid
+						
+						Bureau.game.getGame(gameid, function(err, game) {
+							if(err) {
+								res.send(400, err)
+								return
+							}
+							Bureau.games[game.type].getGameStateForUid(game, uid, function(err, gamestate) {
+								if(err) {
+									res.send(500, err)
+									return
+								}
+								res.json({
+									gameid: gameid,
+									uid: uid,
+									gametype: game.type,
+									gamestatefragment: gamestate
+								})
+							})
 						})
 					}
 				},

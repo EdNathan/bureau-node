@@ -225,11 +225,14 @@ var bureau = {
 			});	
 		},
 		
-		playerListToggle: function(useHeader) {
+		playerListToggle: function(useHeader, callback) {
 			var selector = '.player-table > li' + (!!useHeader ? ' header' : '');
 			$(selector).on('click', function(e) {
+				if(callback) {
+					callback(this)
+				}
 				$(this).closest('li').toggleClass('expanded');
-			});
+			})
 		},
 	
 		home: function() {
@@ -551,8 +554,7 @@ var bureau = {
 		
 		guildGameState: function() {
 			colourItems([])
-			this.playerListToggle(true)
-			this.search()
+			
 			//Field validtion
 			var validate = {
 					results:{},
@@ -634,7 +636,27 @@ var bureau = {
 				if(shouldArchive) {
 					HTMLFormElement.prototype.submit.call(this.parentNode);
 				}
-			});
+			})
+			
+			//Handle game state loading
+			var loadGameState = function(el) {
+					var uid = $(el).find('[name=uid]').attr('value'),
+						gameid = $(el).find('[name=gameid]').attr('value'),
+						k = uid+'-'+gameid
+						
+					if(clicked.indexOf(k) < 0) {
+						//Need to load in gamestate data
+						clicked.push(k)
+						console.log(k)
+						bureau.api(bureau.user.uid, 'read', 'gamestatefragment', {gameid:gameid, uid:uid}, function(err, j) {
+							$(el).parent().find('.gamestate-block').html(j.gamestatefragment)
+						})
+					}
+				},
+				clicked = []
+			
+			this.playerListToggle(true, loadGameState)
+			this.search()
 		},
 		
 		report: function() {

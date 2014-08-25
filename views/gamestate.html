@@ -24,7 +24,7 @@
 			<input type="submit" name="submit" id="submit-button-{{ game.gameid }}" data-gameid="{{ game.gameid }}" value="Change Game Time">
 		</form>
 	{% if game.end < now %}
-		<form action="gamestate.php" method="post" class="archive-form">
+		<form action="" method="post" class="archive-form">
 			{{form.a('archivegame')}}
 			{{form.t(token)}}
 			<input type="hidden" name="gameid" value="{{ game.gameid }}">
