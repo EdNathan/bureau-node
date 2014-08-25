@@ -752,7 +752,22 @@ var Bureau = {
 		isGameType: function(gtype) {
 			return Bureau.games.hasOwnProperty(gtype)
 		},
-	
+		
+		
+		getGamesInGamegroupAsArray: function(ggid, callback) {
+			Bureau.gamegroup.getGamegroup(ggid, function(err, gamegroup) {
+				var games = {}
+				if(err) {
+					callback(err, [])
+				} else if(!gamegroup.games) {
+					callback(null, [])
+				} else {
+					callback(err, gamegroup.games)
+				}
+				
+			})
+		},
+		
 		getGamesInGamegroup: function(ggid, callback) {
 			Bureau.gamegroup.getGamegroup(ggid, function(err, gamegroup) {
 				var games = {}
@@ -811,6 +826,24 @@ var Bureau = {
 					
 					callback(null, potentialPlayers)
 				})
+			})
+		},
+		
+		getPossibleAssassins: function(gameid, ggid, callback) {
+			Bureau.game.getPlayerIds(gameid, function(err, playerIds) {
+				if(err) {
+					callback(err, [])
+				} else if(!!playerIds) {
+					Bureau.assassin.getAssassins({_id: {$nin: playerIds.map(id)}, gamegroup: ggid}, function(err, assassins) {
+						if(err) {
+							callback(err, [])
+						} else {
+							callback(null, assassins)
+						}
+					})
+				} else {
+					callback(null, [])
+				}
 			})
 		},
 		

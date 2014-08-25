@@ -37,7 +37,7 @@ var utils = {
 	},
 	prettyTimestamp: function(date) {
 		var d = !!date ? (date._d ? date.toDate():date) : new Date(),
-			s = d.getFullYear()+'-'+this.date2Digits(d.getMonth()+1)+'-'+this.date2Digits(d.getDate())+' '+this.date2Digits(d.getHours())+':'+this.date2Digits(d.getMinutes())+':'+this.date2Digits(d.getSeconds());
+			s = d.getFullYear()+'-'+utils.date2Digits(d.getMonth()+1)+'-'+utils.date2Digits(d.getDate())+' '+utils.date2Digits(d.getHours())+':'+utils.date2Digits(d.getMinutes())+':'+utils.date2Digits(d.getSeconds());
 		return s;
 	},
 	dateFromPrettyTimestamp: function(d) {

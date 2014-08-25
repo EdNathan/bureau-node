@@ -328,11 +328,15 @@
 					.name {
 						height: 100%;
 						line-height: 60px;
+						position: relative;
+						padding-right: 135px;
 						.scorekd {
 							float: right;
 							height: 100%;
 							width: 130px;
-							
+							position: absolute;
+							top:0;
+							right:0;
 							label {
 								float: left;
 							}
@@ -466,7 +470,7 @@
 		}
 	}
 	
-	.addplayer-row {
+	.addplayer-row, #page-gamestate & .addplayer-row {
 		display: none;
 		height: 50px;
 		overflow: hidden;

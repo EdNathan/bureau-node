@@ -2137,11 +2137,16 @@ h6::after {
 .player-table.gamestate .player-row section header .name {
   height: 100%;
   line-height: 60px;
+  position: relative;
+  padding-right: 135px;
 }
 .player-table.gamestate .player-row section header .name .scorekd {
   float: right;
   height: 100%;
   width: 130px;
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 .player-table.gamestate .player-row section header .name .scorekd label {
   float: left;
@@ -2259,7 +2264,8 @@ h6::after {
 .player-table.membership .player-row.expanded .nickname-rank {
   border-bottom-width: 1px;
 }
-.player-table .addplayer-row {
+.player-table .addplayer-row,
+#page-gamestate .player-table .addplayer-row {
   display: none;
   height: 50px;
   overflow: hidden;
@@ -2267,22 +2273,26 @@ h6::after {
   background: white;
   margin-bottom: 5px;
 }
-.player-table .addplayer-row:last-child {
+.player-table .addplayer-row:last-child,
+#page-gamestate .player-table .addplayer-row:last-child {
   margin-bottom: 30px;
 }
-.player-table .addplayer-row .name {
+.player-table .addplayer-row .name,
+#page-gamestate .player-table .addplayer-row .name {
   float: left;
   height: 50px;
   line-height: 50px;
   padding: 0 15px;
 }
-.player-table .addplayer-row form {
+.player-table .addplayer-row form,
+#page-gamestate .player-table .addplayer-row form {
   float: right;
   height: 100%;
   width: 50px;
   display: block;
 }
-.player-table .addplayer-row form input[type="submit"] {
+.player-table .addplayer-row form input[type="submit"],
+#page-gamestate .player-table .addplayer-row form input[type="submit"] {
   outline: none;
   background: #2ecc71;
   color: white;
@@ -2293,7 +2303,8 @@ h6::after {
   -o-transition: all 0.25s ease 0s;
   transition: all 0.25s ease 0s;
 }
-.player-table .addplayer-row form input[type="submit"]:hover {
+.player-table .addplayer-row form input[type="submit"]:hover,
+#page-gamestate .player-table .addplayer-row form input[type="submit"]:hover {
   background: white;
   color: #2ecc71;
 }
@@ -3343,107 +3354,6 @@ h6::after {
   text-align: right;
   margin-right: 10px;
 }
-#page-guild .game-state h6 {
-  margin-top: 10px;
-}
-#page-guild .game-state .gamedate-form {
-  display: block;
-  width: 100%;
-  max-width: 960px;
-  margin: 20px auto;
-}
-#page-guild .game-state .gamedate-form div {
-  *zoom: 1;
-}
-#page-guild .game-state .gamedate-form div::before,
-#page-guild .game-state .gamedate-form div::after {
-  content: " ";
-  /* 1 */
-  display: table;
-  /* 2 */
-}
-#page-guild .game-state .gamedate-form div::after {
-  clear: both;
-}
-#page-guild .game-state .gamedate-form div section {
-  -webkit-transition: all 0.5s ease 0s;
-  -moz-transition: all 0.5s ease 0s;
-  -o-transition: all 0.5s ease 0s;
-  transition: all 0.5s ease 0s;
-  border: 1px solid #888;
-  margin-bottom: 10px;
-  height: 70px;
-  width: 50%;
-  width: -webkit-calc(50% - 5px);
-  width: calc(50% - 5px);
-  float: right;
-  position: relative;
-}
-#page-guild .game-state .gamedate-form div section:first-child {
-  float: left;
-}
-@media (max-width:480px) {
-  #page-guild .game-state .gamedate-form div section {
-    width: 100%;
-    float: none;
-  }
-  #page-guild .game-state .gamedate-form div section:first-child {
-    float: none;
-  }
-}
-#page-guild .game-state .gamedate-form div section::before {
-  content: "";
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 5px;
-  height: 100%;
-  background: transparent;
-}
-#page-guild .game-state .gamedate-form div section.problem::before {
-  background: #ba2025;
-}
-#page-guild .game-state .gamedate-form div section:hover {
-  background: rgba(255, 255, 255, 0.9);
-  color: #333;
-}
-#page-guild .game-state .gamedate-form div section label {
-  display: block;
-  padding: 5px 0 0 10px;
-  color: #666666;
-}
-#page-guild .game-state .gamedate-form div section input[type="text"] {
-  width: 100%;
-  font-size: 18px;
-  background: transparent;
-  outline: none;
-}
-#page-guild .game-state .gamedate-form input[type="submit"] {
-  -webkit-transition: all 0.5s ease 0s;
-  -moz-transition: all 0.5s ease 0s;
-  -o-transition: all 0.5s ease 0s;
-  transition: all 0.5s ease 0s;
-  outline-offset: 0px;
-}
-#page-guild .game-state .gamedate-form input[type="submit"]:hover {
-  background: rgba(255, 255, 255, 0.9);
-  color: #333;
-}
-#page-guild .game-state .gamedate-form input[type="submit"].disabled {
-  pointer-events: none;
-  opacity: 0.5;
-  background: transparent;
-  color: #333;
-}
-#page-guild .game-state .gamedate-form.archive-form input[type="submit"] {
-  color: #ba2025;
-  outline-color: #ba2025;
-}
-#page-guild .game-state .gamedate-form.archive-form input[type="submit"]:hover {
-  background: rgba(186, 32, 37, 0.9);
-  color: white;
-}
 #page-guild figure[class*="-icon"] {
   text-align: center;
   width: 40px;
@@ -4462,6 +4372,127 @@ h6::after {
     -moz-flex: 1 0 300px;
     flex: 1 0 300px;
   }
+}
+#page-gamestate input[type="submit"] {
+  height: 40px;
+  width: 100%;
+  display: block;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  line-height: 40px;
+  color: #666;
+  font-weight: 400;
+  font-size: 15px;
+  outline: 1px solid #888;
+  outline-offset: -3px;
+  cursor: pointer;
+}
+#page-gamestate input[type="submit"]:hover {
+  color: grey;
+}
+#page-gamestate .game-state h6 {
+  margin-top: 10px;
+}
+#page-gamestate .game-state .gamedate-form {
+  display: block;
+  width: 100%;
+  max-width: 960px;
+  margin: 20px auto;
+}
+#page-gamestate .game-state .gamedate-form div {
+  *zoom: 1;
+}
+#page-gamestate .game-state .gamedate-form div::before,
+#page-gamestate .game-state .gamedate-form div::after {
+  content: " ";
+  /* 1 */
+  display: table;
+  /* 2 */
+}
+#page-gamestate .game-state .gamedate-form div::after {
+  clear: both;
+}
+#page-gamestate .game-state .gamedate-form div section {
+  -webkit-transition: all 0.5s ease 0s;
+  -moz-transition: all 0.5s ease 0s;
+  -o-transition: all 0.5s ease 0s;
+  transition: all 0.5s ease 0s;
+  border: 1px solid #888;
+  margin-bottom: 10px;
+  height: 70px;
+  width: 50%;
+  width: -webkit-calc(50% - 5px);
+  width: calc(50% - 5px);
+  float: right;
+  position: relative;
+}
+#page-gamestate .game-state .gamedate-form div section:first-child {
+  float: left;
+}
+@media (max-width:480px) {
+  #page-gamestate .game-state .gamedate-form div section {
+    width: 100%;
+    float: none;
+  }
+  #page-gamestate .game-state .gamedate-form div section:first-child {
+    float: none;
+  }
+}
+#page-gamestate .game-state .gamedate-form div section::before {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 5px;
+  height: 100%;
+  background: transparent;
+}
+#page-gamestate .game-state .gamedate-form div section.problem::before {
+  background: #ba2025;
+}
+#page-gamestate .game-state .gamedate-form div section:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+}
+#page-gamestate .game-state .gamedate-form div section label {
+  display: block;
+  padding: 5px 0 0 10px;
+  color: #666666;
+}
+#page-gamestate .game-state .gamedate-form div section input[type="text"] {
+  width: 100%;
+  font-size: 18px;
+  background: transparent;
+  outline: none;
+}
+#page-gamestate .game-state .gamedate-form input[type="submit"] {
+  -webkit-transition: all 0.5s ease 0s;
+  -moz-transition: all 0.5s ease 0s;
+  -o-transition: all 0.5s ease 0s;
+  transition: all 0.5s ease 0s;
+  outline-offset: 0px;
+}
+#page-gamestate .game-state .gamedate-form input[type="submit"]:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: #333;
+}
+#page-gamestate .game-state .gamedate-form input[type="submit"].disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  background: transparent;
+  color: #333;
+}
+#page-gamestate .game-state .gamedate-form.archive-form input[type="submit"] {
+  color: #ba2025;
+  outline-color: #ba2025;
+}
+#page-gamestate .game-state .gamedate-form.archive-form input[type="submit"]:hover {
+  background: rgba(186, 32, 37, 0.9);
+  color: white;
 }
 #recent-commits {
   margin-bottom: 20px;

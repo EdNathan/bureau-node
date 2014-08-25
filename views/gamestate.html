@@ -1,0 +1,49 @@
+{% extends "./base.html" %}
+
+{% block title %}Game State{% endblock %}
+
+{% block main %}
+
+{% for game in games %}
+	<div class="game-state">
+		<h6>{{ game.name }}</h6>
+		<form action="" method="post" class="gamedate-form">
+			{{form.a('changegametime')}}
+			{{form.t(token)}}
+			<input type="hidden" name="gameid" value="{{ game.gameid }}">
+			<div>
+				<section id="section-start-input-{{ game.gameid }}">
+					<label for="start-input-{{ game.gameid }}">start</label>
+					<input type="text" name="start" id="start-input-{{ game.gameid }}" data-gameid="{{ game.gameid }}" value="{{ game.start|prettyTimestamp }}">
+				</section>
+				<section id="section-end-input-{{ game.gameid }}">
+					<label for="end-input-{{ game.gameid }}">end</label>
+					<input type="text" name="end" id="end-input-{{ game.gameid }}" data-gameid="{{ game.gameid }}" value="{{ game.start|prettyTimestamp }}">
+				</section>
+			</div>
+			<input type="submit" name="submit" id="submit-button-{{ game.gameid }}" data-gameid="{{ game.gameid }}" value="Change Game Time">
+		</form>
+	{% if game.end < now %}
+		<form action="gamestate.php" method="post" class="archive-form">
+			{{form.a('archivegame')}}
+			{{form.t(token)}}
+			<input type="hidden" name="gameid" value="{{ game.gameid }}">
+			<input type="submit" name="submit" id="archive-button-{{ game.gameid }}" data-name="{{ game.name }}" value="Archive Game">
+		</form>
+	{% endif %}
+	</div>
+	
+	
+	<ul id="gamestate-{{ game.gameid }}" class="player-table searchable gamestate {{ game.type }}">
+		{% for assassin in game.assassins %}
+			{{ rows.gamestatePlayer(assassin, game) }}
+		{% endfor %}
+	</ul>
+	
+	<ul id="gamestate-addplayers-{{ game.gameid }}" data-search="add players" data-searchclass="addplayer-search" data-searchmethod="inclusive" class="player-table searchable gamestate {{ game.type }}">
+		{% for assassin in game.possibleAssassins %}
+			{{ rows.gamestateAddPlayer(assassin, game) }}
+		{% endfor %}
+	</ul>
+	
+{% endfor %}

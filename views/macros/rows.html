@@ -97,3 +97,51 @@
 	<input type="checkbox" name="uids[]" value="{{ a._id|safe }}" {% if a.autoinclude %}checked{% endif %}>
 </li>
 {% endmacro %}
+
+{% macro gamestatePlayer(a, g) %}
+<li class="player-row gamestate-row" data-index="{{a.forename|lower}} {{a.surname|lower}} {{a.nickname|lower}}">
+	<section>
+		<header>
+			<div class="name">
+				{{ a.forename }} {{ a.surname }}
+				<div class="scorekd">
+					<label for="scorefield-{{ a._id|safe }}">Score:</label>
+					<input type="hidden" name="uid" value="{{ a._id|safe }}">
+					<input id="scorefield-{{ a._id|safe }}" type="text" name="scorefield" value="{{ g.players[a._id|safe].score }}">
+				</div>
+			</div>
+		</header>
+		<div class="gamestate-readout">
+			<form action="" method="post" class="removeplayerform">
+				{{form.t(token)}}
+				{{form.a('removeplayer')}}
+				<input type="hidden" name="gameid" value="{{ g.gameid }}">
+				<input type="hidden" name="uid" value="{{ a._id|safe }}">
+				<input type="submit" name="playeraction" value="Remove player">
+			</form>
+			<div class="gamestate-block"></div>
+		</div>
+	</section>
+	<aside>
+		<div class="display-picture" style="background-image:url({{a.imgname}})"></div>
+	</aside>
+
+	<div>
+		
+	</div>
+</li>
+{% endmacro %}
+
+{% macro gamestateAddPlayer(a, g) %}
+<li class="addplayer-row addplayer-row-gamestate" data-index="{{a.forename|lower}} {{a.surname|lower}} {{a.nickname|lower}}">
+	<div class="name">{{ a.forename }} {{ a.surname }}</div>
+	<form action="" method="post" class="addplayer-form">
+		{{form.t(token)}}
+		{{form.a('addplayer')}}
+		<input type="hidden" name="action" value="addplayer">
+		<input type="hidden" name="gameid" value="{{ g.gameid }}">
+		<input type="hidden" name="uid" value="{{ a._id|safe }}">
+		<input type="submit" name="addplayer" value="+">
+	</form>
+</li>
+{% endmacro %}

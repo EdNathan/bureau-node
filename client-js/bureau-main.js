@@ -24,15 +24,6 @@ var bureau = {
 				//Do sliiiightly different things for each page
 				var p = document.title.replace('Underground Command Centre - ', '');
 				switch (p) {
-					case 'Membership':
-						this.setup.guildMembership();
-						break;
-					case 'New Game':
-						this.setup.guildNewGame();
-						break;
-					case 'Game State':
-						this.setup.guildGameState();
-						break;
 					case 'All Reports':
 						this.setup.guildAllReports();
 						break;
@@ -46,8 +37,12 @@ var bureau = {
 				break;
 			case 'page-newgame':
 				this.setup.guildNewGame();
+				break;
+			case 'page-gamestate':
+				this.setup.guildGameState();
+				break;
 			default:
-				applyColours();
+				applyColours()
 				break;
 		}
 	},
@@ -555,6 +550,9 @@ var bureau = {
 		},
 		
 		guildGameState: function() {
+			colourItems([])
+			this.playerListToggle(true)
+			this.search()
 			//Field validtion
 			var validate = {
 					results:{},

@@ -282,6 +282,60 @@ var pages = {
 						})
 					})
 					
+				},
+				
+				gamestate: function(req, res) {
+					if(!res.locals.isGuild) {
+						res.redirect('/home')
+						return
+					}
+					
+					var ggid = res.locals.gamegroup.ggid,
+						displayPage = function(games) {
+							res.render('gamestate', {
+								now: new Date(),
+								games: games.sort(function(a,b) {return b.end-a.end})
+							})
+						}
+					
+					Bureau.game.getGamesInGamegroupAsArray(ggid, function(err, games) {
+						if(err) {
+							res.locals.pageErrors.push(err)
+						}
+						
+						//Remove archived games
+						games = games.filter(function(g) {
+							return !g.archived
+						})
+						
+						var i = 0,
+							l = games.length,
+							loaded = 0,
+							g = null
+						
+						for(i;i<l;i++) {
+							g = games[i]
+							Bureau.game.getAssassins(g.gameid, (function(j) {
+								return function(err, assassins) {
+									loaded++
+									games[j].assassins = assassins
+									if(loaded === l*2) {
+										displayPage(games)
+									}
+								}
+							})(i))
+							Bureau.game.getPossibleAssassins(g.gameid, ggid, (function(j) {
+								return function(err, assassins) {
+									loaded++
+									games[j].possibleAssassins = assassins
+									if(loaded === l*2) {
+										displayPage(games)
+									}
+								}
+							})(i))
+						}
+						
+					})
 				}
 			}
 		},
@@ -670,6 +724,27 @@ var pages = {
 						default:
 							authPages.get.guild.newgame(req, res)
 							break;
+						
+					}
+				},
+				
+				gamestate: function(req, res) {
+					switch(req.body.action) {
+						case 'removeplayer':
+							break;
+							
+						case 'addplayer':
+							break;
+							
+						case 'changegametime':
+							break;
+						
+						case 'archivegame':
+							break;
+							
+						default:
+							authPages.get.guild.gamestate(res, res)
+							break;
 					}
 				}
 			},
@@ -741,9 +816,11 @@ app.engine('html', swig.renderFile);
 app.set('view engine', 'html');
 app.set('views', __dirname + '/views');
 //app.set('view cache', false);
-swig.setDefaults({
-	cache: false
-});
+if(process.env.NODE_ENV !== 'production') { 
+	swig.setDefaults({
+		cache: false
+	})
+}
 
 //For authed pages
 function checkAuth(req, res, next) {
@@ -858,7 +935,9 @@ app.use(function (req, res, next) {
 
 Bureau.init(function (err, db) {
 	if (err) throw err;
-
+	
+	swig.setFilter('prettyTimestamp', utils.prettyTimestamp)
+	
 	var port = (process.env.VMC_APP_PORT || 3000);
 	var host = (process.env.VCAP_APP_HOST || 'localhost');
 	app.listen(port, host)

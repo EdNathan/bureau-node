@@ -1,0 +1,117 @@
+input[type="submit"] {
+	height: 40px;
+	width: 100%;
+	display: block;
+	background: none;
+	border: none;
+	padding: 0;
+	margin: 0;
+	outline: none;
+	line-height: 40px;
+	color:#666;
+	font-weight: 400;
+	font-size: 15px;
+	outline: 1px solid #888;
+	outline-offset: -3px;
+	cursor: pointer;
+}
+
+input[type="submit"]:hover {
+	color: grey;
+}
+
+
+.game-state {
+	h6 {
+		margin-top: 10px;
+	}
+	.gamedate-form {
+		display: block;
+		width: 100%;
+		max-width: 960px;
+		margin: 20px auto;
+		div {
+			.clearfix();
+			section {
+				.transition(0.5s);
+				border: 1px solid #888;
+				margin-bottom: 10px;
+				height: 70px;
+				width: 50%;
+				width: ~"-webkit-calc(50% - 5px)";
+				width: ~"calc(50% - 5px)";
+				float: right;
+				position: relative;
+				&:first-child {
+					float: left;
+				}
+				
+				@media(@mobile) {
+					width: 100%;
+					float: none;
+					&:first-child {
+						float: none;
+					}
+				}
+				
+				&::before {
+					content: "";
+					display: block;
+					position: absolute;
+					left: 0;
+					top:0;
+					width: 5px;
+					height: 100%;
+					background: transparent;
+				}
+				
+				&.problem {
+					&::before {
+						background: @DUASred;
+					}
+				}
+				
+				&:hover {
+					background: fade(white, 90%);
+					color: #333;
+				}
+				label {
+					display: block;
+					padding: 5px 0 0 10px;
+					color: #666
+				}
+				input[type="text"] {
+					width: 100%;
+					font-size: 18px;
+					background: transparent;
+					outline: none;
+				}
+			}
+		}
+		input[type="submit"] {
+			.transition(0.5s);
+			&:hover {
+				background: fade(white, 90%);
+				color: #333;
+			}
+			&.disabled {
+				pointer-events: none;
+				opacity: 0.5;
+				background: transparent;
+				color: #333;
+			}
+			outline-offset: 0px;
+		}
+		
+		&.archive-form {
+			input[type="submit"] {
+				color: @DUASred;
+				outline-color: @DUASred;
+				&:hover {
+					background: fade(@DUASred, 90%);
+					color: white;
+				}
+			}
+		}
+	}
+}
