@@ -313,6 +313,12 @@ var pages = {
 							loaded = 0,
 							g = null
 						
+						//If we don't have any games...
+						if(l === 0) {
+							displayPage([])
+						}
+						
+						
 						for(i;i<l;i++) {
 							g = games[i]
 							Bureau.game.getAssassins(g.gameid, (function(j) {
