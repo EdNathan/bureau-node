@@ -1001,7 +1001,7 @@ var Bureau = {
 		
 		changeGameTimes: function(gameid, start, end, callback) {
 			if(start > end) {
-				callback('The game must start before it ends')
+				callback('Invalid game start date: game start date is after game end date')
 				return
 			}
 			Bureau.game.updateGame(gameid, {start: start, end: end}, function(err, gg) {

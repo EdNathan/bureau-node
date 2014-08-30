@@ -750,6 +750,48 @@ var pages = {
 							break;
 							
 						case 'changegametime':
+							var gameid = req.body.gameid,
+								start = utils.dateFromPrettyTimestamp(req.body.start),
+								end = utils.dateFromPrettyTimestamp(req.body.end),
+								ggid = res.locals.gamegroup.ggid,
+								errs = []
+							
+							if (!(!!start && !isNaN(start.getMonth()) && req.body.start.length === 19 && utils.dateRegex.test(req.body.start))) {
+								errs.push('Invalid game start date')
+							}
+							if (!(!!end && !isNaN(end.getMonth()) && req.body.end.length === 19 && utils.dateRegex.test(req.body.end))) {
+								errs.push('Invalid game end date')
+							}
+							
+							
+							res.locals.pageErrors = errs
+							
+							if(errs.length > 0) {
+								authPages.get.guild.newgame(req, res)
+								return
+							}
+							
+							Bureau.game.changeGameTimes(gameid, start, end, function(err, game) {
+								if(err) {
+									res.locals.pageErrors.push(err)
+								}
+								
+								var notificationString = res.locals.assassin.forename+' '+res.locals.assassin.surname+' changed the start+end dates of game "'+game.name+'" to run from '+moment(start).format('MMMM Do YYYY, h:mm:ss a')+' to '+moment(end).format('MMMM Do YYYY, h:mm:ss a')
+								
+								if(!err) {
+									Bureau.gamegroup.notifyGuild(ggid, notificationString, '', false, function(err) {
+										if(err) {
+											res.locals.pageErrors.push('Failed to send notification to guild about changing the game dates')
+										}
+										authPages.get.guild.gamestate(req, res)
+										
+									})
+								} else {
+									res.locals.pageErrors.push(err)
+									authPages.get.guild.gamestate(req, res)
+								}
+							})
+							
 							break;
 						
 						case 'archivegame':
