@@ -984,9 +984,29 @@ var Bureau = {
 		},
 		
 		archiveGame: function(gameid, callback) {
-			Bureau.game.updateGame(gameid, {$set:{archived: true}}, function(err, gg) {
+			Bureau.game.updateGame(gameid, {archived: true}, function(err, gg) {
 				if(err) {
 					callback('There was an error archiving the game', {})
+				} else {
+					Bureau.game.getGame(gameid, function(err, game) {
+						if(err) {
+							callback(err, {})
+						} else {
+							callback(null, game)
+						}
+					})
+				}
+			})	
+		},
+		
+		changeGameTimes: function(gameid, start, end, callback) {
+			if(start > end) {
+				callback('The game must start before it ends')
+				return
+			}
+			Bureau.game.updateGame(gameid, {start: start, end: end}, function(err, gg) {
+				if(err) {
+					callback('There was an error setting the game start and end times', {})
 				} else {
 					Bureau.game.getGame(gameid, function(err, game) {
 						if(err) {
