@@ -55,12 +55,14 @@ var deathmatchgame = {
 	//Given the uid of a new player added, handle all in game effects
 	handlePlayerAdded: function(game, playerid, callback) {
 		//No effect
+		console.log('Adding '+playerid+' to game '+game.name)
 		callback(null)
 	},
 	
 	//Given the uid of a player just removed, handle all in game effects
 	handlePlayerRemoved: function(game, playerid, callback) {
 		//No effect
+		console.log('Removing '+playerid+' from game '+game.name)
 		callback(null)
 	}
 }

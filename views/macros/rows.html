@@ -141,7 +141,6 @@
 	<form action="" method="post" class="addplayer-form">
 		{{form.t(token)}}
 		{{form.a('addplayer')}}
-		<input type="hidden" name="action" value="addplayer">
 		<input type="hidden" name="gameid" value="{{ g.gameid }}">
 		<input type="hidden" name="uid" value="{{ a._id|safe }}">
 		<input type="submit" name="addplayer" value="+">

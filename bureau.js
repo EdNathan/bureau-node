@@ -1061,6 +1061,30 @@ var Bureau = {
 			})
 		},
 		
+		addPlayer: function(gameid, playerid, callback) {
+			var o = {}
+			o['players.'+playerid] = {score:0}
+			Bureau.game.updateGame(gameid, o, function(err, gg) {
+				if(err) {
+					callback(err)
+				} else {
+					callback(null)
+				}
+			})
+		},
+		
+		removePlayer: function(gameid, playerid, callback) {
+			var o = {}
+			o['players.'+playerid] = 1
+			Bureau.game.updateGame(gameid, {$unset:o}, function(err, gg) {
+				if(err) {
+					callback(err)
+				} else {
+					callback(null)
+				}
+			})
+		},
+		
 		getPlayer: function(gameid, playerid, callback) {
 			Bureau.game.getPlayers(gameid, function(err, players) {
 				if(err) {

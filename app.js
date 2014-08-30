@@ -744,9 +744,72 @@ var pages = {
 					}
 					switch(req.body.action) {
 						case 'removeplayer':
+							var gameid = req.body.gameid,
+								uid = req.body.uid,
+								errs = []
+								
+							Bureau.game.getGame(gameid, function(err, game) {
+								if(err) {
+									res.locals.pageErrors.push(err)
+									authPages.get.guild.gamestate(req, res)
+									return
+								}
+								
+								var gametype = game.type
+								
+								Bureau.games[gametype].handlePlayerRemoved(game, uid, function(err) {
+									if(err) {
+										res.locals.pageErrors.push('There was an error removing the player from the game')
+										authPages.get.guild.gamestate(req, res)
+										return
+									}
+									
+									Bureau.game.removePlayer(gameid, uid, function(err) {
+										if(err) {
+											res.locals.pageErrors.push('There was an error removing the player from the game')
+										}
+										authPages.get.guild.gamestate(req, res)
+									})
+								})
+								
+							})
+								
 							break;
 							
 						case 'addplayer':
+							var gameid = req.body.gameid,
+								uid = req.body.uid,
+								errs = []
+								
+							Bureau.game.getGame(gameid, function(err, game) {
+								if(err) {
+									res.locals.pageErrors.push(err)
+									authPages.get.guild.gamestate(req, res)
+									return
+								}
+								
+								var gametype = game.type
+								
+								
+									
+								Bureau.game.addPlayer(gameid, uid, function(err) {
+									if(err) {
+										res.locals.pageErrors.push('There was an error adding the player to the game')
+										authPages.get.guild.gamestate(req, res)
+										return
+									}
+									
+									Bureau.games[gametype].handlePlayerAdded(game, uid, function(err) {
+										if(err) {
+											res.locals.pageErrors.push('There was an error adding the player to the game')
+											authPages.get.guild.gamestate(req, res)
+											return
+										}
+										authPages.get.guild.gamestate(req, res)
+									})
+								})
+								
+							})
 							break;
 							
 						case 'changegametime':
