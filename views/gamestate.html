@@ -18,7 +18,7 @@
 				</section>
 				<section id="section-end-input-{{ game.gameid }}">
 					<label for="end-input-{{ game.gameid }}">end</label>
-					<input type="text" name="end" id="end-input-{{ game.gameid }}" data-gameid="{{ game.gameid }}" value="{{ game.start|prettyTimestamp }}">
+					<input type="text" name="end" id="end-input-{{ game.gameid }}" data-gameid="{{ game.gameid }}" value="{{ game.end|prettyTimestamp }}">
 				</section>
 			</div>
 			<input type="submit" name="submit" id="submit-button-{{ game.gameid }}" data-gameid="{{ game.gameid }}" value="Change Game Time">
