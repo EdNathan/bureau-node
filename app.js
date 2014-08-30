@@ -653,7 +653,10 @@ var pages = {
 				},
 				
 				newgame: function(req, res) {
-					
+					if(!res.locals.isGuild) {
+						res.redirect('/home')
+						return
+					}
 					switch(req.body.action) {
 						case 'newgame':
 							var title = req.body.title,
@@ -735,6 +738,10 @@ var pages = {
 				},
 				
 				gamestate: function(req, res) {
+					if(!res.locals.isGuild) {
+						res.redirect('/home')
+						return
+					}
 					switch(req.body.action) {
 						case 'removeplayer':
 							break;
@@ -746,6 +753,31 @@ var pages = {
 							break;
 						
 						case 'archivegame':
+							var gameid = req.body.gameid,
+								ggid = res.locals.gamegroup.ggid
+								
+							Bureau.game.archiveGame(gameid, function(err, game) {
+								if(err) {
+									res.locals.pageErrors.push(err)
+								}
+								
+								var notificationString = res.locals.assassin.forename+' '+res.locals.assassin.surname+' archived the game "'+game.name+'"'
+								
+								if(!err) {
+									Bureau.gamegroup.notifyGuild(ggid, notificationString, '', false, function(err) {
+										if(err) {
+											res.locals.pageErrors.push('Failed to send notification to guild about archiving the game')
+										}
+										
+										authPages.get.guild.gamestate(req, res)
+										
+									})
+								} else {
+									res.locals.pageErrors.push(err)
+									authPages.get.guild.gamestate(req, res)
+								}
+								
+							})
 							break;
 							
 						default:

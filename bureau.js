@@ -967,19 +967,36 @@ var Bureau = {
 			}
 
 			
-			Bureau.db.collection('gamegroups').update(filters, toUpdate, function(err, doc) {
-				if(!!doc) {
-					if(Bureau.gamegroup.cachedGamegroups.hasOwnProperty(doc.ggid)) {
-						delete Bureau.gamegroup.cachedGamegroups[doc.ggid]
-					}
-					Bureau.gamegroup.getGamegroup(doc.ggid, function(err, doc) {
-						callback(err, doc)
+			Bureau.db.collection('gamegroups').update(filters, toUpdate, function(err, count) {
+				if(!!count) {
+					Bureau.db.collection('gamegroups').findOne(filters, function(err, doc) {
+						if(Bureau.gamegroup.cachedGamegroups.hasOwnProperty(doc.ggid)) {
+							delete Bureau.gamegroup.cachedGamegroups[doc.ggid]
+						}
+						Bureau.gamegroup.getGamegroup(doc.ggid, function(err, doc) {
+							callback(err, doc)
+						})
 					})
 				} else {
-					throw err;
 					callback(err, {})
 				}
 			})
+		},
+		
+		archiveGame: function(gameid, callback) {
+			Bureau.game.updateGame(gameid, {$set:{archived: true}}, function(err, gg) {
+				if(err) {
+					callback('There was an error archiving the game', {})
+				} else {
+					Bureau.game.getGame(gameid, function(err, game) {
+						if(err) {
+							callback(err, {})
+						} else {
+							callback(null, game)
+						}
+					})
+				}
+			})	
 		},
 	
 		getPlayers: function(gameid, callback) {
