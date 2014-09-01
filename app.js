@@ -243,7 +243,7 @@ var pages = {
 						res.redirect('/home')
 						return
 					}
-					Bureau.assassin.getAssassins({'detailsChangeRequest.state':'waiting'}, function(err, addressChangeRequests) {
+					Bureau.assassin.getAssassins({'detailsChangeRequest.state':'waiting', gamegroup:res.locals.gamegroup.ggid}, function(err, addressChangeRequests) {
 						Bureau.gamegroup.getAssassins(res.locals.gamegroup.ggid, function(err, members) {
 							res.render('guild', {
 								addressChangeRequests: addressChangeRequests,
