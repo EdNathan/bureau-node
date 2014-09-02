@@ -239,6 +239,7 @@ var Bureau = {
 				cursor.toArray(function(err, docs) {
 					if(err) {
 						callback(err, null)
+						return
 					}
 					var i = 0,
 						l = docs.length,
@@ -439,6 +440,47 @@ var Bureau = {
 			})
 		},
 		
+		getDeaths: function(uid, includePending, callback) {
+			var filter = {
+					'kills.victimid':uid
+				},
+				map = function() {
+					var id = this._id.valueOf()
+					
+					this.kills.forEach(function(k) {
+						k.killerid = id
+						emit(k.id, k)
+					})
+				},
+				reduce = function(key, values) {
+					return values[0]
+				}
+			
+			Bureau.db.collection('assassins').mapReduce(
+				map, 
+				reduce,
+				{
+					out:{merge:'kills'},
+					query: filter
+				},
+				function(err, collection) {
+					if(err) {
+						callback('There was an error finding the deaths', null)
+						return
+					}
+					collection.find({victimid: uid}, function(err, cursor) {
+						cursor.toArray(function(err, docs) {
+							if(err) {
+								callback(err, null)
+								return;
+							}
+							callback(null, docs)
+						})
+					})
+				}
+			)
+		},
+		
 		getKillsFromGame: function(uid, gameid, includePending, callback) {
 			Bureau.assassin.getKills(uid, includePending, function(err, kills) {
 				if(err) {
@@ -450,6 +492,48 @@ var Bureau = {
 					callback(null, fromGame)
 				}
 			})
+		},
+		
+		getDeathsFromGame: function(uid, gameid, includePending, callback) {
+			var filter = {
+					'kills.victimid':uid,
+					'kills.gameid':gameid
+				},
+				map = function() {
+					var id = this._id.valueOf()
+					
+					this.kills.forEach(function(k) {
+						k.killerid = id
+						emit(k.id, k)
+					})
+				},
+				reduce = function(key, values) {
+					return values[0]
+				}
+			
+			Bureau.db.collection('assassins').mapReduce(
+				map, 
+				reduce,
+				{
+					out:{merge:'kills'},
+					query: filter
+				},
+				function(err, collection) {
+					if(err) {
+						callback('There was an error finding the deaths', null)
+						return
+					}
+					collection.find({victimid: uid, gameid: gameid}, function(err, cursor) {
+						cursor.toArray(function(err, docs) {
+							if(err) {
+								callback(err, null)
+								return;
+							}
+							callback(null, docs)
+						})
+					})
+				}
+			)
 		},
 		
 		getPlayersKilled: function(uid, includePending, callback) {
@@ -765,6 +849,18 @@ var Bureau = {
 					callback(err, gamegroup.games)
 				}
 				
+			})
+		},
+		
+		toArray: function(games) {
+			var arr = []
+			
+			for(var key in games) {
+				arr.push(games[key])
+			}
+			
+			return arr.sort(function(a,b) {
+				return b.start-a.start
 			})
 		},
 		

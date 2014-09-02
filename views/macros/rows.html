@@ -8,7 +8,7 @@
 		</header>
 		<div class="membership-fields">
 			<div title="address" class="address-group">
-				<p>{{ a.address|replace(',', '<br>'|safe, 'g') }}</p>
+				<p>{{ a.address|address }}</p>
 			</div>
 			<div class="academic-group">
 				<p title="college">{{ a.college }}</p>
@@ -60,7 +60,7 @@
 		</header>
 		<div class="membership-fields">
 			<div title="address" class="address-group">
-				<p>{{ a.address|replace(',', '<br>'|safe, 'g') }}</p>
+				<p>{{ a.address|address }}</p>
 			</div>
 			<div class="academic-group">
 				<p title="college">{{ a.college }}</p>
@@ -146,4 +146,42 @@
 		<input type="submit" name="addplayer" value="+">
 	</form>
 </li>
+{% endmacro %}
+
+{% macro gamePlayer(a, g) %}
+	{% if !a.hasBeenKilledBy %}
+	<li class="player-row {{a.hasKilled}}" data-index="{{a.forename|lower}} {{a.surname|lower}} {{a.nickname|lower}}">
+		<section>
+			<header>
+				<div class="name">{{ a.forename }} {{ a.surname }}</div>
+				<div class="nickname-rank"><span class="nickname">{{a.nickname}}</span><!--  Lethality: #lethality --></div>
+			</header>
+			<div class="fields">
+				<div title="address" class="address-group">
+					<p>{{ a.address|address }}</p>
+				</div>
+				
+				<div class="academic-group">
+					<p title="college">{{ a.college }}</p>
+					<p title="course">{{ a.course }}</p>
+				</div>
+			</div>
+			<div class="form-wrapper">
+				<form action="/report" method="post">
+					<input type="hidden" name="targetid" value="{{a._id|safe}}">
+					<input type="hidden" name="gameid" value="{{g.gameid}}">
+					<input type="submit" name="kill" value="Killed">
+				</form>
+			</div>
+			
+		</section>
+		<aside>
+			<div class="display-picture" style="background-image:url({{a.imgname}})"></div>
+		</aside>
+	
+		<div>
+			
+		</div>
+	</li>
+	{% endif %}
 {% endmacro %}

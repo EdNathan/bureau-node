@@ -53,6 +53,10 @@ var utils = {
 		d = d+'';
 		return d.length>1?d:'0'+d;
 	},
+	
+	addressFormat: function(input) {
+		return input.replace(/(\s)*,/g, '<br>')
+	}
 }
 
 

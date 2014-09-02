@@ -178,7 +178,65 @@ var pages = {
 	authPages = {
 		get: {
 			home: function (req, res) {
-				res.render('home')
+				var uid = res.locals.uid,
+					ggid = res.locals.gamegroup.ggid
+				//Display the current games with the player in
+				Bureau.game.getCurrentGamesWithPlayer(uid, function(err, games) {
+					var games = Bureau.game.toArray(games),
+						numGames = games.length,
+						gamesComplete = 0
+						
+					if(numGames < 1) {
+						res.render('home')
+						return
+					}	
+					
+					var gameLoaded = function() {
+					
+						gamesComplete++
+						
+						if(gamesComplete === numGames) {
+							res.render('home', {
+								games: games
+							})
+						}
+					}
+					
+					games.forEach(function(g) {
+						var gameid = g.gameid
+						Bureau.assassin.getDeathsFromGame(uid, gameid, true, function(err, deaths) {
+						
+							g.deaths = deaths
+							var deathIds = deaths.map(function(d) {
+								return d.killerid
+							})
+							console.log('deaths', deaths)
+							Bureau.assassin.getKillsFromGame(uid, gameid, true, function(err, kills) {
+							
+								g.kills = kills
+								var killedIds = kills.map(function(k) {
+									return k.victimid
+								})
+								console.log('kills', kills)
+								
+								Bureau.game.getAssassins(gameid, function(err, assassins) {
+								
+									g.assassins = assassins
+									g.assassins.forEach(function(a) {
+										a.hasKilled = killedIds.indexOf(a._id+'')>-1
+										a.hasBeenKilledBy = deathIds.indexOf(a._id+'')>-1
+									})
+									
+									gameLoaded()
+									
+								})
+							})
+						})
+					})
+					
+					
+				})
+				
 			},
 			personal: function(req, res) {
 				var uid = req.session.uid
@@ -1104,7 +1162,10 @@ app.use(function (req, res, next) {
 Bureau.init(function (err, db) {
 	if (err) throw err;
 	
+	//Set some filters
 	swig.setFilter('prettyTimestamp', utils.prettyTimestamp)
+	utils.addressFormat.safe = true
+	swig.setFilter('address', utils.addressFormat)
 	
 	var port = (process.env.VMC_APP_PORT || 3000);
 	var host = (process.env.VCAP_APP_HOST || 'localhost');

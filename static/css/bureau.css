@@ -1865,6 +1865,7 @@ h6::after {
   -webkit-box-shadow: 0 5px 0px white, 0px 10px 25px -20px rgba(0, 0, 0, 1);
   -moz-box-shadow: 0 5px 0px white, 0px 10px 25px -20px rgba(0, 0, 0, 1);
   box-shadow: 0 5px 0px white, 0px 10px 25px -20px rgba(0, 0, 0, 1);
+  min-height: 53px;
 }
 .player-table .player-row section header .name {
   color: #666;

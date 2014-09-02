@@ -7,10 +7,31 @@
 
 <script type="text/javascript">var displayName = '{% if isAdmin %}Sir.{% else %}{{assassin.nickname|default(assassin.forename)}}{% endif %}'</script>
 
+{% if !games.length %}
 	<div id="game-title" class="container">
-		<h2>{{game.title|default('No Games Running')}}</h2> <!--  The game title goes here -->
-		<div id="motd">{{gamegroup.motd|default('Welcome to Bureau!')}}</div> <!-- MotD goes in here! -->
+		<h2>No Games Running</h2>
+		<div id="motd">{{gamegroup.motd|default('Welcome to Bureau!')}}</div>
 	</div>
+{% else %}
+	{% for game in games %}
+		
+		<div id="game-title" class="container">
+			<h2>{{game.name}}</h2>
+			{% if loop.first %}
+			<div id="motd">{{gamegroup.motd|default('Welcome to Bureau!')}}</div>
+			{% endif %}
+		</div>
+		
+		<ul id="game-{{game.gameid}}" class="player-table searchable {{game.type}}">
+			{% for a in game.assassins %}
+				{{ rows.gamePlayer(a,game) }}
+			{% endfor %}
+		</ul>
+		
+		
+		
+	{% endfor %}
+{% endif %}
 
 {{form.t(token)}}
 {% endblock %}
