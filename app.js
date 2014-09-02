@@ -516,6 +516,10 @@ var pages = {
 							var motd = req.body.motd
 							Bureau.gamegroup.setMotd(res.locals.gamegroup.ggid, motd, function(err, doc) {
 								if(!err) {
+									var notif = res.locals.assassin.forename+' '+res.locals.assassin.surname+' has set the MotD to :"'+motd.trim()+'"'
+									Bureau.gamegroup.notifyGuild(res.locals.gamegroup.ggid, notif, false, function(err, assassins) {
+										authPages.get.guild['/'](req, res)
+									})
 									//Manually update the locals, otherwise they'll have the previous value
 									res.locals.gamegroup = doc
 								}
