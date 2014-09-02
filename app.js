@@ -210,14 +210,13 @@ var pages = {
 							var deathIds = deaths.map(function(d) {
 								return d.killerid
 							})
-							console.log('deaths', deaths)
+
 							Bureau.assassin.getKillsFromGame(uid, gameid, true, function(err, kills) {
 							
 								g.kills = kills
 								var killedIds = kills.map(function(k) {
 									return k.victimid
 								})
-								console.log('kills', kills)
 								
 								Bureau.game.getAssassins(gameid, function(err, assassins) {
 								
