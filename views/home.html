@@ -21,10 +21,11 @@
 			<div id="motd">{{gamegroup.motd|default('Welcome to Bureau!')}}</div>
 			{% endif %}
 		</div>
-		
 		<ul id="game-{{game.gameid}}" class="player-table searchable {{game.type}}">
 			{% for a in game.assassins %}
-				{{ rows.gamePlayer(a,game) }}
+				{% if a._id|safe != uid %}
+					{{ rows.gamePlayer(a,game) }}
+				{% endif %}
 			{% endfor %}
 		</ul>
 		

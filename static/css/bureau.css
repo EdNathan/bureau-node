@@ -1891,9 +1891,6 @@ h6::after {
   line-height: 1em;
   font-weight: 300;
 }
-.player-table .player-row section header .nickname-rank span:not(:empty)::after {
-  content: ", ";
-}
 .player-table .player-row section .fields {
   padding-right: 150px;
 }
