@@ -24,13 +24,18 @@ var deathmatchgame = {
 	
 	//Given killer, victim, kill method, time and everything else in the report if needed, determine whether the kill is valid
 	checkKillValid: function(game, killerid, victimid, killmethod, time, report, callback) {
+		console.log('Checking if killer killed victim')
 		//We want to check whether the player has already been killed by this person, or has already killed them
-		this.Bureau.assassin.hasKilledPlayerInGame(killerid, victimid, game.gameid, true, function(err, hasKilled) {
+		var self = this
+		self.Bureau.assassin.hasKilledPlayerInGame(killerid, victimid, game.gameid, true, function(err, hasKilled) {
 			if(err) {
+				console.log('Error getting if killed victim: ', err)
 				callback(err)
 			} else {
-				this.Bureau.assassin.hasKilledPlayerInGame(victimid, killerid, game.gameid, true, function(err, hasBeenKilled) {
+				console.log('Checking if victim killed killer')
+				self.Bureau.assassin.hasKilledPlayerInGame(victimid, killerid, game.gameid, true, function(err, hasBeenKilled) {
 					if(err) {
+						console.log('Error getting if killed killer: ', err)
 						callback(err)
 					} else {
 						callback(null, !hasKilled && !hasBeenKilled)

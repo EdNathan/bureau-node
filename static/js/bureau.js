@@ -717,6 +717,7 @@ var bureau = {
 						function (results, status) {
 							if (status == google.maps.GeocoderStatus.OK) {
 								if (results[0] && bureau.utils.getRouteFromMapsApiResult(results[0])) {
+									console.log(results)
 									var placename = bureau.utils.getRouteFromMapsApiResult(results[0]);
 									$I('place-input').value = placename;
 									updateValidation();

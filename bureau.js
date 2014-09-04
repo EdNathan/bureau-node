@@ -167,6 +167,9 @@ var Bureau = {
 			
 			var now = new Date()
 			
+			//Add an empty array of kills
+			data.kills = []
+			
 			//Add some welcome notifications
 			data.notifications = [{
 					added: now,
@@ -327,6 +330,34 @@ var Bureau = {
 			Bureau.assassin.updateAssassin(uid, {lastonline: now}, function(){})
 		},
 		
+		submitReport: function(uid, report, callback) {
+			var now = new Date()
+			report.submitted = now
+			report.id = utils.md5(now+uid)
+			Bureau.assassin.updateAssassin(uid, {$push: {kills: report}}, function(err, a) {
+				if(err) {
+					callback(err, {})
+					return
+				}
+				Bureau.assassin.getAssassin(report.victimid, function(err, victim) {
+					if(err) {
+						callback(err, {})
+						return
+					}
+					Bureau.game.getGame(report.gameid, function(err, game) {
+						if(err) {
+							callback(err, {})
+							return
+						}
+						var notif = 'Your report on '+utils.fullname(victim)+' in the game '+game.name+' has been submitted'
+						Bureau.assassin.addNotification(uid,notif)
+						callback(null, a)
+					})
+					
+				})
+			})
+		},
+		
 		getNotifications: function(uid, limit, callback) {
 			Bureau.assassin.getAssassin(uid, function(err, a) {
 				if(a.notifications && a.notifications.length > 0) {
@@ -350,6 +381,7 @@ var Bureau = {
 			}
 			Bureau.assassin.updateAssassin(uid, {$push: {notifications: n}}, function(){})
 		},
+		
 		
 		markNotificationRead: function(uid, notificationid, callback) {
 			Bureau.assassin.updateAssassin(uid, {
@@ -538,17 +570,27 @@ var Bureau = {
 		
 		getPlayersKilled: function(uid, includePending, callback) {
 			Bureau.assassin.getKills(uid, includePending, function(err, kills) {
-				var playersKilled = unique(kills.map(function(x) {
-					return x.victimid
-				}))
+				if(err) {
+					callback(err, [])
+				} else {
+					var playersKilled = unique(kills.map(function(x) {
+						return x.victimid
+					}))
+					callback(null, playersKilled)
+				}
 			})
 		},
 		
 		getPlayersKilledFromGame: function(uid, gameid, includePending, callback) {
 			Bureau.assassin.getKillsFromGame(uid, gameid, includePending, function(err, kills) {
-				var playersKilled = unique(kills.map(function(x) {
-					return x.victimid
-				}))
+				if(err) {
+					callback(err, [])
+				} else {
+					var playersKilled = unique(kills.map(function(x) {
+						return x.victimid
+					}))
+					callback(null, playersKilled)
+				}
 			})
 		},
 		
@@ -557,7 +599,7 @@ var Bureau = {
 				if(err) {
 					callback(err, false)
 				} else {
-					return playersKilled.indexOf(victimid) > -1
+					callback(null,playersKilled.indexOf(victimid) > -1)
 				}
 			})
 		},
@@ -837,7 +879,6 @@ var Bureau = {
 			return Bureau.games.hasOwnProperty(gtype)
 		},
 		
-		
 		getGamesInGamegroupAsArray: function(ggid, callback) {
 			Bureau.gamegroup.getGamegroup(ggid, function(err, gamegroup) {
 				var games = {}
@@ -973,6 +1014,16 @@ var Bureau = {
 				}
 				callback(null, gamesWithPlayer)
 			})
+		},
+		
+		isPlayerInGame: function(id, gameid, callback) {
+			Bureau.game.getGamesWithPlayer(id, function(err, gamesWithPlayer) {
+				if(err) {
+					callback(err, {})
+				} else {
+					callback(null, gamesWithPlayer.hasOwnProperty(gameid))
+				}
+			})	
 		},
 		
 		getCurrentGamesWithPlayer: function(id, callback) {

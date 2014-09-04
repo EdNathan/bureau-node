@@ -56,6 +56,25 @@ var utils = {
 	
 	addressFormat: function(input) {
 		return input.replace(/(\s)*,/g, '<br>')
+	},
+	
+	fullname: function(assassin) {
+		return !!assassin.nickname ? assassin.nickname : assassin.forename+' '+assassin.surname
+	},
+	
+	merge: function(o1, o2) {
+		var n = {}
+		for(key in o1) {
+			if(o1.hasOwnProperty(key)) {
+				n[key] = o1[key]
+			}
+		}
+		for(key in o2) {
+			if(o2.hasOwnProperty(key)) {
+				n[key] = o2[key]
+			}
+		}
+		return n
 	}
 }
 

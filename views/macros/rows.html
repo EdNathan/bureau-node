@@ -150,7 +150,7 @@
 
 {% macro gamePlayer(a, g) %}
 	{% if !a.hasBeenKilledBy %}
-	<li class="player-row {{a.hasKilled}}" data-index="{{a.forename|lower}} {{a.surname|lower}} {{a.nickname|lower}}">
+	<li class="player-row {% if a.hasKilled %}has-killed{% endif %}" data-index="{{a.forename|lower}} {{a.surname|lower}} {{a.nickname|lower}}">
 		<section>
 			<header>
 				<div class="name">{{ a.forename }} {{ a.surname }}</div>
@@ -167,8 +167,8 @@
 				</div>
 			</div>
 			<div class="form-wrapper">
-				<form action="/report" method="post">
-					<input type="hidden" name="targetid" value="{{a._id|safe}}">
+				<form action="/report" method="get">
+					<input type="hidden" name="victimid" value="{{a._id|safe}}">
 					<input type="hidden" name="gameid" value="{{g.gameid}}">
 					<input type="submit" name="kill" value="Killed">
 				</form>

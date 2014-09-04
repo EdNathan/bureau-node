@@ -294,6 +294,44 @@ var pages = {
 				
 			},
 			
+			report: function(req, res) {
+				var uid = res.locals.uid,
+					victimid = res.fromPost ? req.body.victimid:req.query.victimid,
+					gameid = res.fromPost ? req.body.gameid:req.query.gameid,
+					ggid = res.locals.gamegroup.ggid
+				
+				Bureau.game.isPlayerInGame(victimid, gameid, function(err, isInGame){
+					if(err || !isInGame) {
+						req.session.pageErrors = ['That player isn\'t in the game!']
+						res.redirect('home')
+						return
+					}
+					Bureau.game.isPlayerInGame(uid, gameid, function(err, isInGame){
+						if(err || !isInGame) {
+							req.session.pageErrors = ['You\'re not in that game!']
+							res.redirect('home')
+							return
+						}
+					
+						Bureau.assassin.getAssassin(victimid, function(err, victim) {
+							if(victim.gamegroup !== res.locals.assassin.gamegroup) {
+								req.session.pageErrors = ['You can\'t kill someone from another gamegroup!']
+								res.redirect('home')
+								return
+							}
+											
+							Bureau.gamegroup.getKillMethods(ggid, function(err, killmethods) {
+								res.render('report', {
+									killmethods: killmethods,
+									victim: victim,
+									gameid: gameid
+								})
+							})
+						})
+					})
+				})
+			},
+			
 			guild: {
 				'/': function(req, res) {
 					if(!res.locals.isGuild) {
@@ -350,7 +388,6 @@ var pages = {
 					var ggid = res.locals.gamegroup.ggid,
 						displayPage = function(games) {
 							res.render('gamestate', {
-								now: new Date(),
 								games: games.sort(function(a,b) {return b.end-a.end})
 							})
 						}
@@ -436,6 +473,120 @@ var pages = {
 							})
 					}
 				}
+			},
+			
+			report: function(req, res) {
+				var uid = res.locals.uid,
+					victimid = req.body.victimid,
+					gameid = req.body.gameid,
+					killmethod = req.body.killmethod,
+					methoddetail = req.body['killmethod-detail']
+					place = req.body.place,
+					coords = req.body.coords,
+					text = req.body['report-text'],
+					time = utils.dateFromPrettyTimestamp(req.body.time),
+					ggid = res.locals.gamegroup.ggid,
+					now = new Date(),
+					errs = [],
+					report = {
+						victimid: victimid,
+						gameid: gameid,
+						time: req.body.time,
+						place: place,
+						killmethod: killmethod,
+						methoddetail:methoddetail,
+						text:text,
+						coords: coords,
+						state: 'waiting'
+					}
+				console.log('Loading report page')
+				console.log(req.body, report)
+					
+				res.locals = utils.merge(res.locals, report)
+					
+				res.fromPost = true
+				//Let's validate some shiii
+				if(!text || text.length < 11) {
+					errs.push('Please specify a longer kill report!')
+				}
+				if(!place || place.length < 6) {
+					errs.push('Please specify a longer place name!')
+				}
+				if(!killmethod) {
+					errs.push('Please specify a kill method!')
+				}
+				if(!victimid) {
+					errs.push('Your kill has no victim')
+				}
+				if (!(!!time && !isNaN(time.getMonth()) && time < now && req.body.time.length === 19 && utils.dateRegex.test(req.body.time))) {
+					errs.push('Invalid time of kill!')
+				}
+				
+				if(errs.length > 0) {
+					res.locals.pageErrors = errs
+					authPages.get.report(req, res)
+					return
+				}
+				console.log('Getting game')
+				Bureau.game.getGame(gameid, function(err, game) {
+					console.log('Got game')
+					if(err) {
+						req.session.pageErrors = [err]
+						res.redirect('home')
+						return
+					}
+					console.log('Checking if victim is in game')
+					Bureau.game.isPlayerInGame(victimid, gameid, function(err, isInGame){
+						if(err || !isInGame) {
+							console.log('Error getting if victim is in game: ', err)
+							req.session.pageErrors = ['That player isn\'t in the game!']
+							res.redirect('home')
+							return
+						}
+						console.log('Got victim in game')
+						console.log('Checking if player is in game')
+						Bureau.game.isPlayerInGame(uid, gameid, function(err, isInGame){
+							if(err || !isInGame) {
+								req.session.pageErrors = ['You\'re not in that game!']
+								res.redirect('home')
+								return
+							}
+							console.log('Got player in game')
+							console.log('Getting victim')
+							Bureau.assassin.getAssassin(victimid, function(err, victim) {
+								if(victim.gamegroup !== res.locals.assassin.gamegroup) {
+									console.log('Assassin is not in same gamegroup')
+									req.session.pageErrors = ['You can\'t kill someone from another gamegroup!']
+									res.redirect('home')
+									return
+								}
+								if(err || !victim._id) {
+									console.log('Victim has invalid id')
+									req.session.pageErrors = ['That isn\'t a valid assassin id!']
+									res.redirect('home')
+									return
+								}
+								console.log('Got victim')
+								console.log('Checking kill valid')
+								Bureau.games[game.type].checkKillValid(game, uid, victimid, killmethod, time, report, function(err, valid) {
+									if(err || !valid) {
+										console.log(err?('Error checking if kill valid: '+err):'Kill invalid')
+										req.session.pageErrors = [!!err?'There was an error submitting the report':'The kill was invalid!']
+										res.redirect('home')
+										return
+									}
+									console.log('Kill id valid')
+									console.log('Submitting report')
+									Bureau.assassin.submitReport(uid, report, function(err, a) {
+										console.log('Report submitted')
+										console.log(err)
+										res.redirect('home')
+									})
+								})		
+							})
+						})
+					})
+				})
 			},
 			
 			personal: function(req, res) {
@@ -1088,14 +1239,16 @@ function addLocals(req, res, next) {
 		Bureau.gamegroup.getGamegroup(req.session.gamegroup, function(err, gamegroup) {
 			//Update when we last saw them
 			Bureau.assassin.updateLastHere(req.session.uid)
-		
+			
+			res.locals.now = new Date()
 			res.locals.isGuild = assassin.guild
 			res.locals.isAdmin = password.adminEmails.indexOf(assassin.email) > -1
 			res.locals.uid = req.session.uid
 			res.locals.gamegroup = gamegroup
 			res.locals.token = req.session.token
 			res.locals.assassin = assassin
-			res.locals.pageErrors = []
+			res.locals.pageErrors = !!req.session.pageErrors ? req.session.pageErrors : []
+			req.session.pageErrors = null
 			next()
 		})
 	})

@@ -1,0 +1,64 @@
+{% extends "./base.html" %}
+{% set hideHeader=true %}
+{% block title %}Report{% endblock %}
+
+{% block main %}
+
+<div class="kill-report-container">
+
+	<div id="kill-report-top-decor"></div>
+	<div class="kill-report-inner">
+		<form method="post" action="">
+			{{form.t(token)}}
+			<input type="hidden" name="gameid" value="{{gameid}}">
+			<input type="hidden" name="victimid" value="{{victimid|default(victim._id|safe)}}">
+			
+			<header>
+				<span>You Killed</span>
+				<figure>
+					{{card.card(victim)}}
+				</figure>
+			</header>
+			<section id="method" class="dropdown">
+				<span><label for="killmethod-dropdown">method</label>
+				<select id="killmethod-dropdown" name="killmethod">
+				{% for method in killmethods %}
+						<option {% if method.id == killmethod %}selected{% endif %}
+							value="{{method.id}}" 
+							data-zone="{{method.zone}}"
+							data-question="{{method.detailquestion}}">{{method.name}}</option>
+				{% endfor %}
+				</select>
+				</span>
+				<div>
+					<input id="killMethodQuestionInput" name="killmethod-detail" type="text" value="{{methoddetail}}">
+				</div>
+			</section>
+			<section id="time">
+				<span><label for="time-input">time</label>
+				<input id="time-input" type="text" name="time" value="{{now|prettyTimestamp}}">
+				</span>
+			</section>
+			
+			<section id="place">
+				<span><label for="place-input">place</label>
+				<div id="coords-btn" class="hidden"></div>
+				<input id="place-input" name="place" type="text" placeholder="e.g. Outside the Library" value="{{place}}">
+				<input id="coords-input" name="coords" type="hidden" value="{{coords}}">
+				</span>
+			</section>
+			
+			<section id="report-text">
+				<span>report</span>
+				<textarea name="report-text" id="killreport-textarea" placeholder="Describe what happened">{{text}}</textarea>
+			</section>
+			
+			<div class="targetdecor"></div>
+			
+			<div id="submit-button" class="fancy-submit">Submit</div>
+			
+		</form>
+	</div>
+</div>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB01yd9fWUD7iZU45t6Z7HJS6os-y2UCrA&sensor=false"></script>
+{% endblock %}

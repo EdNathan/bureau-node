@@ -1,0 +1,7 @@
+{% macro fullname(a) %}
+{% if !!a.nickname %}
+	{{a.nickname}}
+{% else %}
+	{{a.forename}} {{a.surname}}
+{% endif %}
+{% endmacro %}

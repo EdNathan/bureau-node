@@ -2625,6 +2625,7 @@ h6::after {
   height: 40px;
   line-height: 1em;
   margin-right: 30px;
+  width: 245px;
 }
 #page-report section input {
   background: none;
