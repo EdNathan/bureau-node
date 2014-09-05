@@ -477,15 +477,20 @@ var Bureau = {
 					'kills.victimid':uid
 				},
 				map = function() {
-					var id = this._id.valueOf()
+					var id = this._id.valueOf(),
+						ggid = this.gamegroup
 					
 					this.kills.forEach(function(k) {
 						k.killerid = id
+						k.gamegroup = ggid
 						emit(k.id, k)
 					})
 				},
 				reduce = function(key, values) {
 					return values[0]
+				},
+				getVal = function(o) {
+					return o.value
 				}
 			
 			Bureau.db.collection('assassins').mapReduce(
@@ -500,13 +505,13 @@ var Bureau = {
 						callback('There was an error finding the deaths', null)
 						return
 					}
-					collection.find({victimid: uid}, function(err, cursor) {
+					collection.find({'value.victimid': uid}, function(err, cursor) {
 						cursor.toArray(function(err, docs) {
 							if(err) {
-								callback(err, null)
+								callback(err, [])
 								return;
 							}
-							callback(null, docs)
+							callback(null, docs.map(getVal))
 						})
 					})
 				}
@@ -532,15 +537,20 @@ var Bureau = {
 					'kills.gameid':gameid
 				},
 				map = function() {
-					var id = this._id.valueOf()
+					var id = this._id.valueOf(),
+						ggid = this.gamegroup
 					
 					this.kills.forEach(function(k) {
 						k.killerid = id
+						k.gamegroup = ggid
 						emit(k.id, k)
 					})
 				},
 				reduce = function(key, values) {
 					return values[0]
+				},
+				getVal = function(o) {
+					return o.value
 				}
 			
 			Bureau.db.collection('assassins').mapReduce(
@@ -555,13 +565,13 @@ var Bureau = {
 						callback('There was an error finding the deaths', null)
 						return
 					}
-					collection.find({victimid: uid, gameid: gameid}, function(err, cursor) {
+					collection.find({'value.victimid': uid, 'value.gameid': gameid}, function(err, cursor) {
 						cursor.toArray(function(err, docs) {
 							if(err) {
-								callback(err, null)
+								callback(err, [])
 								return;
 							}
-							callback(null, docs)
+							callback(null, docs.map(getVal))
 						})
 					})
 				}
@@ -871,9 +881,80 @@ var Bureau = {
 			}
 		},
 		
-		getPlayersForNextGame: function(ggid) {
+		getReports: function(ggid, filter, callback) {
+			var f = {
+					gamegroup:ggid
+				},
+				map = function() {
+					var id = this._id.valueOf(),
+						ggid = this.gamegroup
+					
+					this.kills.forEach(function(k) {
+						k.killerid = id
+						k.gamegroup = ggid
+						emit(k.id, k)
+					})
+				},
+				reduce = function(key, values) {
+					return values[0]
+				},
+				getVal = function(o) {
+					return o.value
+				},
+				filter = merge({'value.gamegroup':ggid},filter)
 			
+			Bureau.db.collection('assassins').mapReduce(
+				map, 
+				reduce,
+				{
+					out:{merge:'kills'},
+					query: f
+				},
+				function(err, collection) {
+					if(err) {
+						callback('There was an error finding the deaths', null)
+						return
+					}
+					collection.find(filter, function(err, cursor) {
+						cursor.toArray(function(err, docs) {
+							if(err) {
+								callback(err, [])
+								return;
+							}
+							callback(null, docs.map(getVal))
+						})
+					})
+				}
+			)
+		},
+		
+		getPendingReports: function(ggid, callback) {
+			Bureau.gamegroup.getReports(ggid, {'value.state':'waiting'}, callback)
+		},
+		
+		fullReport: function(report, callback) {
+			//We need killer, victim, killmethod and sentence
+			Bureau.assassin.getAssassin(report.killerid, function(err, killer) {
+				report.killer = killer
+				Bureau.assassin.getAssassin(report.victimid, function(err, victim) {
+					report.victim = victim
+					Bureau.gamegroup.getKillMethod(report.gamegroup, report.killmethod, function(err, killmethod) {
+						report.killmethod = killmethod
+						report.sentence = Bureau.gamegroup.getKillSentence(report)
+						callback(null, report)
+					})
+				})
+			})
+		},
+		
+		getKillSentence: function(report) {
+			var killmethod = report.killmethod,
+				verb = killmethod.verb,
+				killer = report.killer,
+				victim = report.victim
+			return verb.replace('#v', utils.fullname(victim)).replace('#k', utils.fullname(killer)).replace('#d', report.methoddetail)
 		}
+		
 	},
 	
 	games: {},

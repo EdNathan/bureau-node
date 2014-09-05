@@ -338,13 +338,41 @@ var pages = {
 						res.redirect('/home')
 						return
 					}
-					Bureau.assassin.getAssassins({'detailsChangeRequest.state':'waiting', gamegroup:res.locals.gamegroup.ggid}, function(err, addressChangeRequests) {
-						Bureau.gamegroup.getAssassins(res.locals.gamegroup.ggid, function(err, members) {
-							res.render('guild', {
-								addressChangeRequests: addressChangeRequests,
-								members: members
+					
+					var ggid = res.locals.gamegroup.ggid,
+						resumeLoading = function(reports) {
+							console.log('resuming load')
+							Bureau.assassin.getAssassins({'detailsChangeRequest.state':'waiting', gamegroup:ggid}, function(err, addressChangeRequests) {
+								Bureau.gamegroup.getAssassins(ggid, function(err, members) {
+									res.render('guild', {
+										addressChangeRequests: addressChangeRequests,
+										members: members,
+										reports: reports,
+									})
+								})
+							})
+						}
+					
+					Bureau.gamegroup.getPendingReports(ggid, function(err, reports) {
+						var numReportsDone = 0,
+							reports = reports,
+							reportDone = function() {
+								if(++numReportsDone === reports.length) {
+									resumeLoading(reports)
+								}
+							}
+						
+						if(!reports || err || reports.length < 1) {
+							resumeLoading([])
+						}
+						
+						reports.forEach(function(report) {
+							Bureau.gamegroup.fullReport(report, function(err, fullReport) {
+								report = fullReport
+								reportDone()
 							})
 						})
+						
 					})
 				},
 				

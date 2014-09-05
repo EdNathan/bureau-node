@@ -27,7 +27,7 @@
 					<input type="submit" name="state" value="✖" class="cross">
 					<input type="hidden" name="action" value="killreportprocess">
 					{{form.t(token)}}
-					<input type="hidden" name="reportid" value="{{report._id}}">
+					<input type="hidden" name="reportid" value="{{report.id}}">
 					<input type="hidden" name="gameid" value="{{report.gameid}}">
 					<input type="hidden" name="killerid" value="{{report.killer}}">
 					<input type="hidden" name="victimid" value="{{report.victim}}">
@@ -40,9 +40,9 @@
 				{% endif %}
 				<div title="place">{{report.place}}></div>
 				<div title="kill method">
-					{{report.killmethod.public}}
+					{{report.killmethod.name}}
 					<div class="zone {{report.killmethod.zone}} ?>"></div>
-					<div class="rules" title="{{report.killmethod.public}} rules">{{report.killmethod.rules}}</div>
+					<div class="rules" title="{{report.killmethod.name}} rules">{{report.killmethod.rules}}</div>
 				</div>
 				{% if report.killmethod.detailquestion %}
 					<div title="{{report.killmethod.detailquestion}}">{{report.methoddetail}}</div>
