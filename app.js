@@ -341,7 +341,6 @@ var pages = {
 					
 					var ggid = res.locals.gamegroup.ggid,
 						resumeLoading = function(reports) {
-							console.log('resuming load')
 							Bureau.assassin.getAssassins({'detailsChangeRequest.state':'waiting', gamegroup:ggid}, function(err, addressChangeRequests) {
 								Bureau.gamegroup.getAssassins(ggid, function(err, members) {
 									res.render('guild', {
@@ -353,7 +352,7 @@ var pages = {
 							})
 						}
 					
-					Bureau.gamegroup.getPendingReports(ggid, function(err, reports) {
+					Bureau.report.getPendingReports(ggid, function(err, reports) {
 						var numReportsDone = 0,
 							reports = reports,
 							reportDone = function() {
@@ -367,7 +366,7 @@ var pages = {
 						}
 						
 						reports.forEach(function(report) {
-							Bureau.gamegroup.fullReport(report, function(err, fullReport) {
+							Bureau.report.fullReport(report, function(err, fullReport) {
 								report = fullReport
 								reportDone()
 							})
@@ -690,6 +689,36 @@ var pages = {
 						return
 					}
 					switch(req.body.action) {
+						case 'killreportprocess':
+							var approved = req.body.state == '✓',
+								state = approved?'approved':'rejected',
+								reportid = req.body.reportid,
+								comment = req.body.guildcomment,
+								killerid = req.body.killerid,
+								gameid = req.body.gameid,
+								loadPage = function() {
+									authPages.get.guild['/'](req, res)
+								}
+							
+							if(approved) {
+								Bureau.report.acceptReport(reportid,function(err, report) {
+									Bureau.game.getGame(gameid, function(err, game) {
+										var gametype = game.type
+										Bureau.games[gametype].handleKill(game, report.killerid, report.victimid, report, loadPage)
+									})
+								})
+							} else {
+								Bureau.report.rejectReport(reportid,comment,function(err, report) {
+									Bureau.assassin.getAssassin(report.victimid, function(err, victim) {
+										var notif = 'Your kill on '+utils.fullname(victim)+' was rejected by '+utils.fullname(res.locals.assassin)+' with reason "'+comment+'"'
+										Bureau.assassin.addNotification(killerid, notif)
+										loadPage()
+									})
+								})
+							}
+							
+							break;
+					
 						case 'setmotd':
 							var motd = req.body.motd
 							Bureau.gamegroup.setMotd(res.locals.gamegroup.ggid, motd, function(err, doc) {

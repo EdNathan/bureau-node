@@ -880,11 +880,12 @@ var Bureau = {
 				callback(new Error('Gamegroup already exists'), {})
 			}
 		},
-		
-		getReports: function(ggid, filter, callback) {
-			var f = {
-					gamegroup:ggid
-				},
+				
+	},
+	
+	report: {
+		getReports: function(query, filter, callback) {
+			var f = query,
 				map = function() {
 					var id = this._id.valueOf(),
 						ggid = this.gamegroup
@@ -900,8 +901,7 @@ var Bureau = {
 				},
 				getVal = function(o) {
 					return o.value
-				},
-				filter = merge({'value.gamegroup':ggid},filter)
+				}
 			
 			Bureau.db.collection('assassins').mapReduce(
 				map, 
@@ -912,7 +912,7 @@ var Bureau = {
 				},
 				function(err, collection) {
 					if(err) {
-						callback('There was an error finding the deaths', null)
+						callback('There was an error finding the reports', null)
 						return
 					}
 					collection.find(filter, function(err, cursor) {
@@ -928,8 +928,73 @@ var Bureau = {
 			)
 		},
 		
+		getReport: function(reportid, callback) {
+			Bureau.report.getReports({'kills.id':reportid},{},function(err, reports) {
+				if(reports.length < 1) {
+					callback('There is no report with that id', {})
+					return
+				}
+				callback(null,reports[0])
+			})
+		},
+		
+		updateReport: function(reportid, stuff, callback) {
+			var toUpdate = {$set: {}},
+				filters = {'kills.id': reportid}
+			
+			//Check if we have any special things	
+			for(key in stuff) {
+				if(key !== 'filter') {
+					if(stuff.hasOwnProperty(key) && key[0] === '$') {
+						//Special $key, we have to move it outside!
+						toUpdate[key] = {}
+						//Loop through subkey of stuff and modify things...
+						for(subkey in stuff[key]) {
+							if(stuff[key].hasOwnProperty(subkey)) {
+								toUpdate[key]['kills.$.'+subkey] = stuff[key][subkey]
+							}
+						}
+					} else if(stuff.hasOwnProperty(key)) {
+						toUpdate.$set['kills.$.'+key] = stuff[key]
+					}
+				} else {
+					//We want to apply some extra filters
+					filters = merge(filters, stuff.filter)
+				}
+			}
+
+			
+			Bureau.db.collection('assassins').update(filters, toUpdate, function(err, count) {
+				if(!!count) {
+					Bureau.db.collection('assassins').findOne(filters, function(err, doc) {
+						var uid = doc._id+''
+						if(Bureau.assassin.cachedAssassins.hasOwnProperty(uid)) {
+							delete Bureau.assassin.cachedAssassins[uid]
+						}
+						Bureau.assassin.getAssassin(uid, function(err, doc) { //Force recaching of the assassin
+							Bureau.report.getReport(reportid, callback)
+						})
+					})
+				} else {
+					callback(err, {})
+				}
+			})
+		},
+		
 		getPendingReports: function(ggid, callback) {
-			Bureau.gamegroup.getReports(ggid, {'value.state':'waiting'}, callback)
+			Bureau.report.getReports({gamegroup:ggid}, {'value.state':'waiting','value.gamegroup':ggid}, callback)
+		},
+		
+		getProcessedReports: function(ggid, callback) {
+			Bureau.report.getReports({gamegroup:ggid}, {$or:[{'value.state':'approved'},{'value.state':'rejected'}],'value.gamegroup':ggid}, callback)
+		},
+		
+		acceptReport: function(reportid, callback) {
+			Bureau.report.updateReport(reportid, {state: 'approved'}, callback)
+		},
+		
+		rejectReport: function(reportid, comment, callback) {
+			Bureau.report.updateReport(reportid, {state: 'rejected', comment: comment}, callback)
 		},
 		
 		fullReport: function(report, callback) {
@@ -940,7 +1005,7 @@ var Bureau = {
 					report.victim = victim
 					Bureau.gamegroup.getKillMethod(report.gamegroup, report.killmethod, function(err, killmethod) {
 						report.killmethod = killmethod
-						report.sentence = Bureau.gamegroup.getKillSentence(report)
+						report.sentence = Bureau.report.getKillSentence(report)
 						callback(null, report)
 					})
 				})
@@ -954,7 +1019,6 @@ var Bureau = {
 				victim = report.victim
 			return verb.replace('#v', utils.fullname(victim)).replace('#k', utils.fullname(killer)).replace('#d', report.methoddetail)
 		}
-		
 	},
 	
 	games: {},

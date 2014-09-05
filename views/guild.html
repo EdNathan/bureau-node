@@ -19,7 +19,7 @@
 	<h2>{{reports.length|default(0)}} Kill Report{% if reports.length != 1 %}s{% endif %} to process</h2>
 	{% for report in reports %}
 	<article class="killreport closed">
-		<form method="POST" action="guild.php">
+		<form method="POST" action="">
 			<header>
 				{{report.sentence}}
 				<div class="processing-buttons">
@@ -29,8 +29,8 @@
 					{{form.t(token)}}
 					<input type="hidden" name="reportid" value="{{report.id}}">
 					<input type="hidden" name="gameid" value="{{report.gameid}}">
-					<input type="hidden" name="killerid" value="{{report.killer}}">
-					<input type="hidden" name="victimid" value="{{report.victim}}">
+					<input type="hidden" name="killerid" value="{{report.killerid}}">
+					<input type="hidden" name="victimid" value="{{report.victimid}}">
 				</div>
 			</header>
 			<section>
