@@ -62,6 +62,13 @@ var utils = {
 		return !!assassin.nickname ? assassin.nickname : assassin.forename+' '+assassin.surname
 	},
 	
+	plural: function(num) {
+		if(typeof num != 'number') {
+			throw new Error('Must pass in a number')
+		}
+		return num===1?'':'s'
+	},
+	
 	merge: function(o1, o2) {
 		var n = {}
 		for(key in o1) {

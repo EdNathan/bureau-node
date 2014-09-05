@@ -1322,6 +1322,7 @@ Bureau.init(function (err, db) {
 	swig.setFilter('prettyTimestamp', utils.prettyTimestamp)
 	utils.addressFormat.safe = true
 	swig.setFilter('address', utils.addressFormat)
+	swig.setFilter('plural', utils.plural)
 	
 	var port = (process.env.VMC_APP_PORT || 3000);
 	var host = (process.env.VCAP_APP_HOST || 'localhost');

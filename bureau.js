@@ -605,7 +605,7 @@ var Bureau = {
 		},
 		
 		totalKills: function(uid, callback) {
-			Bureau.assassin.getKills(uid, false, function(err, kills) {
+			Bureau.assassin.getKills(uid, true, function(err, kills) {
 				if(err) {
 					callback(err, 0)
 				} else {
@@ -615,8 +615,12 @@ var Bureau = {
 		},
 		
 		totalDeaths: function(uid, callback) {
-			Bureau.db.collection('reports').count({victim: uid}, function(err, count) {
-				callback(err, count)	
+			Bureau.assassin.getDeaths(uid, true, function(err, deaths) {
+				if(err) {
+					callback(err, 0)
+				} else {
+					callback(null, deaths.length)
+				}
 			})
 		},
 		

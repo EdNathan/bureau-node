@@ -64,7 +64,7 @@
 			<span id="kills-total" title="kills">{{ stats.kills }}</span>
 			<span id="colon">:</span>
 			<span id="deaths-total" title="deaths">{{ stats.deaths }}</span><br>
-			<span id="ratio" title="ratio">{{ stats.ratio }}</span>		
+			<span id="ratio" title="ratio">{% if stats.ratio===Infinity %}&infin;{% else %}{{ stats.ratio }}{% endif %}</span>		
 		</div>
 	
 	</div>
