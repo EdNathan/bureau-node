@@ -1144,6 +1144,8 @@ var pages = {
 							Bureau.game.archiveGame(gameid, function(err, game) {
 								if(err) {
 									res.locals.pageErrors.push(err)
+									authPages.get.guild.gamestate(req, res)
+									return
 								}
 								
 								var notificationString = res.locals.assassin.forename+' '+res.locals.assassin.surname+' archived the game "'+game.name+'"'

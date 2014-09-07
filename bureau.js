@@ -1310,19 +1310,32 @@ var Bureau = {
 		},
 		
 		archiveGame: function(gameid, callback) {
-			Bureau.game.updateGame(gameid, {archived: true}, function(err, gg) {
+			Bureau.game.getGame(gameid, function(err, game) {
 				if(err) {
-					callback('There was an error archiving the game', {})
-				} else {
-					Bureau.game.getGame(gameid, function(err, game) {
-						if(err) {
-							callback(err, {})
-						} else {
-							callback(null, game)
-						}
-					})
+					callback(err, {})
+					return
 				}
-			})	
+				
+				var now = new Date()
+				if(game.end > now) {
+					callback('Cannot archive a game before it has finished', {})
+					return
+				}
+				
+				Bureau.game.updateGame(gameid, {archived: true}, function(err, gg) {
+					if(err) {
+						callback('There was an error archiving the game', {})
+					} else {
+						Bureau.game.getGame(gameid, function(err, game) {
+							if(err) {
+								callback(err, {})
+							} else {
+								callback(null, game)
+							}
+						})
+					}
+				})
+			})
 		},
 		
 		changeGameTimes: function(gameid, start, end, callback) {
