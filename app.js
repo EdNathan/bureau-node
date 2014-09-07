@@ -463,6 +463,16 @@ var pages = {
 						}
 						
 					})
+				},
+				
+				allreports: function(req, res) {
+					var ggid = res.locals.gamegroup.ggid,
+						start = new Date()
+					Bureau.report.getProcessedReportsByGame(ggid, function(err, games) {
+						res.render('allreports',{
+							reportsByGame: games
+						})
+					})
 				}
 			}
 		},
@@ -595,6 +605,7 @@ var pages = {
 								}
 								console.log('Got victim')
 								console.log('Checking kill valid')
+								report.time = time
 								Bureau.games[game.type].checkKillValid(game, uid, victimid, killmethod, time, report, function(err, valid) {
 									if(err || !valid) {
 										console.log(err?('Error checking if kill valid: '+err):'Kill invalid')

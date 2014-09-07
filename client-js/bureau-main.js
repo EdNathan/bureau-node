@@ -21,14 +21,6 @@ var bureau = {
 				break;
 			case 'page-guild':
 				this.setup.guild();
-				//Do sliiiightly different things for each page
-				var p = document.title.replace('Underground Command Centre - ', '');
-				switch (p) {
-					case 'All Reports':
-						this.setup.guildAllReports();
-						break;
-				}
-				break;
 			case 'page-gamegroup':
 				this.setup.gamegroup();
 				break;
@@ -40,6 +32,9 @@ var bureau = {
 				break;
 			case 'page-gamestate':
 				this.setup.guildGameState();
+				break;
+			case 'page-killreports':
+				this.setup.guildAllReports();
 				break;
 			default:
 				applyColours()
@@ -383,6 +378,48 @@ var bureau = {
 		},
 		
 		guildAllReports: function() {
+			var a = [],
+				membershipRows = document.querySelectorAll('.member-row'),
+				commenttextareas = document.querySelectorAll('.killreport textarea')
+				
+			a.push(makeColourItem($I('kill-reports'), 'color'))
+			a.push(makeColourItem($I('guild-nav'), 'color'))
+			a.push(makeColourItem($I('motd-input'), 'outlineColor'))
+
+			for(var i=0; i<commenttextareas.length; i++) {
+				a.push(makeColourItem(commenttextareas[i], 'color'))
+				a.push(makeColourItem(commenttextareas[i], 'outline-color'))
+			}
+			colourItems(a)
+			
+			//Make the kill report headers respond to clicks
+			$('article.killreport header').on('click', function(e) {
+				$(this).closest('.killreport').toggleClass('closed');
+			});
+			
+			//Autoexpand the comment textarea on kill reports
+			$('.killreport textarea').autogrow();
+			
+			//Make prettier maps
+			google.maps.visualRefresh = true;
+			//Populate the map containers with maps
+			$('.mapcontainer').each(function() {
+				var el = this,
+					coords = this.getAttribute('data-coords').split(','),
+					latlng = new google.maps.LatLng(parseFloat(coords[0]), parseFloat(coords[1]))
+					mapOptions = {
+						zoom: 18,
+						center: latlng,
+						mapTypeId: google.maps.MapTypeId.HYBRID
+					},
+					map = new google.maps.Map(this, mapOptions),
+					marker = new google.maps.Marker({
+					    position: latlng,
+					    map: map,
+					    icon: ((document.title.indexOf('-')!==-1)?'../':'') + 'images/target-small.svg'
+					})
+			})
+			
 			//Add the confirmation dialog to approving and rejecting reports
 			$('.processing-buttons input[type="submit"]').on('click', function(e) {
 				stopEvent(e)
@@ -394,6 +431,8 @@ var bureau = {
 					});	
 				}
 			});
+			
+			this.playerListToggle(true);
 		},
 		
 		guildMembership: function() {

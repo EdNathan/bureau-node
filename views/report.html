@@ -8,7 +8,7 @@
 
 	<div id="kill-report-top-decor"></div>
 	<div class="kill-report-inner">
-		<form method="post" action="">
+		<form method="post" action="" autocomplete="off">
 			{{form.t(token)}}
 			<input type="hidden" name="gameid" value="{{gameid}}">
 			<input type="hidden" name="victimid" value="{{victimid|default(victim._id|safe)}}">

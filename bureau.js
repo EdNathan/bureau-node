@@ -382,7 +382,6 @@ var Bureau = {
 			Bureau.assassin.updateAssassin(uid, {$push: {notifications: n}}, function(){})
 		},
 		
-		
 		markNotificationRead: function(uid, notificationid, callback) {
 			Bureau.assassin.updateAssassin(uid, {
 				'notifications.$.read': true,
@@ -926,6 +925,37 @@ var Bureau = {
 					})
 				}
 			)
+		},
+		
+		getProcessedReportsByGame: function(ggid, callback) {
+			//Get reports
+			Bureau.report.getReports({gamegroup:ggid}, {$or:[{'value.state':'approved'},{'value.state':'rejected'}],'value.gamegroup':ggid}, function(err, reports) {
+				Bureau.game.getGamesInGamegroupAsArray(ggid, function(err, games) {
+					var idMap = {},
+						numReports = reports.length,
+						doneReports = 0,
+						reportLoaded = function() {
+							if(++doneReports === numReports) {
+								callback(null, games)
+							}
+						}
+					
+						
+					games.forEach(function(g,i) {
+						g.reports = []
+						idMap[g.gameid] = i
+					})
+					reports.forEach(function(r) {
+						Bureau.report.fullReport(r, function(err, report) {
+							games[idMap[report.gameid]].reports.push(report)
+							reportLoaded()
+						})
+					})
+					if(numReports < 1) {
+						callback(null, games)
+					}
+				})
+			})
 		},
 		
 		getReport: function(reportid, callback) {

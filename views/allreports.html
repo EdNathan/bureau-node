@@ -1,0 +1,61 @@
+{% extends "./base.html" %}
+
+{% block title %}Kill Reports{% endblock %}
+
+{% block main %}
+
+
+<div id="kill-reports">
+	{% for game in reportsByGame %}
+	<div class="game-reports {% if now > game.end %}historic{% endif %}">
+		<h6>{{game.name}}</h6>
+		{% for report in game.reports %}
+		<article id="report-{{report.id}}" class="killreport closed {{report.state}}">
+			{% if now <= game.end %}
+			<form method="POST" action="allreports.php">
+			{% endif %}
+				<header>
+					{{report.sentence}}
+					{% if now <= game.end %}
+					<div class="processing-buttons">
+						<input type="submit" name="pooshbutton" value="{% if report.state === 'approved' %}Revoke Kill{% else %}Approve Kill{% endif %}" class="{% if report.state === 'approved' %}revoke{% else %}approve{% endif %}">
+						{{form.a('killreportchange')}}
+						{{form.t(token)}}
+						<input type="hidden" name="reportid" value="{{report.id}}">
+						<input type="hidden" name="gameid" value="{{report.gameid}}">
+						<input type="hidden" name="killerid" value="{{report.killerid}}">
+						<input type="hidden" name="victimid" value="{{report.victimid}}">
+						<input type="hidden" name="state" value="{{report.state}}">
+					</div>
+					{% endif %}
+				</header>
+				<section>
+					<div title="time">{{report.time|prettyTimestamp}}</div>
+					{% if !!report.coords %}
+						<div class="mapcontainer" data-coords="{{report.coords}}"></div>
+					{% endif %}
+					<div title="place">{{report.place}}</div>
+					<div title="kill method">
+						{{report.killmethod.name}}
+						<div class="zone {{report.killmethod.zone}}"></div>
+						<div class="rules" title="{{report.killmethod.name}} rules">{{report.killmethod.rules}}</div>
+					</div>
+					{% if report.killmethod.detailquestion %}
+						<div title="{{report.killmethod.detailquestion}}">{{report.methoddetail}}</div>
+					{% endif %}
+					<div title="report text">{{report.text}}</div>
+					<div title="guild comment">
+						<textarea name="guildcomment" placeholder="">{{report.comment|default('No comment written')}}</textarea>
+					</div>
+				</section>
+			{% if now <= game.end %}
+			</form>
+			{% endif %}
+		</article>
+		{% endfor %}
+	</div>
+	{% endfor %}
+</div>
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB01yd9fWUD7iZU45t6Z7HJS6os-y2UCrA&sensor=false"></script>
+{% endblock %}
