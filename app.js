@@ -1171,6 +1171,24 @@ var pages = {
 							authPages.get.guild.gamestate(res, res)
 							break;
 					}
+				},
+				
+				allreports: function(req, res) {
+					if(!res.locals.isGuild) {
+						res.redirect('/home')
+						return
+					}
+					switch(req.body.action) {
+						case 'killreportchange':
+							//Do something to change the kill report
+							authPages.get.guild.allreports(res, res)
+							break;
+							
+						default:
+							authPages.get.guild.allreports(res, res)
+							break;
+						
+					}
 				}
 			},
 			
