@@ -1180,8 +1180,52 @@ var pages = {
 					}
 					switch(req.body.action) {
 						case 'killreportchange':
-							//Do something to change the kill report
-							authPages.get.guild.allreports(res, res)
+							var gameid = req.body.gameid,
+								reportid = req.body.reportid,
+								state = req.body.state,
+								approved = (state === 'approved'),
+								comment = req.body.guildcomment,
+								loadPage = function(err, report) {
+									if(err) {
+										res.locals.pageErrors.push(err)
+									}
+									authPages.get.guild.allreports(res, res)
+								}
+							
+							Bureau.game.getGame(gameid, function(err, game) {
+								if(err) {
+									res.locals.pageErrors.push(err)
+									authPages.get.guild.allreports(res, res)
+									return
+								}
+								Bureau.report.getReport(reportid, function(err, report) {
+									if(err) {
+										res.locals.pageErrors.push(err)
+										authPages.get.guild.allreports(res, res)
+										return
+									}
+									var ria = (report.state === 'approved')
+									
+									if(ria !== approved) {
+										//An already approved report can't be reapproved by cheaty form editing
+										res.locals.pageErrors.push('That report has already been '+(!ria?'rejected':'approved'))
+										authPages.get.guild.allreports(res, res)
+										return
+									}
+									
+									if(approved) {
+										//Retroactively reject the kill
+										Bureau.games[game.type].undoKill(game, report.killerid, report.victimid, report, function(err, game) {
+											Bureau.report.rejectReport(reportid, comment, loadPage)
+										}) 
+									} else {
+										//Retroactively approve the kill
+										Bureau.games[game.type].handleKill(game, report.killerid, report.victimid, report, function(err, game) {
+											Bureau.report.acceptReport(reportid, loadPage)
+										})
+									}
+								})
+							})
 							break;
 							
 						default:
