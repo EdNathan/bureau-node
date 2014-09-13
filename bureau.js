@@ -282,6 +282,11 @@ var Bureau = {
 				}
 			}
 			
+			//Prune empty $set
+			if(empty(toUpdate.$set)){
+				delete toUpdate.$set
+			}
+			
 			Bureau.db.collection('assassins').update(filters, toUpdate, function(err, doc) {
 				if(!!doc) {
 					Bureau.assassin.getAssassin(uid, function(err, doc) {
@@ -312,6 +317,11 @@ var Bureau = {
 					//We want to apply some extra filters
 					filter = merge(filter, stuff.filter)
 				}
+			}
+			
+			//Prune empty $set
+			if(empty(toUpdate.$set)){
+				delete toUpdate.$set
 			}
 			
 			Bureau.db.collection('assassins').update(filter, toUpdate, {multi: true}, function(err, docs) {
@@ -723,7 +733,11 @@ var Bureau = {
 					filters = merge(filters, stuff.filter)
 				}
 			}
-
+			
+			//Prune empty $set
+			if(empty(toUpdate.$set)){
+				delete toUpdate.$set
+			}
 			
 			Bureau.db.collection('gamegroups').update(filters, toUpdate, function(err, doc) {
 				if(!!doc) {
@@ -991,6 +1005,11 @@ var Bureau = {
 					//We want to apply some extra filters
 					filters = merge(filters, stuff.filter)
 				}
+			}
+			
+			//Prune empty $set
+			if(empty(toUpdate.$set)){
+				delete toUpdate.$set
 			}
 
 			
