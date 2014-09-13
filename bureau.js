@@ -1291,8 +1291,12 @@ var Bureau = {
 					filters = merge(filters, stuff.filter)
 				}
 			}
-
 			
+			//Prune empty $set
+			if(empty(toUpdate.$set)){
+				delete toUpdate.$set
+			}
+
 			Bureau.db.collection('gamegroups').update(filters, toUpdate, function(err, count) {
 				if(!!count) {
 					Bureau.db.collection('gamegroups').findOne(filters, function(err, doc) {
