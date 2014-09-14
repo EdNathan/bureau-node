@@ -899,6 +899,7 @@ var pages = {
 								detail = req.body.methoddetailquestion,
 								verb = req.body.methodverb,
 								rules = req.body.methodrules,
+								retired = !req.body.enabled,
 								errs = []
 							
 							Bureau.gamegroup.getKillMethod(res.locals.gamegroup.ggid, id, function(err, method) {
@@ -934,6 +935,7 @@ var pages = {
 									
 									var m = {
 										verb: verb,
+										retired: retired,
 										rules: rules
 									}
 									

@@ -71,6 +71,9 @@
 			<textarea type="text" id="rules-{{k.id}}" name="methodrules">{{k.rules}}</textarea>
 			<label for="rules-{{k.id}}">rules</label>
 			
+			<input type="checkbox" name="enabled" id="enabled-{{k.id}}" {% if !k.retired %}checked{% endif %}>
+			<label for="enabled-{{k.id}}">enabled</label>
+			
 			<input type="submit" value="save changes">
 		</form>
 	</li>

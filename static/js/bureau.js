@@ -225,8 +225,7 @@ var bureau = {
 					}
 				});
 				this.parentNode.insertBefore(f, this);
-			});	
-			console.log(arguments.callee.caller)
+			});
 		},
 		
 		playerListToggle: function(useHeader, callback) {

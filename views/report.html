@@ -23,10 +23,12 @@
 				<span><label for="killmethod-dropdown">method</label>
 				<select id="killmethod-dropdown" name="killmethod">
 				{% for method in killmethods %}
+					{% if !method.retired %}
 						<option {% if method.id == killmethod %}selected{% endif %}
 							value="{{method.id}}" 
 							data-zone="{{method.zone}}"
 							data-question="{{method.detailquestion}}">{{method.name}}</option>
+					{% endif %}
 				{% endfor %}
 				</select>
 				</span>
