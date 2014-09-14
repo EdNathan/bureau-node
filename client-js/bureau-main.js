@@ -21,6 +21,7 @@ var bureau = {
 				break;
 			case 'page-guild':
 				this.setup.guild();
+				break;
 			case 'page-gamegroup':
 				this.setup.gamegroup();
 				break;
@@ -35,6 +36,9 @@ var bureau = {
 				break;
 			case 'page-killreports':
 				this.setup.guildAllReports();
+				break;
+			case 'page-updatedetails':
+				this.setup.updateDetails();
 				break;
 			default:
 				applyColours()
@@ -107,6 +111,7 @@ var bureau = {
 	},
 	
 	displayNotifications: function() {
+		try{
 		var list = $I('notifications'),
 			tpl = $I('notification-template').innerHTML,
 			n = bureau.notifications.map(function(x) {
@@ -116,6 +121,9 @@ var bureau = {
 			out = swig.render(tpl, { locals: {
 				notifications: n
 			}})
+		} catch(e) {
+			return
+		}
 
 		list.innerHTML = out
 		
@@ -218,6 +226,7 @@ var bureau = {
 				});
 				this.parentNode.insertBefore(f, this);
 			});	
+			console.log(arguments.callee.caller)
 		},
 		
 		playerListToggle: function(useHeader, callback) {
@@ -1001,6 +1010,27 @@ var bureau = {
 			$I('picture-form').onchange = function() {
 				$I('picture-form').submit();
 			}
+		},
+		
+		updateDetails: function() {
+			var a = [];
+	
+			a.push(
+				makeColourItem($I('personal-header'), 'borderColor'),
+				makeColourItem($I('personal-page'), 'borderColor'),
+				makeColourItem(document.querySelectorAll('p')[0], 'color')
+			)
+		
+			
+			var d = document.querySelectorAll('#details input'),
+				k = d.length,
+				j = 0
+			
+			for(j; j<k; j++) {
+				a.push(makeColourItem(d[j], 'outlineColor'))
+			}
+			
+			colourItems(a)
 		},
 		
 		gamegroup: function() {

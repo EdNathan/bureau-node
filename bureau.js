@@ -170,6 +170,10 @@ var Bureau = {
 			//Add an empty array of kills
 			data.kills = []
 			
+			//Mark details up to date
+			data.detailsUpdated = true
+			data.detailsLastUpdated = new Date()
+			
 			//Add some welcome notifications
 			data.notifications = [{
 					added: now,
@@ -444,6 +448,13 @@ var Bureau = {
 		
 		setPicture: function(uid, picture, callback) {
 			Bureau.assassin.updateAssassin(uid, {imgname: picture}, function(err, doc) {
+				callback(err, doc)
+			})
+		},
+		
+		markDetailsUpdated: function(uid, callback) {
+			var now = new Date()
+			Bureau.assassin.updateAssassin(uid, {detailsUpdated: true, detailsLastUpdated: now}, function(err, doc) {
 				callback(err, doc)
 			})
 		},
@@ -855,6 +866,15 @@ var Bureau = {
 			Bureau.assassin.updateAssassins({gamegroup: ggid, guild: true}, {$push: {notifications: n}}, function(err, assassins){
 				if(callback) {
 					log('Notification: "'+notification+'" sent to guild for '+ggid)
+					callback(err, assassins)
+				}
+			})
+		},
+		
+		forceDetailsUpdate: function(ggid, callback) {
+			Bureau.assassin.updateAssassins({gamegroup: ggid}, {detailsUpdated: false}, function(err, assassins){
+				if(callback) {
+					log('Details update forced for '+ggid)
 					callback(err, assassins)
 				}
 			})

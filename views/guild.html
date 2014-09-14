@@ -113,10 +113,20 @@
 			<input type="text" id="notifytext" name="notifytext" placeholder="Message will be displayed exactly as typed">
 			<label for="notifytext">Notification message</label>
 		</section>
-		<input type="submit" id="submit-button" name="newkillmethod" value="Send Notification to all Members of {{gamegroup.name}}">
+		<input type="submit" id="submit-button" name="notifyallbutton" value="Send Notification to all Members of {{gamegroup.name}}">
 	</form>
 </div>
 
+
+<!-- Upset Members -->
+<h6>Force Details Update</h6>
+<div id="detailsupdate-gamegroup" class="">
+	<form action="" method="post" class="line">
+		{{form.t(token)}}
+		{{form.a('forcedetailsupdate')}}
+		<input type="submit" id="submit-button" name="forceupdatebutton" value="Force all Members of {{gamegroup.name}} to update their details">
+	</form>
+</div>
 
 <!-- Members -->
 <h6>Members</h6>

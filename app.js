@@ -237,8 +237,10 @@ var pages = {
 				})
 				
 			},
+			
 			personal: function(req, res) {
-				var uid = req.session.uid
+				var uid = req.session.uid,
+					assassin = res.locals.assassin
 				Bureau.assassin.stats(uid, function(err, stats) {
 					Bureau.assassin.getLethality(uid, function(err, lethality) {
 						Bureau.assassin.hasDetailsChangeRequest(uid, function(err, hasRequest) {
@@ -255,8 +257,12 @@ var pages = {
 						})
 					})
 				})
-				
 			},
+			
+			updatedetails: function(req, res) {
+				res.render('updatedetails')
+			},
+			
 			admin: {
 				'/': function(req, res) {
 					if(!res.locals.isAdmin) {
@@ -693,6 +699,12 @@ var pages = {
 				
 			},
 			
+			updatedetails: function(req, res) {
+				Bureau.assassin.markDetailsUpdated(req.session.uid, function(err, assassin) {
+					res.redirect('/home')
+				})
+			},
+			
 			guild: {
 				'/': function(req, res) {
 					if(!res.locals.isGuild) {
@@ -700,6 +712,20 @@ var pages = {
 						return
 					}
 					switch(req.body.action) {
+						case 'forcedetailsupdate':
+							var ggid = res.locals.gamegroup.ggid
+							Bureau.gamegroup.forceDetailsUpdate(ggid, function(err, misery) {
+								if(err) {
+									res.locals.pageErrors.push(err)
+									authPages.get.guild['/'](req, res)
+								} else {
+									Bureau.gamegroup.notifyGuild(res.locals.gamegroup.ggid, utils.fullname(res.locals.assassin)+' forced a details update on the whole gamegroup and everyone is sad :(', '', false, function(err, assassins) {
+										authPages.get.guild['/'](req, res)
+									})
+								}
+							})
+							break;
+					
 						case 'killreportprocess':
 							var approved = req.body.state == '✓',
 								state = approved?'approved':'rejected',
@@ -761,6 +787,9 @@ var pages = {
 										delete d.state
 										delete d.submitted
 										d.detailsChangeRequest = {}
+										d.detailsUpdated = true
+										d.detailsLastUpdated = new Date()
+										
 										Bureau.assassin.updateAssassin(uid, d, function(err, assassin) {
 											Bureau.assassin.addNotification(uid, 'Your details change request was approved.')
 											authPages.get.guild['/'](req, res)
@@ -1366,6 +1395,19 @@ function checkAuth(req, res, next) {
 //	next()
 }
 
+//For checking if details updated
+function checkDetailsUpdated(req, res, next) {
+	if(!res.locals.assassin.detailsUpdated) {
+		if(req.route.path === '/updatedetails') {
+			next()
+		} else {
+			res.redirect('/updatedetails')
+		}
+	} else {
+		next()
+	}
+}
+
 function addLocals(req, res, next) {
 	Bureau.assassin.getAssassin(req.session.uid, function(err, assassin) {
 		Bureau.gamegroup.getGamegroup(req.session.gamegroup, function(err, gamegroup) {
@@ -1419,9 +1461,9 @@ app.map = function (a, route, method, auth) { //Returns an array of mapped urls
 				key = glue = ''
 			}
 			if(auth && method == 'post') {
-				app[method](route+glue+key, checkAuth, addLocals, checkToken, a[!key?'/':key])
+				app[method](route+glue+key, checkAuth, addLocals, checkToken, checkDetailsUpdated, a[!key?'/':key])
 			} else if(auth) {
-				app[method](route+glue+key, checkAuth, addLocals, a[!key?'/':key])
+				app[method](route+glue+key, checkAuth, addLocals, checkDetailsUpdated, a[!key?'/':key])
 			} else {
 				app[method](route+glue+key, a[!key?'/':key])
 			}

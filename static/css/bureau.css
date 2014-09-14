@@ -3467,7 +3467,8 @@ h6::after {
   cursor: text;
   pointer-events: all;
 }
-#page-me {
+#page-me,
+#page-updatedetails {
   height: 100%;
   padding-bottom: 0;
   padding-top: 0px !important;
@@ -3507,13 +3508,16 @@ h6::after {
   /* @end */
   /* @end */
 }
-#page-me h1 {
+#page-me h1,
+#page-updatedetails h1 {
   display: none;
 }
-#page-me #grabber {
+#page-me #grabber,
+#page-updatedetails #grabber {
   top: 10px;
 }
-#page-me #personal-page {
+#page-me #personal-page,
+#page-updatedetails #personal-page {
   background: #fff;
   text-align: center;
   min-height: 100%;
@@ -3529,34 +3533,43 @@ h6::after {
   -webkit-transition: border-color 0.5s ease 0.5s;
   transition: border-color 0.5s ease 0.5s;
 }
-#page-me .nodecor {
+#page-me .nodecor,
+#page-updatedetails .nodecor {
   border: none !important;
 }
-#page-me .light-container input:disabled {
+#page-me .light-container input:disabled,
+#page-updatedetails .light-container input:disabled {
   opacity: 1;
   color: #545454;
 }
-#page-me .edit.light-container {
+#page-me .edit.light-container,
+#page-updatedetails .edit.light-container {
   background: #f0f0f0 !important;
 }
-#page-me .edit.light-container .edit-button {
+#page-me .edit.light-container .edit-button,
+#page-updatedetails .edit.light-container .edit-button {
   color: #f06060;
 }
-#page-me .edit#details div {
+#page-me .edit#details div,
+#page-updatedetails .edit#details div {
   background: white !important;
   overflow: visible;
 }
-#page-me .edit#details input:focus {
+#page-me .edit#details input:focus,
+#page-updatedetails .edit#details input:focus {
   outline-width: 1px;
   outline-style: solid;
 }
-#page-me .edit#details input[type="checkbox"]:focus {
+#page-me .edit#details input[type="checkbox"]:focus,
+#page-updatedetails .edit#details input[type="checkbox"]:focus {
   outline-offset: 2px;
 }
-#page-me .edit#details label {
+#page-me .edit#details label,
+#page-updatedetails .edit#details label {
   color: inherit !important;
 }
-#page-me .edit-button {
+#page-me .edit-button,
+#page-updatedetails .edit-button {
   padding: 0 10px;
   margin: 0;
   border: none;
@@ -3576,13 +3589,16 @@ h6::after {
   right: 0;
   pointer-events: fill;
 }
-#page-me .edit-button:hover {
+#page-me .edit-button:hover,
+#page-updatedetails .edit-button:hover {
   color: #9f9f9f;
 }
-#page-me .edit-button:active {
+#page-me .edit-button:active,
+#page-updatedetails .edit-button:active {
   color: #5c5c5c;
 }
-#page-me #personal-header {
+#page-me #personal-header,
+#page-updatedetails #personal-header {
   display: inline-block;
   margin: auto auto 20px;
   width: 100%;
@@ -3598,7 +3614,8 @@ h6::after {
   -webkit-transition: border-color 0.5s ease 0.5s;
   transition: border-color 0.5s ease 0.5s;
 }
-#page-me #display-picture {
+#page-me #display-picture,
+#page-updatedetails #display-picture {
   width: 128px;
   height: 128px;
   margin: auto;
@@ -3618,7 +3635,8 @@ h6::after {
   position: relative;
   z-index: 11;
 }
-#page-me #display-picture > form {
+#page-me #display-picture > form,
+#page-updatedetails #display-picture > form {
   -webkit-transition: opacity 0.3s linear;
   transition: opacity 0.3s linear;
   width: 100%;
@@ -3626,11 +3644,13 @@ h6::after {
   line-height: 128px;
   text-align: center;
 }
-#page-me #display-picture > form > input[type="file"] {
+#page-me #display-picture > form > input[type="file"],
+#page-updatedetails #display-picture > form > input[type="file"] {
   position: relative;
   left: -9999px;
 }
-#page-me #file-input-label {
+#page-me #file-input-label,
+#page-updatedetails #file-input-label {
   position: absolute;
   width: 129px;
   height: 129px;
@@ -3646,17 +3666,21 @@ h6::after {
   overflow: hidden;
   -webkit-transition: top 0.5s ease;
 }
-#page-me #display-picture > form:hover > #file-input-label {
+#page-me #display-picture > form:hover > #file-input-label,
+#page-updatedetails #display-picture > form:hover > #file-input-label {
   top: 0;
 }
-#page-me #name {
+#page-me #name,
+#page-updatedetails #name {
   font-size: 32px;
   color: #666;
 }
-#page-me #nickname {
+#page-me #nickname,
+#page-updatedetails #nickname {
   font-size: 12px;
 }
-#page-me #personal-content {
+#page-me #personal-content,
+#page-updatedetails #personal-content {
   -webkit-column-width: 440px;
   -moz-column-width: 440px;
   column-width: 440px;
@@ -3668,17 +3692,20 @@ h6::after {
   overflow: visible;
   padding-bottom: 10px;
 }
-#page-me #details h4 {
+#page-me #details h4,
+#page-updatedetails #details h4 {
   margin-bottom: 20px;
 }
-#page-me #details div {
+#page-me #details div,
+#page-updatedetails #details div {
   height: 40px;
   overflow: hidden;
   width: 100%;
   position: relative;
   margin-bottom: 4px;
 }
-#page-me #details label {
+#page-me #details label,
+#page-updatedetails #details label {
   color: transparent !important;
   position: absolute;
   bottom: 1px;
@@ -3694,7 +3721,8 @@ h6::after {
   -webkit-transition: color 0.5s ease;
   transition: color 0.5s ease;
 }
-#page-me #details input[type="text"] {
+#page-me #details input[type="text"],
+#page-updatedetails #details input[type="text"] {
   border: none;
   height: 40px;
   padding: 0 0 0 8px;
@@ -3708,23 +3736,28 @@ h6::after {
   outline-width: 0px;
   outline-style: solid;
 }
-#page-me #details input[type="checkbox"] {
+#page-me #details input[type="checkbox"],
+#page-updatedetails #details input[type="checkbox"] {
   margin-top: 6px;
 }
-#page-me #details input[type="checkbox"]:disabled {
+#page-me #details input[type="checkbox"]:disabled,
+#page-updatedetails #details input[type="checkbox"]:disabled {
   opacity: 0;
 }
-#page-me #details label[for="liverin-input"] {
+#page-me #details label[for="liverin-input"],
+#page-updatedetails #details label[for="liverin-input"] {
   font-size: 20px;
   text-transform: capitalize;
   padding-left: 8px;
   height: 100%;
   line-height: 40px;
 }
-#page-me #details.edit label[for="liverin-input"] {
+#page-me #details.edit label[for="liverin-input"],
+#page-updatedetails #details.edit label[for="liverin-input"] {
   color: black !important;
 }
-#page-me #living-in-row::after {
+#page-me #living-in-row::after,
+#page-updatedetails #living-in-row::after {
   display: block;
   content: attr(data-lio);
   color: #555555;
@@ -3737,25 +3770,30 @@ h6::after {
   -webkit-transition: color 0.2s linear;
   transition: color 0.2s linear;
 }
-#page-me .edit #living-in-row::after {
+#page-me .edit #living-in-row::after,
+#page-updatedetails .edit #living-in-row::after {
   color: transparent;
 }
-#page-me #kd-ratio {
+#page-me #kd-ratio,
+#page-updatedetails #kd-ratio {
   padding-right: 20px;
 }
-#page-me #kd-ratio span {
+#page-me #kd-ratio span,
+#page-updatedetails #kd-ratio span {
   font-size: 80px;
   position: relative;
   display: inline-block;
   height: 1em;
   line-height: 1em;
 }
-#page-me #kd-ratio #colon {
+#page-me #kd-ratio #colon,
+#page-updatedetails #kd-ratio #colon {
   font-weight: 100;
   position: relative;
   bottom: 0.1em;
 }
-#page-me #kd-ratio span::after {
+#page-me #kd-ratio span::after,
+#page-updatedetails #kd-ratio span::after {
   content: attr(title);
   font-size: 18px;
   position: absolute;
@@ -3767,36 +3805,142 @@ h6::after {
   font-weight: 300;
   color: #999999;
 }
-#page-me #kd-ratio span:empty::after {
+#page-me #kd-ratio span:empty::after,
+#page-updatedetails #kd-ratio span:empty::after {
   display: none;
 }
-#page-me #kd-ratio > #ratio {
+#page-me #kd-ratio > #ratio,
+#page-updatedetails #kd-ratio > #ratio {
   font-size: 40px;
   float: right;
   height: 41px;
   line-height: 50px;
   margin-bottom: 25px;
 }
-#page-me #kd-ratio > #rank {
+#page-me #kd-ratio > #rank,
+#page-updatedetails #kd-ratio > #rank {
   float: left;
 }
-#page-me #kd-ratio > #ratio:empty {
+#page-me #kd-ratio > #ratio:empty,
+#page-updatedetails #kd-ratio > #ratio:empty {
   margin-bottom: 5px;
 }
 @media screen and (max-width: 500px) {
-  #page-me #personal-content {
+  #page-me #personal-content,
+  #page-updatedetails #personal-content {
     width: 100%;
   }
-  #page-me #toolbar {
+  #page-me #toolbar,
+  #page-updatedetails #toolbar {
     border-left-width: 5px;
     border-right-width: 0;
   }
-  #page-me #kd-ratio span {
+  #page-me #kd-ratio span,
+  #page-updatedetails #kd-ratio span {
     font-size: 60px;
   }
-  #page-me #kd-ratio > #ratio {
+  #page-me #kd-ratio > #ratio,
+  #page-updatedetails #kd-ratio > #ratio {
     margin-top: 13px;
   }
+}
+#page-updatedetails {
+  max-width: 900px;
+  margin: auto;
+}
+#page-updatedetails h1 {
+  display: block;
+  position: static;
+  margin-bottom: 10px;
+}
+#page-updatedetails p {
+  font-size: 20px;
+  color: #333;
+  text-align: center;
+  margin: 40px 0;
+  text-shadow: 0px 1px 1px #ffffff;
+}
+#page-updatedetails span.or {
+  margin: 40px 0;
+  font-size: 60px;
+  font-weight: 200;
+  color: #666;
+  line-height: 60px;
+  display: -webkit-box;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;
+  /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox;
+  /* TWEENER - IE 10 */
+  display: -webkit-flex;
+  /* NEW - Chrome */
+  display: flex;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+}
+#page-updatedetails span.or::before {
+  content: "";
+  display: block;
+  height: 1px;
+  background: #666;
+  -webkit-box-flex: 1;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-flex: 1;
+  /* OLD - Firefox 19- */
+  width: 20px;
+  /* For old syntax, otherwise collapses. */
+  -webkit-flex: 1 0 20px;
+  /* Chrome */
+  -ms-flex: 1 0 20px;
+  /* IE 10 */
+  flex: 1 0 20px;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  margin-top: 30px;
+  margin-right: 20px;
+}
+#page-updatedetails span.or::after {
+  content: "";
+  display: block;
+  height: 1px;
+  background: #666;
+  -webkit-box-flex: 1;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  -moz-box-flex: 1;
+  /* OLD - Firefox 19- */
+  width: 20px;
+  /* For old syntax, otherwise collapses. */
+  -webkit-flex: 1 0 20px;
+  /* Chrome */
+  -ms-flex: 1 0 20px;
+  /* IE 10 */
+  flex: 1 0 20px;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  margin-top: 30px;
+  margin-left: 20px;
+}
+#page-updatedetails #details {
+  max-width: 600px;
+  margin: auto;
+}
+#page-updatedetails input[type="submit"] {
+  height: 40px;
+  width: 100%;
+  max-width: 600px;
+  display: block;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 10px auto;
+  outline: none;
+  line-height: 40px;
+  color: #666;
+  font-weight: 400;
+  font-size: 15px;
+  outline: 1px solid #888;
+  outline-offset: -3px;
+  cursor: pointer;
+}
+#page-updatedetails input[type="submit"]:hover {
+  color: grey;
 }
 #page-admin .gamegrouplink a,
 #page-gamegroup .gamegrouplink a {
