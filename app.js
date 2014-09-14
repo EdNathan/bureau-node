@@ -155,7 +155,7 @@ var pages = {
 							
 						} else {
 							var uid = assassin._id+''
-							if(rememberme) {
+							if(true) {
 								res.cookie('BAC', uid+'sheepworks'+utils.md5(uid+'~'+assassin.joindate), {
 									//Set the cookie for 2 weeks
 									expires: new Date(Date.now() + 3600000*24*14),
@@ -166,6 +166,7 @@ var pages = {
 							req.session.gamegroup = assassin.gamegroup
 							req.session.assassin = assassin
 							req.session.token = utils.md5(assassin.joindate + password.tokenSecret)
+							console.log(req.session)
 							res.redirect('/home')
 						}
 					})
