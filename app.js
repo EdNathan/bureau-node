@@ -166,7 +166,6 @@ var pages = {
 							req.session.gamegroup = assassin.gamegroup
 							req.session.assassin = assassin
 							req.session.token = utils.md5(assassin.joindate + password.tokenSecret)
-							console.log(req.session)
 							res.redirect('/home')
 						}
 					})
