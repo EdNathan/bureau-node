@@ -6,7 +6,7 @@ var deathmatchgame = {
 	label: 'Deathmatch',
 	//This should output html/text for displaying when setting up a game. Use form fields for extra parameters when setting up
 	getGameSetupFragment: function(callback) {
-		callback(null, 'Standard pair locking deathmatch')
+		callback(null, 'Standard pair locking deathmatch<br>At the start of the game everyone in the game has everyone else in the game as a target. so if we take players A, B and C.<br><br>Player A kills player B. the pairing of player A and player B is now locked. this means that Player B cant kill A and A cant kill be again. However both players can kill player C')
 	},
 	//Passed all the form data from game setup, should modify the data and return a 'game' object for insertion into the database
 	constructGame: function(data, callback) {
