@@ -3739,6 +3739,11 @@ h6::after {
 #page-me #details input[type="checkbox"],
 #page-updatedetails #details input[type="checkbox"] {
   margin-top: 6px;
+  display: none;
+}
+#page-me #details.edit input[type="checkbox"],
+#page-updatedetails #details.edit input[type="checkbox"] {
+  display: block;
 }
 #page-me #details input[type="checkbox"]:disabled,
 #page-updatedetails #details input[type="checkbox"]:disabled {
