@@ -598,6 +598,26 @@ var Bureau = {
 			)
 		},
 		
+		hasKilledInGame: function(uid, gameid, includePending, callback) {
+			Bureau.assassin.getKillsFromGame(uid, gameid, includePending, function(err, kills) {
+				if(err) {
+					callback(err, false)
+					return
+				}
+				callback(null, kills.length > 0)
+			})
+		},
+		
+		hasDiedInGame: function(uid, gameid, includePending, callback) {
+			Bureau.assassin.getDeathsFromGame(uid, gameid, includePending, function(err, deaths) {
+				if(err) {
+					callback(err, false)
+					return
+				}
+				callback(null, deaths.length > 0)
+			})
+		},
+		
 		getPlayersKilled: function(uid, includePending, callback) {
 			Bureau.assassin.getKills(uid, includePending, function(err, kills) {
 				if(err) {
