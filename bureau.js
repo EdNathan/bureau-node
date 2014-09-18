@@ -375,7 +375,15 @@ var Bureau = {
 		},
 		
 		createTempPassword: function(uid, callback) {
+			var pwd = utils.hash(utils.md5((new Date())+''))
 			
+			Bureau.assassin.updateAssassin(uid, {password: utils.hash(pwd), temppassword: true}, function(err, assassin) {
+				if(err) {
+					callback(err, false)
+					return
+				}
+				callback(null, pwd)
+			})
 		},
 		
 		submitReport: function(uid, report, callback) {
