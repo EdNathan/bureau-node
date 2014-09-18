@@ -3703,15 +3703,6 @@ h6::after {
   text-align: center;
   width: 100%;
   font-size: 20px;
-  opacity: 0.2;
-  -webkit-transition: opacity 0.3s ease 0s;
-  -moz-transition: opacity 0.3s ease 0s;
-  -o-transition: opacity 0.3s ease 0s;
-  transition: opacity 0.3s ease 0s;
-}
-#page-me .light-container input[type="submit"]:hover,
-#page-updatedetails .light-container input[type="submit"]:hover {
-  opacity: 1;
 }
 #page-me .light-container.edit,
 #page-updatedetails .light-container.edit,

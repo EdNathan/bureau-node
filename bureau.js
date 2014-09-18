@@ -359,7 +359,7 @@ var Bureau = {
 				callback('Password must be 6 chars or longer', false)
 				return
 			}
-			Bureau.assassin.updateAssassin(uid, {password: utils.md5(password)}, function(err, assassin) {
+			Bureau.assassin.updateAssassin(uid, {password: utils.md5(password), $unset:{temppassword:''}}, function(err, assassin) {
 				if(err) {
 					callback(err, false)
 					return
