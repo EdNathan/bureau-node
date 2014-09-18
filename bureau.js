@@ -167,6 +167,9 @@ var Bureau = {
 			
 			var now = new Date()
 			
+			//Hash the password
+			data.password = utils.hash(data.password)
+			
 			//Add an empty array of kills
 			data.kills = []
 			
@@ -206,13 +209,16 @@ var Bureau = {
 				$or: [
 					{email:email},
 					{nickname: email}
-				],
-				password: utils.md5(password)
-			}).toArray(function(err, docs) {
-				if(docs.length > 0) {
-					log(docs[0].forename+' '+docs[0].surname+' logged in')
+				]
+			}).toArray(function(err, doc) {
+				var assassin = doc[0],
+					correctDetails = !!assassin && utils.test(password, assassin.password)
+					
+				if(correctDetails) {
+					log(utils.fullname(assassin)+' logged in')
 				}
-				callback(err, docs.length > 0 ? docs[0] : false)
+				
+				callback(err, correctDetails ? assassin : false)
 			})
 		}
 	},
@@ -350,7 +356,7 @@ var Bureau = {
 					callback(err, false)
 					return
 				}
-				callback(null, assassin.password === utils.md5(password))
+				callback(null, utils.test(password, assassin.password))
 			})
 		},
 		
@@ -359,13 +365,17 @@ var Bureau = {
 				callback('Password must be 6 chars or longer', false)
 				return
 			}
-			Bureau.assassin.updateAssassin(uid, {password: utils.md5(password), $unset:{temppassword:''}}, function(err, assassin) {
+			Bureau.assassin.updateAssassin(uid, {password: utils.hash(password), $unset:{temppassword:''}}, function(err, assassin) {
 				if(err) {
 					callback(err, false)
 					return
 				}
 				callback(null, true)
 			})
+		},
+		
+		createTempPassword: function(uid, callback) {
+			
 		},
 		
 		submitReport: function(uid, report, callback) {

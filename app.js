@@ -36,6 +36,9 @@ var pages = {
 			logout: function(req, res) {
 				//alias for goodbye
 				pages.get.goodbye(req, res)
+			},
+			forgotpassword: function(req, res) {
+				res.render('forgotpassword')
 			}
 		},
 		post: {
@@ -104,7 +107,7 @@ var pages = {
 						if(errors.length === 0) {
 						//Register a new user
 							var newAssassin = {
-								password: utils.md5(password),
+								password: password,
 								email: email,
 								forename: forename,
 								surname: surname,
@@ -141,7 +144,6 @@ var pages = {
 						}
 						
 					})
-				
 				} else if(!!email || !!password) {
 					Bureau.register.loginAssassin(email, password, function(err, assassin) {
 						if(!assassin) {
@@ -262,7 +264,7 @@ var pages = {
 			updatedetails: function(req, res) {
 				res.render('updatedetails')
 			},
-			
+						
 			admin: {
 				'/': function(req, res) {
 					if(!res.locals.isAdmin) {

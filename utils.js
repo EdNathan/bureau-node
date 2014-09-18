@@ -1,5 +1,6 @@
 var crypto = require('crypto'),
-	passwords = require('./passwords')
+	passwords = require('./passwords'),
+	bcrypt = require('bcrypt')
 
 var utils = {
 	production: process.env.PLATFORM === 'nodejitsu',
@@ -34,6 +35,12 @@ var utils = {
 	},
 	md5: function(str) {
 		return crypto.createHash('md5').update(str).digest("hex")
+	},
+	hash: function(str) {
+		return bcrypt.hashSync(str, 10)
+	},
+	test: function(str, hash) {
+		return bcrypt.compareSync(str, hash)
 	},
 	prettyTimestamp: function(date) {
 		var d = !!date ? (date._d ? date.toDate():date) : new Date(),

@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "aws-sdk": "~2.0.0-rc10",
+    "bcrypt": "^0.8.0",
     "connect-mongo": "^0.4.1",
     "consolidate": "0.10.x",
     "express": "3.4.x",
