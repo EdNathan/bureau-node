@@ -32,20 +32,20 @@
 				{{form.t(token)}}
 				<input type="hidden" name="action" value="detailschange" />
 				{% if gamegroup.ggid == 'DURHAM' %}
-				<div>
+				<div class="row">
 					<input type="text" disabled="true" name="college" value="{{assassin.college}}" id="college-input">
 					<label for="college-input">College</label>
 				</div>
 				{% endif %}
 				
 				<div class="editable-row">
-				<input type="text" name="course" disabled="true" value="{{assassin.course}}" id="course-input">
-				<label for="course-input">Course</label>
+					<input type="text" name="course" disabled="true" value="{{assassin.course}}" id="course-input">
+					<label for="course-input">Course</label>
 				</div>
 				
 				<div class="editable-row">
-				<input type="text" name="address" disabled="true" value="{{assassin.address}}" id="address-input">
-				<label for="address-input">Address & Postcode/Block & Room Number</label>
+					<input type="text" name="address" disabled="true" value="{{assassin.address}}" id="address-input">
+					<label for="address-input">Address & Postcode/Block & Room Number</label>
 				</div>
 				
 				{% if gamegroup.ggid == 'DURHAM' %}
@@ -65,6 +65,32 @@
 			<span id="colon">:</span>
 			<span id="deaths-total" title="deaths">{{ stats.deaths }}</span><br>
 			<span id="ratio" title="ratio">{% if stats.ratio===Infinity %}&infin;{% else %}{{ stats.ratio }}{% endif %}</span>		
+		</div>
+		
+		<div id="change-password" class="container light-container">
+			<h4>Change Password</h4>
+			<form action="/changepassword" method="POST">
+				{{form.t(token)}}
+				{{form.a('changepassword')}}
+				
+				<div class="editable-row">
+					<input type="password" id="oldpassword" name="oldpassword" value="" placeholder="Old Password">
+					<label for="oldpassword">Old Password</label>
+				</div>
+				
+				<div class="editable-row">
+					<input type="password" id="newpassword" name="newpoassword" value="" placeholder="New Password">
+					<label for="newpassword">New Password</label>
+				</div>
+				
+				<div class="editable-row">
+					<input type="password" id="verifypassword" name="verifypoassword" value="" placeholder="Verify Password">
+					<label for="newpassword">Verify Password</label>
+				</div>
+				
+				<input type="submit" value="Change Password">
+				
+			</form>
 		</div>
 	
 	</div>

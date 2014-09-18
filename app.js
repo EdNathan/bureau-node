@@ -705,6 +705,45 @@ var pages = {
 				})
 			},
 			
+			changepassword: function(req, res) {
+				var oldpassword = req.body.oldpassword,
+					newpassword = req.body.newpassword,
+					verifypassword = req.body.verifypassword,
+					uid = req.session.uid,
+					errs = []
+				
+				if(!oldpassword) {
+					errs.push('You must enter your old password')
+				}
+				Bureau.assassin.checkPassword(uid, oldpassword, function(err, correct) {
+					if(!correct) {
+						errs.push('The old password was incorrect')
+					}
+					
+					if(!newpassword || newpassword.length < 6) {
+						errs.push('Your new password must be at least 6 characters long')
+					} else if(newpassword !== verifypassword) {
+						errs.push('Your new password didn\'t match! You might have typed it incorrectly')
+					}
+					
+					if(errs.length < 1) {
+						Bureau.assassin.setPassword(uid, newpassword, function(err, success) {
+							if(err) {
+								req.session.pageErrors.push(err)
+								
+							} else {
+								Bureau.assassin.addNotification(uid, 'Your password was successfully changed')
+							}
+							res.redirect('/personal')
+						})
+					} else {
+						req.session.pageErrors = errs
+						res.redirect('/personal')
+					}
+					
+				})
+			},
+			
 			guild: {
 				'/': function(req, res) {
 					if(!res.locals.isGuild) {

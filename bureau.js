@@ -344,6 +344,30 @@ var Bureau = {
 			Bureau.assassin.updateAssassin(uid, {lastonline: now}, function(){})
 		},
 		
+		checkPassword: function(uid, password, callback) {
+			Bureau.assassin.getAssassin(uid, function(err, assassin) {
+				if(err) {
+					callback(err, false)
+					return
+				}
+				callback(null, assassin.password === utils.md5(password))
+			})
+		},
+		
+		setPassword: function(uid, password, callback) {
+			if(!password || password.length < 6) {
+				callback('Password must be 6 chars or longer', false)
+				return
+			}
+			Bureau.assassin.updateAssassin(uid, {password: utils.md5(password)}, function(err, assassin) {
+				if(err) {
+					callback(err, false)
+					return
+				}
+				callback(null, true)
+			})
+		},
+		
 		submitReport: function(uid, report, callback) {
 			var now = new Date()
 			report.submitted = now

@@ -3472,41 +3472,6 @@ h6::after {
   height: 100%;
   padding-bottom: 0;
   padding-top: 0px !important;
-  /* @group Container Styles */
-  /* @end */
-  /* @group Edit Button */
-  /* @end */
-  /* @group Header */
-  /* @group Display Picture */
-  /*#display-picture::before {
-			display: none;
-			content: "";
-			position: absolute;
-			top: -5px;
-			right: -5px;
-			bottom: -5px;
-			left: -5px;
-			background: -webkit-linear-gradient(top, rgba(0, 0, 0, 0) 3.8%, rgba(0, 0, 0, 0.25) 100%);
-			background: -moz-linear-gradient(top, rgba(0, 0, 0, 0) 3.8%, rgba(0, 0, 0, 0.25) 100%);
-			background: -ms-linear-gradient(top, rgba(0, 0, 0, 0) 3.8%, rgba(0, 0, 0, 0.25) 100%);
-			background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 3.8%, rgba(0, 0, 0, 0.25) 100%);
-			-webkit-border-radius: 50%;
-			-moz-border-radius: 50%;
-			border-radius: 50%;
-			
-			-webkit-box-sizing: border-box;
-			-moz-box-sizing: border-box;
-			box-sizing: border-box;
-			z-index: 10;
-		}*/
-  /* @end */
-  /* @end */
-  /* @group Body */
-  /* @group Personal Details */
-  /* @end */
-  /* @group Kill/Death */
-  /* @end */
-  /* @end */
 }
 #page-me h1,
 #page-updatedetails h1 {
@@ -3541,32 +3506,6 @@ h6::after {
 #page-updatedetails .light-container input:disabled {
   opacity: 1;
   color: #545454;
-}
-#page-me .edit.light-container,
-#page-updatedetails .edit.light-container {
-  background: #f0f0f0 !important;
-}
-#page-me .edit.light-container .edit-button,
-#page-updatedetails .edit.light-container .edit-button {
-  color: #f06060;
-}
-#page-me .edit#details div,
-#page-updatedetails .edit#details div {
-  background: white !important;
-  overflow: visible;
-}
-#page-me .edit#details input:focus,
-#page-updatedetails .edit#details input:focus {
-  outline-width: 1px;
-  outline-style: solid;
-}
-#page-me .edit#details input[type="checkbox"]:focus,
-#page-updatedetails .edit#details input[type="checkbox"]:focus {
-  outline-offset: 2px;
-}
-#page-me .edit#details label,
-#page-updatedetails .edit#details label {
-  color: inherit !important;
 }
 #page-me .edit-button,
 #page-updatedetails .edit-button {
@@ -3614,8 +3553,8 @@ h6::after {
   -webkit-transition: border-color 0.5s ease 0.5s;
   transition: border-color 0.5s ease 0.5s;
 }
-#page-me #display-picture,
-#page-updatedetails #display-picture {
+#page-me #personal-header #display-picture,
+#page-updatedetails #personal-header #display-picture {
   width: 128px;
   height: 128px;
   margin: auto;
@@ -3635,8 +3574,8 @@ h6::after {
   position: relative;
   z-index: 11;
 }
-#page-me #display-picture > form,
-#page-updatedetails #display-picture > form {
+#page-me #personal-header #display-picture > form,
+#page-updatedetails #personal-header #display-picture > form {
   -webkit-transition: opacity 0.3s linear;
   transition: opacity 0.3s linear;
   width: 100%;
@@ -3644,13 +3583,13 @@ h6::after {
   line-height: 128px;
   text-align: center;
 }
-#page-me #display-picture > form > input[type="file"],
-#page-updatedetails #display-picture > form > input[type="file"] {
+#page-me #personal-header #display-picture > form > input[type="file"],
+#page-updatedetails #personal-header #display-picture > form > input[type="file"] {
   position: relative;
   left: -9999px;
 }
-#page-me #file-input-label,
-#page-updatedetails #file-input-label {
+#page-me #personal-header #display-picture > form #file-input-label,
+#page-updatedetails #personal-header #display-picture > form #file-input-label {
   position: absolute;
   width: 129px;
   height: 129px;
@@ -3666,17 +3605,17 @@ h6::after {
   overflow: hidden;
   -webkit-transition: top 0.5s ease;
 }
-#page-me #display-picture > form:hover > #file-input-label,
-#page-updatedetails #display-picture > form:hover > #file-input-label {
+#page-me #personal-header #display-picture > form:hover > #file-input-label,
+#page-updatedetails #personal-header #display-picture > form:hover > #file-input-label {
   top: 0;
 }
-#page-me #name,
-#page-updatedetails #name {
+#page-me #personal-header #name,
+#page-updatedetails #personal-header #name {
   font-size: 32px;
   color: #666;
 }
-#page-me #nickname,
-#page-updatedetails #nickname {
+#page-me #personal-header #nickname,
+#page-updatedetails #personal-header #nickname {
   font-size: 12px;
 }
 #page-me #personal-content,
@@ -3692,20 +3631,22 @@ h6::after {
   overflow: visible;
   padding-bottom: 10px;
 }
-#page-me #details h4,
-#page-updatedetails #details h4 {
-  margin-bottom: 20px;
+#page-me #personal-content .light-container,
+#page-updatedetails #personal-content .light-container {
+  margin-bottom: 30px;
 }
-#page-me #details div,
-#page-updatedetails #details div {
+#page-me .light-container .row,
+#page-updatedetails .light-container .row,
+#page-me .light-container .editable-row,
+#page-updatedetails .light-container .editable-row {
   height: 40px;
   overflow: hidden;
   width: 100%;
   position: relative;
   margin-bottom: 4px;
 }
-#page-me #details label,
-#page-updatedetails #details label {
+#page-me .light-container label,
+#page-updatedetails .light-container label {
   color: transparent !important;
   position: absolute;
   bottom: 1px;
@@ -3721,8 +3662,10 @@ h6::after {
   -webkit-transition: color 0.5s ease;
   transition: color 0.5s ease;
 }
-#page-me #details input[type="text"],
-#page-updatedetails #details input[type="text"] {
+#page-me .light-container input[type="text"],
+#page-updatedetails .light-container input[type="text"],
+#page-me .light-container input[type="password"],
+#page-updatedetails .light-container input[type="password"] {
   border: none;
   height: 40px;
   padding: 0 0 0 8px;
@@ -3736,18 +3679,95 @@ h6::after {
   outline-width: 0px;
   outline-style: solid;
 }
-#page-me #details input[type="checkbox"],
-#page-updatedetails #details input[type="checkbox"] {
+#page-me .light-container input[type="checkbox"],
+#page-updatedetails .light-container input[type="checkbox"] {
   margin-top: 6px;
   display: none;
 }
-#page-me #details.edit input[type="checkbox"],
-#page-updatedetails #details.edit input[type="checkbox"] {
+#page-me .light-container input[type="checkbox"]:disabled,
+#page-updatedetails .light-container input[type="checkbox"]:disabled {
+  opacity: 0;
+}
+#page-me .light-container input[type="submit"],
+#page-updatedetails .light-container input[type="submit"] {
+  color: inherit;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  margin: 1px 0;
+  display: block;
+  font-weight: bold;
+  text-align: center;
+  width: 100%;
+  font-size: 20px;
+  opacity: 0.2;
+  -webkit-transition: opacity 0.3s ease 0s;
+  -moz-transition: opacity 0.3s ease 0s;
+  -o-transition: opacity 0.3s ease 0s;
+  transition: opacity 0.3s ease 0s;
+}
+#page-me .light-container input[type="submit"]:hover,
+#page-updatedetails .light-container input[type="submit"]:hover {
+  opacity: 1;
+}
+#page-me .light-container.edit,
+#page-updatedetails .light-container.edit,
+#page-me .light-container:focus,
+#page-updatedetails .light-container:focus {
+  background: #f0f0f0 !important;
+}
+#page-me .light-container.edit .edit-button,
+#page-updatedetails .light-container.edit .edit-button,
+#page-me .light-container:focus .edit-button,
+#page-updatedetails .light-container:focus .edit-button {
+  color: #f06060;
+}
+#page-me .light-container.edit label,
+#page-updatedetails .light-container.edit label,
+#page-me .light-container:focus label,
+#page-updatedetails .light-container:focus label {
+  color: inherit !important;
+}
+#page-me .light-container.edit .row,
+#page-updatedetails .light-container.edit .row,
+#page-me .light-container:focus .row,
+#page-updatedetails .light-container:focus .row,
+#page-me .light-container.edit .editable-row,
+#page-updatedetails .light-container.edit .editable-row,
+#page-me .light-container:focus .editable-row,
+#page-updatedetails .light-container:focus .editable-row {
+  background: white !important;
+  overflow: visible;
+}
+#page-me .light-container.edit input[type="checkbox"]:focus,
+#page-updatedetails .light-container.edit input[type="checkbox"]:focus,
+#page-me .light-container:focus input[type="checkbox"]:focus,
+#page-updatedetails .light-container:focus input[type="checkbox"]:focus {
+  outline-offset: 2px;
+}
+#page-me .light-container.edit input[type="checkbox"],
+#page-updatedetails .light-container.edit input[type="checkbox"],
+#page-me .light-container:focus input[type="checkbox"],
+#page-updatedetails .light-container:focus input[type="checkbox"] {
   display: block;
 }
-#page-me #details input[type="checkbox"]:disabled,
-#page-updatedetails #details input[type="checkbox"]:disabled {
-  opacity: 0;
+#page-me .light-container.edit input:focus,
+#page-updatedetails .light-container.edit input:focus,
+#page-me .light-container:focus input:focus,
+#page-updatedetails .light-container:focus input:focus {
+  outline-width: 1px;
+  outline-style: solid;
+}
+#page-me #change-password label,
+#page-updatedetails #change-password label {
+  color: inherit !important;
+}
+#page-me #details h4,
+#page-updatedetails #details h4 {
+  margin-bottom: 20px;
 }
 #page-me #details label[for="liverin-input"],
 #page-updatedetails #details label[for="liverin-input"] {
@@ -3757,12 +3777,8 @@ h6::after {
   height: 100%;
   line-height: 40px;
 }
-#page-me #details.edit label[for="liverin-input"],
-#page-updatedetails #details.edit label[for="liverin-input"] {
-  color: black !important;
-}
-#page-me #living-in-row::after,
-#page-updatedetails #living-in-row::after {
+#page-me #details #living-in-row::after,
+#page-updatedetails #details #living-in-row::after {
   display: block;
   content: attr(data-lio);
   color: #555555;
@@ -3775,8 +3791,12 @@ h6::after {
   -webkit-transition: color 0.2s linear;
   transition: color 0.2s linear;
 }
-#page-me .edit #living-in-row::after,
-#page-updatedetails .edit #living-in-row::after {
+#page-me #details.edit label[for="liverin-input"],
+#page-updatedetails #details.edit label[for="liverin-input"] {
+  color: black !important;
+}
+#page-me #details.edit #living-in-row::after,
+#page-updatedetails #details.edit #living-in-row::after {
   color: transparent;
 }
 #page-me #kd-ratio,
@@ -3790,12 +3810,6 @@ h6::after {
   display: inline-block;
   height: 1em;
   line-height: 1em;
-}
-#page-me #kd-ratio #colon,
-#page-updatedetails #kd-ratio #colon {
-  font-weight: 100;
-  position: relative;
-  bottom: 0.1em;
 }
 #page-me #kd-ratio span::after,
 #page-updatedetails #kd-ratio span::after {
@@ -3814,21 +3828,27 @@ h6::after {
 #page-updatedetails #kd-ratio span:empty::after {
   display: none;
 }
-#page-me #kd-ratio > #ratio,
-#page-updatedetails #kd-ratio > #ratio {
+#page-me #kd-ratio #colon,
+#page-updatedetails #kd-ratio #colon {
+  font-weight: 100;
+  position: relative;
+  bottom: 0.1em;
+}
+#page-me #kd-ratio #ratio,
+#page-updatedetails #kd-ratio #ratio {
   font-size: 40px;
   float: right;
   height: 41px;
   line-height: 50px;
   margin-bottom: 25px;
 }
-#page-me #kd-ratio > #rank,
-#page-updatedetails #kd-ratio > #rank {
-  float: left;
-}
-#page-me #kd-ratio > #ratio:empty,
-#page-updatedetails #kd-ratio > #ratio:empty {
+#page-me #kd-ratio #ratio:empty,
+#page-updatedetails #kd-ratio #ratio:empty {
   margin-bottom: 5px;
+}
+#page-me #kd-ratio #rank,
+#page-updatedetails #kd-ratio #rank {
+  float: left;
 }
 @media screen and (max-width: 500px) {
   #page-me #personal-content,
