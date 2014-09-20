@@ -339,7 +339,7 @@ var bureau = {
 					})
 			})
 			
-			
+			/*
 			bureau.api(bureau.user.uid, 'read', 'statistics', ['members'], function(result) {
 				//Make the brace headers extend and populate data
 				$('.brace-block').each(function() {
@@ -378,7 +378,17 @@ var bureau = {
 					t.children('.caption').css('width', h);
 					t.addClass('ready');
 				});
-			});
+			});*/
+			
+			//Handle resetting of passwords
+			$("input[type=submit][name=resetpassword]").on('click', function(e) {
+				var resetuid = this.getAttribute('data-uid')
+				if(confirm('Are you sure you want to reset their password?')) {
+					bureau.api(bureau.uid, 'write', 'resetPassword', {resetuid:resetuid}, function(err, j) {
+						prompt('Copy the password below and securely send it to the player. If either of you lose this code you will need to generate it again.', j.temppassword)
+					})
+				}
+			})
 			
 			//Setup player lists and search for guild pages that need it
 			this.playerListToggle(true);

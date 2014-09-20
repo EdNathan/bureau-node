@@ -3468,21 +3468,25 @@ h6::after {
   pointer-events: all;
 }
 #page-me,
-#page-updatedetails {
+#page-updatedetails,
+#page-changepassword {
   height: 100%;
   padding-bottom: 0;
   padding-top: 0px !important;
 }
 #page-me h1,
-#page-updatedetails h1 {
+#page-updatedetails h1,
+#page-changepassword h1 {
   display: none;
 }
 #page-me #grabber,
-#page-updatedetails #grabber {
+#page-updatedetails #grabber,
+#page-changepassword #grabber {
   top: 10px;
 }
 #page-me #personal-page,
-#page-updatedetails #personal-page {
+#page-updatedetails #personal-page,
+#page-changepassword #personal-page {
   background: #fff;
   text-align: center;
   min-height: 100%;
@@ -3499,16 +3503,19 @@ h6::after {
   transition: border-color 0.5s ease 0.5s;
 }
 #page-me .nodecor,
-#page-updatedetails .nodecor {
+#page-updatedetails .nodecor,
+#page-changepassword .nodecor {
   border: none !important;
 }
 #page-me .light-container input:disabled,
-#page-updatedetails .light-container input:disabled {
+#page-updatedetails .light-container input:disabled,
+#page-changepassword .light-container input:disabled {
   opacity: 1;
   color: #545454;
 }
 #page-me .edit-button,
-#page-updatedetails .edit-button {
+#page-updatedetails .edit-button,
+#page-changepassword .edit-button {
   padding: 0 10px;
   margin: 0;
   border: none;
@@ -3529,15 +3536,18 @@ h6::after {
   pointer-events: fill;
 }
 #page-me .edit-button:hover,
-#page-updatedetails .edit-button:hover {
+#page-updatedetails .edit-button:hover,
+#page-changepassword .edit-button:hover {
   color: #9f9f9f;
 }
 #page-me .edit-button:active,
-#page-updatedetails .edit-button:active {
+#page-updatedetails .edit-button:active,
+#page-changepassword .edit-button:active {
   color: #5c5c5c;
 }
 #page-me #personal-header,
-#page-updatedetails #personal-header {
+#page-updatedetails #personal-header,
+#page-changepassword #personal-header {
   display: inline-block;
   margin: auto auto 20px;
   width: 100%;
@@ -3554,7 +3564,8 @@ h6::after {
   transition: border-color 0.5s ease 0.5s;
 }
 #page-me #personal-header #display-picture,
-#page-updatedetails #personal-header #display-picture {
+#page-updatedetails #personal-header #display-picture,
+#page-changepassword #personal-header #display-picture {
   width: 128px;
   height: 128px;
   margin: auto;
@@ -3575,7 +3586,8 @@ h6::after {
   z-index: 11;
 }
 #page-me #personal-header #display-picture > form,
-#page-updatedetails #personal-header #display-picture > form {
+#page-updatedetails #personal-header #display-picture > form,
+#page-changepassword #personal-header #display-picture > form {
   -webkit-transition: opacity 0.3s linear;
   transition: opacity 0.3s linear;
   width: 100%;
@@ -3584,12 +3596,14 @@ h6::after {
   text-align: center;
 }
 #page-me #personal-header #display-picture > form > input[type="file"],
-#page-updatedetails #personal-header #display-picture > form > input[type="file"] {
+#page-updatedetails #personal-header #display-picture > form > input[type="file"],
+#page-changepassword #personal-header #display-picture > form > input[type="file"] {
   position: relative;
   left: -9999px;
 }
 #page-me #personal-header #display-picture > form #file-input-label,
-#page-updatedetails #personal-header #display-picture > form #file-input-label {
+#page-updatedetails #personal-header #display-picture > form #file-input-label,
+#page-changepassword #personal-header #display-picture > form #file-input-label {
   position: absolute;
   width: 129px;
   height: 129px;
@@ -3606,20 +3620,24 @@ h6::after {
   -webkit-transition: top 0.5s ease;
 }
 #page-me #personal-header #display-picture > form:hover > #file-input-label,
-#page-updatedetails #personal-header #display-picture > form:hover > #file-input-label {
+#page-updatedetails #personal-header #display-picture > form:hover > #file-input-label,
+#page-changepassword #personal-header #display-picture > form:hover > #file-input-label {
   top: 0;
 }
 #page-me #personal-header #name,
-#page-updatedetails #personal-header #name {
+#page-updatedetails #personal-header #name,
+#page-changepassword #personal-header #name {
   font-size: 32px;
   color: #666;
 }
 #page-me #personal-header #nickname,
-#page-updatedetails #personal-header #nickname {
+#page-updatedetails #personal-header #nickname,
+#page-changepassword #personal-header #nickname {
   font-size: 12px;
 }
 #page-me #personal-content,
-#page-updatedetails #personal-content {
+#page-updatedetails #personal-content,
+#page-changepassword #personal-content {
   -webkit-column-width: 440px;
   -moz-column-width: 440px;
   column-width: 440px;
@@ -3632,13 +3650,16 @@ h6::after {
   padding-bottom: 10px;
 }
 #page-me #personal-content .light-container,
-#page-updatedetails #personal-content .light-container {
+#page-updatedetails #personal-content .light-container,
+#page-changepassword #personal-content .light-container {
   margin-bottom: 30px;
 }
 #page-me .light-container .row,
 #page-updatedetails .light-container .row,
+#page-changepassword .light-container .row,
 #page-me .light-container .editable-row,
-#page-updatedetails .light-container .editable-row {
+#page-updatedetails .light-container .editable-row,
+#page-changepassword .light-container .editable-row {
   height: 40px;
   overflow: hidden;
   width: 100%;
@@ -3646,7 +3667,8 @@ h6::after {
   margin-bottom: 4px;
 }
 #page-me .light-container label,
-#page-updatedetails .light-container label {
+#page-updatedetails .light-container label,
+#page-changepassword .light-container label {
   color: transparent !important;
   position: absolute;
   bottom: 1px;
@@ -3664,8 +3686,10 @@ h6::after {
 }
 #page-me .light-container input[type="text"],
 #page-updatedetails .light-container input[type="text"],
+#page-changepassword .light-container input[type="text"],
 #page-me .light-container input[type="password"],
-#page-updatedetails .light-container input[type="password"] {
+#page-updatedetails .light-container input[type="password"],
+#page-changepassword .light-container input[type="password"] {
   border: none;
   height: 40px;
   padding: 0 0 0 8px;
@@ -3680,16 +3704,19 @@ h6::after {
   outline-style: solid;
 }
 #page-me .light-container input[type="checkbox"],
-#page-updatedetails .light-container input[type="checkbox"] {
+#page-updatedetails .light-container input[type="checkbox"],
+#page-changepassword .light-container input[type="checkbox"] {
   margin-top: 6px;
   display: none;
 }
 #page-me .light-container input[type="checkbox"]:disabled,
-#page-updatedetails .light-container input[type="checkbox"]:disabled {
+#page-updatedetails .light-container input[type="checkbox"]:disabled,
+#page-changepassword .light-container input[type="checkbox"]:disabled {
   opacity: 0;
 }
 #page-me .light-container input[type="submit"],
-#page-updatedetails .light-container input[type="submit"] {
+#page-updatedetails .light-container input[type="submit"],
+#page-changepassword .light-container input[type="submit"] {
   color: inherit;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -3706,62 +3733,81 @@ h6::after {
 }
 #page-me .light-container.edit,
 #page-updatedetails .light-container.edit,
+#page-changepassword .light-container.edit,
 #page-me .light-container:focus,
-#page-updatedetails .light-container:focus {
+#page-updatedetails .light-container:focus,
+#page-changepassword .light-container:focus {
   background: #f0f0f0 !important;
 }
 #page-me .light-container.edit .edit-button,
 #page-updatedetails .light-container.edit .edit-button,
+#page-changepassword .light-container.edit .edit-button,
 #page-me .light-container:focus .edit-button,
-#page-updatedetails .light-container:focus .edit-button {
+#page-updatedetails .light-container:focus .edit-button,
+#page-changepassword .light-container:focus .edit-button {
   color: #f06060;
 }
 #page-me .light-container.edit label,
 #page-updatedetails .light-container.edit label,
+#page-changepassword .light-container.edit label,
 #page-me .light-container:focus label,
-#page-updatedetails .light-container:focus label {
+#page-updatedetails .light-container:focus label,
+#page-changepassword .light-container:focus label {
   color: inherit !important;
 }
 #page-me .light-container.edit .row,
 #page-updatedetails .light-container.edit .row,
+#page-changepassword .light-container.edit .row,
 #page-me .light-container:focus .row,
 #page-updatedetails .light-container:focus .row,
+#page-changepassword .light-container:focus .row,
 #page-me .light-container.edit .editable-row,
 #page-updatedetails .light-container.edit .editable-row,
+#page-changepassword .light-container.edit .editable-row,
 #page-me .light-container:focus .editable-row,
-#page-updatedetails .light-container:focus .editable-row {
+#page-updatedetails .light-container:focus .editable-row,
+#page-changepassword .light-container:focus .editable-row {
   background: white !important;
   overflow: visible;
 }
 #page-me .light-container.edit input[type="checkbox"]:focus,
 #page-updatedetails .light-container.edit input[type="checkbox"]:focus,
+#page-changepassword .light-container.edit input[type="checkbox"]:focus,
 #page-me .light-container:focus input[type="checkbox"]:focus,
-#page-updatedetails .light-container:focus input[type="checkbox"]:focus {
+#page-updatedetails .light-container:focus input[type="checkbox"]:focus,
+#page-changepassword .light-container:focus input[type="checkbox"]:focus {
   outline-offset: 2px;
 }
 #page-me .light-container.edit input[type="checkbox"],
 #page-updatedetails .light-container.edit input[type="checkbox"],
+#page-changepassword .light-container.edit input[type="checkbox"],
 #page-me .light-container:focus input[type="checkbox"],
-#page-updatedetails .light-container:focus input[type="checkbox"] {
+#page-updatedetails .light-container:focus input[type="checkbox"],
+#page-changepassword .light-container:focus input[type="checkbox"] {
   display: block;
 }
 #page-me .light-container.edit input:focus,
 #page-updatedetails .light-container.edit input:focus,
+#page-changepassword .light-container.edit input:focus,
 #page-me .light-container:focus input:focus,
-#page-updatedetails .light-container:focus input:focus {
+#page-updatedetails .light-container:focus input:focus,
+#page-changepassword .light-container:focus input:focus {
   outline-width: 1px;
   outline-style: solid;
 }
 #page-me #change-password label,
-#page-updatedetails #change-password label {
+#page-updatedetails #change-password label,
+#page-changepassword #change-password label {
   color: inherit !important;
 }
 #page-me #details h4,
-#page-updatedetails #details h4 {
+#page-updatedetails #details h4,
+#page-changepassword #details h4 {
   margin-bottom: 20px;
 }
 #page-me #details label[for="liverin-input"],
-#page-updatedetails #details label[for="liverin-input"] {
+#page-updatedetails #details label[for="liverin-input"],
+#page-changepassword #details label[for="liverin-input"] {
   font-size: 20px;
   text-transform: capitalize;
   padding-left: 8px;
@@ -3769,7 +3815,8 @@ h6::after {
   line-height: 40px;
 }
 #page-me #details #living-in-row::after,
-#page-updatedetails #details #living-in-row::after {
+#page-updatedetails #details #living-in-row::after,
+#page-changepassword #details #living-in-row::after {
   display: block;
   content: attr(data-lio);
   color: #555555;
@@ -3783,19 +3830,23 @@ h6::after {
   transition: color 0.2s linear;
 }
 #page-me #details.edit label[for="liverin-input"],
-#page-updatedetails #details.edit label[for="liverin-input"] {
+#page-updatedetails #details.edit label[for="liverin-input"],
+#page-changepassword #details.edit label[for="liverin-input"] {
   color: black !important;
 }
 #page-me #details.edit #living-in-row::after,
-#page-updatedetails #details.edit #living-in-row::after {
+#page-updatedetails #details.edit #living-in-row::after,
+#page-changepassword #details.edit #living-in-row::after {
   color: transparent;
 }
 #page-me #kd-ratio,
-#page-updatedetails #kd-ratio {
+#page-updatedetails #kd-ratio,
+#page-changepassword #kd-ratio {
   padding-right: 20px;
 }
 #page-me #kd-ratio span,
-#page-updatedetails #kd-ratio span {
+#page-updatedetails #kd-ratio span,
+#page-changepassword #kd-ratio span {
   font-size: 80px;
   position: relative;
   display: inline-block;
@@ -3803,7 +3854,8 @@ h6::after {
   line-height: 1em;
 }
 #page-me #kd-ratio span::after,
-#page-updatedetails #kd-ratio span::after {
+#page-updatedetails #kd-ratio span::after,
+#page-changepassword #kd-ratio span::after {
   content: attr(title);
   font-size: 18px;
   position: absolute;
@@ -3816,17 +3868,20 @@ h6::after {
   color: #999999;
 }
 #page-me #kd-ratio span:empty::after,
-#page-updatedetails #kd-ratio span:empty::after {
+#page-updatedetails #kd-ratio span:empty::after,
+#page-changepassword #kd-ratio span:empty::after {
   display: none;
 }
 #page-me #kd-ratio #colon,
-#page-updatedetails #kd-ratio #colon {
+#page-updatedetails #kd-ratio #colon,
+#page-changepassword #kd-ratio #colon {
   font-weight: 100;
   position: relative;
   bottom: 0.1em;
 }
 #page-me #kd-ratio #ratio,
-#page-updatedetails #kd-ratio #ratio {
+#page-updatedetails #kd-ratio #ratio,
+#page-changepassword #kd-ratio #ratio {
   font-size: 40px;
   float: right;
   height: 41px;
@@ -3834,29 +3889,35 @@ h6::after {
   margin-bottom: 25px;
 }
 #page-me #kd-ratio #ratio:empty,
-#page-updatedetails #kd-ratio #ratio:empty {
+#page-updatedetails #kd-ratio #ratio:empty,
+#page-changepassword #kd-ratio #ratio:empty {
   margin-bottom: 5px;
 }
 #page-me #kd-ratio #rank,
-#page-updatedetails #kd-ratio #rank {
+#page-updatedetails #kd-ratio #rank,
+#page-changepassword #kd-ratio #rank {
   float: left;
 }
 @media screen and (max-width: 500px) {
   #page-me #personal-content,
-  #page-updatedetails #personal-content {
+  #page-updatedetails #personal-content,
+  #page-changepassword #personal-content {
     width: 100%;
   }
   #page-me #toolbar,
-  #page-updatedetails #toolbar {
+  #page-updatedetails #toolbar,
+  #page-changepassword #toolbar {
     border-left-width: 5px;
     border-right-width: 0;
   }
   #page-me #kd-ratio span,
-  #page-updatedetails #kd-ratio span {
+  #page-updatedetails #kd-ratio span,
+  #page-changepassword #kd-ratio span {
     font-size: 60px;
   }
   #page-me #kd-ratio > #ratio,
-  #page-updatedetails #kd-ratio > #ratio {
+  #page-updatedetails #kd-ratio > #ratio,
+  #page-changepassword #kd-ratio > #ratio {
     margin-top: 13px;
   }
 }
@@ -3957,6 +4018,26 @@ h6::after {
 }
 #page-updatedetails input[type="submit"]:hover {
   color: grey;
+}
+#page-changepassword {
+  max-width: 900px;
+  margin: auto;
+}
+#page-changepassword h1 {
+  display: block;
+  position: static;
+  margin-bottom: 10px;
+}
+#page-changepassword p {
+  font-size: 20px;
+  color: #333;
+  text-align: center;
+  margin: 40px 0;
+  text-shadow: 0px 1px 1px #ffffff;
+}
+#page-changepassword #change-password {
+  max-width: 600px;
+  margin: auto;
 }
 #page-forgotpassword {
   display: -webkit-box;

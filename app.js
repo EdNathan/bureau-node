@@ -264,7 +264,11 @@ var pages = {
 			updatedetails: function(req, res) {
 				res.render('updatedetails')
 			},
-						
+			
+			changepassword: function(req, res) {
+				res.render('changepassword')
+			},
+			
 			admin: {
 				'/': function(req, res) {
 					if(!res.locals.isAdmin) {
@@ -745,8 +749,14 @@ var pages = {
 							res.redirect('/personal')
 						})
 					} else {
-						req.session.pageErrors = errs
-						res.redirect('/personal')
+						
+						if(!res.locals.assassin.temppassword) {
+							req.session.pageErrors = errs
+							res.redirect('/personal')
+						} else {
+							res.locals.pageErrors = errs
+							authPages.get.changepassword(req, res)
+						}
 					}
 					
 				})
@@ -759,6 +769,7 @@ var pages = {
 						return
 					}
 					switch(req.body.action) {
+										
 						case 'forcedetailsupdate':
 							var ggid = res.locals.gamegroup.ggid
 							Bureau.gamegroup.forceDetailsUpdate(ggid, function(err, misery) {
@@ -1378,6 +1389,26 @@ var pages = {
 								})
 							})
 						})
+					},
+					
+					resetPassword: function(req, res) {
+						if(!res.locals.isGuild) {
+							res.send(500, 'You do not have sufficient privileges to perform this action')
+							return
+						}
+						var uid = req.body.uid,
+							resetuid = req.body.data.resetuid
+						
+						Bureau.assassin.createTempPassword(resetuid, function(err, pwd) {
+							if(err) {
+								res.send(500, err)
+								return
+							}
+							res.json({
+								temppassword:pwd
+							})
+							Bureau.assassin.addNotification(resetuid, 'Your password was reset by '+utils.fullname(res.locals.assassin)+' at '+moment().format('MMMM Do YYYY, h:mm:ss a'))
+						})
 					}
 				}
 			}
@@ -1444,13 +1475,19 @@ function checkAuth(req, res, next) {
 //	next()
 }
 
-//For checking if details updated
-function checkDetailsUpdated(req, res, next) {
+//For checking if details updated/password needs resetting etc
+function checkForceRedirect(req, res, next) {
 	if(!res.locals.assassin.detailsUpdated) {
 		if(req.route.path === '/updatedetails') {
 			next()
 		} else {
 			res.redirect('/updatedetails')
+		}
+	} else if(res.locals.assassin.temppassword) {
+		if(req.route.path === '/changepassword') {
+			next()
+		} else {
+			res.redirect('/changepassword')
 		}
 	} else {
 		next()
@@ -1510,9 +1547,9 @@ app.map = function (a, route, method, auth) { //Returns an array of mapped urls
 				key = glue = ''
 			}
 			if(auth && method == 'post') {
-				app[method](route+glue+key, checkAuth, addLocals, checkToken, checkDetailsUpdated, a[!key?'/':key])
+				app[method](route+glue+key, checkAuth, addLocals, checkToken, checkForceRedirect, a[!key?'/':key])
 			} else if(auth) {
-				app[method](route+glue+key, checkAuth, addLocals, checkDetailsUpdated, a[!key?'/':key])
+				app[method](route+glue+key, checkAuth, addLocals, checkForceRedirect, a[!key?'/':key])
 			} else {
 				app[method](route+glue+key, a[!key?'/':key])
 			}
