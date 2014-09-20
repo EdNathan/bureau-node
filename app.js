@@ -653,7 +653,8 @@ var pages = {
 									if(err) throw err;
 									fs.readFile(tempName, function (err, data) {
 										if(err) {
-											throw err
+											res.locals.pageErrors.push('There was an error uploading the picture')
+											authPages.get.personal(req, res)
 										} else {
 											var s3 = new AWS.S3(),
 												bucket = 'bureau-engine',
@@ -666,11 +667,16 @@ var pages = {
 											}, function (err, data) {
 												if (err) {
 													console.log(err)
-													res.send(500, 'Image uploading failed :(')
+													res.locals.pageErrors.push('Image uploading failed :(')
+													authPages.get.personal(req, res)
 												} else {
 													Bureau.assassin.setPicture(uid, passwords.awsPath+imgKey, function(err, doc) {
 														if(err) console.log(err);
-														authPages.get.personal(req, res)
+														Bureau.assassin.getAssassin(uid, function(err, assassin) {
+															//Force update of page to prevent having to reload
+															res.locals.assassin = assassin
+															authPages.get.personal(req, res)
+														})
 													})
 													
 												}
