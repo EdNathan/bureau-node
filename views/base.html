@@ -24,15 +24,7 @@
 <h1>{% block title %}Bureau{% endblock %}</h1>
 {% endif %}
 
-{% if pageErrors.length > 0 %}
-<ul id="page-errors">
-	{% for e in pageErrors %}
-	
-	<li class="page-error">{{e}}</li>
-	
-	{% endfor %}
-</ul>
-{% endif %}
+{% include "./includes/errors.html" %}
 
 {% include "./includes/navbar.html" %}
 {% block main %}{% endblock %}

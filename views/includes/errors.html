@@ -1,0 +1,9 @@
+{% if pageErrors.length > 0 %}
+<ul id="page-errors">
+	{% for e in pageErrors %}
+	
+	<li class="page-error">{{e}}</li>
+	
+	{% endfor %}
+</ul>
+{% endif %}
