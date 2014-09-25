@@ -1530,8 +1530,12 @@ function checkToken(req, res, next) {
 	}
 }
 
-app.get('/', checkAuth, function (req, res) {
-	res.redirect('/home')
+app.get('/', function (req, res) {
+	if(!req.session.uid || !req.session.gamegroup || !req.session.token) {
+		res.render('landingpage')
+	} else {
+		res.redirect('/home')
+	}
 })
 
 app.map = function (a, route, method, auth) { //Returns an array of mapped urls
