@@ -26,12 +26,12 @@ b = {
 		b.data = b.image.data;
 		
 		noise.seed(new Date())
-		/*if(innerWidth > 860)
+		if(innerWidth > 860)
 			setTimeout(function(){
 				console.log('bg')
 				b.canvas.className='showing'
 				requestAnimationFrame(b.drawBG)
-			},2.4*1000)*/
+			},2.4*1000)
 		
 	},
 	drawBG: function() {
