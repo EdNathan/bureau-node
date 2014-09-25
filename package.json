@@ -41,5 +41,9 @@
   "engines": {
     "node": "0.10.x"
   },
+  "domains": [
+	  "www.assassinsbureau.org",
+	  "assassinsbureau.org"
+  ],
   "subdomain": "bureau"
 }
