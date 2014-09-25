@@ -18,12 +18,12 @@ b = {
 			this.setAttribute('style', '-webkit-animation-name: zoom;animation-name: zoom;-webkit-animation-delay: '+num+'s;animation-delay: '+num+'s;')
 		})
 		
-		b.canvas = document.getElementsByTagName('canvas')[0];
-		b.canvas.width = innerWidth/4;
-		b.canvas.height = innerHeight/4;
-		b.ctx = b.canvas.getContext('2d');
-		b.image = b.ctx.createImageData(b.canvas.width, b.canvas.height);
-		b.data = b.image.data;
+		b.canvas = document.getElementsByTagName('canvas')[0]
+		b.tempCanvas = document.createElement('canvas')
+		b.canvas.width = b.tempCanvas.width = innerWidth
+		b.canvas.height = b.tempCanvas.height = innerHeight
+		b.ctx = b.canvas.getContext('2d')
+		b.tempCtx = b.tempCanvas.getContext('2d')
 		
 		noise.seed(new Date())
 		if(innerWidth > 860)
@@ -36,25 +36,24 @@ b = {
 	},
 	drawBG: function() {
 		var data = b.data,
-			now = new Date()
-		for (var x = 0; x < b.canvas.width; x++) {
-			for (var y = 0; y < b.canvas.height; y++) {
-				var cell = (x + y * b.canvas.width) * 4;
-				if(x%30 < 6 && y%30 < 6) {
-					var value = noise.perlin3(x / 100, y / 100, now/5000);
-					value *= 30;
-					data[cell] = data[cell + 1] = data[cell + 2] = 0;
-					data[cell + 3] = value; // alpha.
-				} else {
-					data[cell] = data[cell + 1] = data[cell + 2] = data[cell + 3] = 0
-				}
-				
+			now = new Date(),
+			width = 24,
+			spacing = 120
+			
+		b.tempCtx.clearRect(0,0,b.tempCanvas.width,b.tempCanvas.height)
+		for(var x = 0; x < b.tempCanvas.width; x+= spacing) {
+			for(var y = 0; y < b.tempCanvas.height; y+= spacing) {
+				var value = noise.perlin3(x / 25, y / 25, now/20000);
+					value *= 0.2;
+				b.tempCtx.globalAlpha = Math.abs(value)
+				b.tempCtx.fillColor = 'black'
+				b.tempCtx.fillRect(x,y,width,width)
 			}
 		}
-
-		b.ctx.fillColor = 'black';
-		b.ctx.fillRect(0, 0, 100, 100);
-		b.ctx.putImageData(b.image, 0, 0);
+		
+		var d = b.tempCtx.getImageData(0,0,b.tempCanvas.width,b.tempCanvas.height)
+		b.ctx.putImageData(d, 0, 0);
+		
 		requestAnimationFrame(b.drawBG)
 	}
 }
