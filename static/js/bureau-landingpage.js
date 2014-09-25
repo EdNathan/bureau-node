@@ -43,7 +43,7 @@ b = {
 		b.tempCtx.clearRect(0,0,b.tempCanvas.width,b.tempCanvas.height)
 		for(var x = 0; x < b.tempCanvas.width; x+= spacing) {
 			for(var y = 0; y < b.tempCanvas.height; y+= spacing) {
-				var value = noise.perlin3(x / 25, y / 25, now/20000);
+				var value = noise.perlin3(x / 25, y / 25, now/5000);
 					value *= 0.2;
 				b.tempCtx.globalAlpha = Math.abs(value)
 				b.tempCtx.fillColor = 'black'
