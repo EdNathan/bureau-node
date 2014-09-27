@@ -947,6 +947,11 @@ var Bureau = {
 			Bureau.gamegroup.updateGamegroup(ggid, {motd: motd}, callback)
 		},
 		
+		setEmail: function(ggid, email, callback) {
+			log('setting email for '+ggid+' to ' + email)
+			Bureau.gamegroup.updateGamegroup(ggid, {email: email}, callback)
+		},
+		
 		getAssassins: function(ggid, callback) {
 			Bureau.assassin.getAssassins({gamegroup: ggid}, function(err, assassins) {
 				callback(err, assassins)
