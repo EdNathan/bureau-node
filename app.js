@@ -520,6 +520,19 @@ var pages = {
 							Bureau.assassin.setGuild(uid, shouldBeGuild, function(err, doc) {
 								authPages.get.admin[':gamegroup'](req, res)
 							})
+							break;
+						case 'changeemail':
+							var email = req.body.email,
+								ggid = req.params.gamegroup.toUpperCase()
+							
+							Bureau.gamegroup.setEmail(ggid, email, function(err, gg) {
+								authPages.get.admin[':gamegroup'](req, res)
+							})
+							
+							break;
+						default:
+							authPages.get.admin[':gamegroup'](req, res)
+							break;
 					}
 				}
 			},

@@ -3,6 +3,16 @@
 {% block title %}Gamegroup{% endblock %}
 
 {% block main %}
+<h6>Change Details</h6>
+<form action="" method="post" class="line">
+	{{form.t(token)}}
+	{{form.a('changeemail')}}
+	<section>
+		<input type="text" id="email" name="email" value="{{gg.email}}">
+		<label for="email">Master Email Address</label>
+	</section>
+	<input type="submit" id="" name="changeemail" value="Set email for {{gg.name}}">
+</form>
 
 <h6>Manage {{gg.name}} Guild</h6>
 <ul id="guild-list" class="player-table membership">
