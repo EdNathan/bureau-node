@@ -3,7 +3,8 @@ var MongoClient = require('mongodb').MongoClient,
 	utils = require('./utils'),
 	lethalities = require('./lethalities'),
 	passwords = require('./passwords'),
-	moment = require('moment')
+	moment = require('moment'),
+	Mail = require('./mail')
 
 function id(uid) {
 	return new mongo.ObjectID(uid)
@@ -193,14 +194,22 @@ var Bureau = {
 				}]
 			
 			Bureau.db.collection('assassins').insert(data, {safe: true}, function(err, docs) {
-				//Notify guild of them joining
-				var notif = data.forename+' '+data.surname+' has joined Bureau'
-				Bureau.gamegroup.getGuild(data.gamegroup, function(err, guild) {
-					guild.forEach(function(el) {
-						Bureau.assassin.addNotification(el._id+'', notif)
+				//Send an email to gamegroup master email
+				Bureau.gamegroup.getGamegroup(data.gamegroup, function(err, gg) {
+				
+					Mail.sendText(gg.email, 'New Bureau User', utils.fullname(data)+' has joined Bureau', function(err, res) {
+						console.log(err, res)
 					})
+				
+					//Notify guild of them joining
+					var notif = data.forename+' '+data.surname+' has joined Bureau'
+					Bureau.gamegroup.getGuild(data.gamegroup, function(err, guild) {
+						guild.forEach(function(el) {
+							Bureau.assassin.addNotification(el._id+'', notif)
+						})
+					})
+					callback(err, docs)
 				})
-				callback(err, docs)
 			})
 		},
 		
