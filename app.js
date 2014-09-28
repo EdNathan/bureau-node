@@ -652,7 +652,10 @@ var pages = {
 				})
 			},
 			
+			
+			
 			personal: function(req, res) {
+				
 				switch(req.body.action) {
 					case 'picturechange':
 						var imgPath = req.files.picture.path,
@@ -725,9 +728,22 @@ var pages = {
 			},
 			
 			updatedetails: function(req, res) {
-				Bureau.assassin.markDetailsUpdated(req.session.uid, function(err, assassin) {
-					res.redirect('/home')
-				})
+				var loadPage = function() {
+					Bureau.assassin.markDetailsUpdated(req.session.uid, function(err, assassin) {
+						res.redirect('/home')
+					})
+				}
+				switch(req.body.action) {
+					case 'detailschange':
+						Bureau.assassin.submitDetailsChangeRequest(req.session.uid, req.body, function(err, doc) {
+							loadPage()
+						})
+						break;
+					default:
+						loadPage()
+						break;		
+				}
+				
 			},
 			
 			changepassword: function(req, res) {

@@ -45,5 +45,6 @@
   "domains": [
     "www.assassinsbureau.org",
     "assassinsbureau.org"
-  ]
+  ],
+  "subdomain": "bureau"
 }

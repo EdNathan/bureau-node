@@ -23,13 +23,11 @@
 <h1>You've Changed</h1>
 <p>It's time for you to update your details! If nothing has changed that's fine, just click the button at the bottom and we'll let you get back to the fun stuff.</p>
 
-<form action="/personal" method="POST">
+<form action="/updatedetails" method="POST">
 	<div id="details" class="container light-container edit">
 		<h4>Personal Details</h4>
-		
-		
 			{{form.t(token)}}
-			<input type="hidden" name="action" value="detailschange" />
+			{{form.a('detailschange')}}
 			{% if gamegroup.ggid == 'DURHAM' %}
 			<div class="row">
 				<input type="text" name="college" value="{{assassin.college}}" id="college-input">
