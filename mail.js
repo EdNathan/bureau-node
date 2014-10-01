@@ -1,4 +1,5 @@
 var nodemailer = require('nodemailer'),
+	swig = require('swig'),
 	passwords = require('./passwords')
 	Address = passwords.mail.address,
 	Transporter = nodemailer.createTransport({
@@ -26,6 +27,14 @@ var Mail = {
 					callback(null, res)
 				}
 			})
+		},
+		
+		sendWelcome: function(data, callback) {
+			var to = data.email,
+				subject = 'Welcome To Bureau',
+				text = swig.renderFile('./mail/welcome.txt', data)
+				
+			Mail.sendText(to, subject, text, callback)
 		}
 	}
 

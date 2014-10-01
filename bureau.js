@@ -192,12 +192,18 @@ var Bureau = {
 					id: utils.md5(now+'cheese'),
 					priority: false
 				}]
+			//Add the email confirmation token
+			data.token = utils.md5(data.email+data.password)
 			
-			Bureau.db.collection('assassins').insert(data, {safe: true}, function(err, docs) {
+			Bureau.db.collection('unconfirmed-assassins').insert(data, {safe: true}, function(err, docs) {
 				//Send an email to gamegroup master email
 				Bureau.gamegroup.getGamegroup(data.gamegroup, function(err, gg) {
 				
 					Mail.sendText(gg.email, 'New Bureau User', utils.fullname(data)+' has joined Bureau', function(err, res) {
+						console.log(err, res)
+					})
+					
+					Mail.sendWelcome(data, function(err, res) {
 						console.log(err, res)
 					})
 				
@@ -209,6 +215,31 @@ var Bureau = {
 						})
 					})
 					callback(err, docs)
+				})
+			})
+		},
+		
+		confirmEmail: function(email, token, callback) {
+			var query = {email: email, token: token}
+			
+			Bureau.db.collection('unconfirmed-assassins').findOne(query, {_id:0,token:0}, function(err, doc) {
+				if(!doc || empty(doc)) {
+					callback('Invalid token or email', {})
+					return
+				}
+				var assassin = doc
+				Bureau.db.collection('unconfirmed-assassins').remove(query, function(err, doc) {
+					if(err) {
+						callback('Error dropping unconfirmed assassin from db', {})
+						return
+					}
+					Bureau.db.collection('assassins').insert(assassin, {safe:true}, function(err, doc) {
+						if(err) {
+							callback('Error registering assassin as confirmed', {})
+							return
+						}
+						callback(null, doc)
+					})
 				})
 			})
 		},

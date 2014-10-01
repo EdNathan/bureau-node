@@ -39,6 +39,22 @@ var pages = {
 			},
 			forgotpassword: function(req, res) {
 				res.render('forgotpassword')
+			},
+			confirmemail: function(req, res) {
+				var email = req.query.e,
+					token = req.query.t
+				
+				Bureau.register.confirmEmail(email, token, function(err, assassin) {
+					if(err) {
+						res.locals.pageErrors = [err]
+					}
+					res.redirect('/login')
+				})
+			},
+			'views/mail/:page': function(req, res) {
+				res.render('mail/'+req.params.page, {
+					subject: 'Testing Email'
+				})
 			}
 		},
 		post: {
@@ -120,13 +136,6 @@ var pages = {
 								newAssassin.college = college
 							}
 							Bureau.register.registerNewAssassin(newAssassin, function(err, assassin) {
-								
-								/*
-								
-									TODO:
-									Send email on successful signup
-									
-								*/
 								Bureau.gamegroup.getGamegroups(function(err, gamegroups) {
 									res.render('login', {
 										success: true,

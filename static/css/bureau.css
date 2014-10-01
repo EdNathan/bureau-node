@@ -2270,6 +2270,7 @@ h6::after {
   font-size: 24px;
   background: white;
   margin-bottom: 5px;
+  position: relative;
 }
 .player-table .addplayer-row:last-child,
 #page-gamestate .player-table .addplayer-row:last-child {
@@ -2281,6 +2282,11 @@ h6::after {
   height: 50px;
   line-height: 50px;
   padding: 0 15px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 80px;
+  text-overflow: ellipsis;
 }
 .player-table .addplayer-row form,
 #page-gamestate .player-table .addplayer-row form {

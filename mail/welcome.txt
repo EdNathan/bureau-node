@@ -1,0 +1,9 @@
+Hi {{forename}}!
+
+Welcome to Bureau, before you can get started we need you to confirm your email address. Copy and paste the link below into your browser.
+
+
+http://www.assassinsbureau.org/confirmemail?e={{email|url_encode}}&t={{token}}
+
+Thanks
+Bureau Staff
