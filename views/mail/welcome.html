@@ -1,0 +1,221 @@
+<html>
+
+<head>
+	<title>
+		{{subject}}
+	</title>
+	<style type="text/css">
+		@font-face {
+			font-family: "Segoe UI";
+			src: local("Segoe UI"), url("http://www.xbox.com//shell/fonts/segoeui.ttf") format("TrueType"), url("http://www.xbox.com/shell/SegoeUI-Regular-final.woff") format("woff"), url("http://www.xbox.com/shell/SegoeUI-Regular-final.svg") format("svg");
+			font-weight: normal;
+			font-style: normal;
+			unicode-range: U+0000-3000;
+		}
+		font[class="segoe"] {
+			font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+		}
+		@font-face {
+			font-family: "Segoe UI Light";
+			src: local("Segoe UI Light"), url("http://www.xbox.com/shell/fonts/segoeuil.ttf") format("TrueType"), url("http://www.xbox.com/shell/SegoeUI-Light-final.woff") format("woff"), url("http://www.xbox.com/shell/SegoeUI-Light-final.svg") format("svg");
+			font-weight: normal;
+			font-style: normal;
+		}
+		font[class="segoelight"] {
+			font-family: 'Segoe UI Light', verdana, arial, sans-serif !important;
+		}
+		.ExternalClass a:link {
+			color: #666666;
+		}
+		.ExternalClass a:visited {
+			color: #666666;
+		}
+		.ExternalClass a:active {
+			color: #666666;
+		}
+		.ExternalClass a:hover {
+			color: #666666;
+		}
+		.ExternalClass .ecxReadMsgBody {
+			width: 100%;
+		}
+		.ExternalClass {
+			width: 100%;
+		}
+	</style>
+</head>
+
+<body bgcolor="#d0d0d0" style="margin:0; padding:0;">
+	<table width="100%" cellpadding="0" cellspacing="0" bgcolor="#d0d0d0" style="table-layout:fixed;">
+		<tr>
+			<td align="center" bgcolor="#d0d0d0">
+				<table width="600" align="center" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="margin:0 auto;">
+					<tr>
+						<td width="600">
+							<table cellspacing="0" cellpadding="0" border="0" width="600" align="center">
+								<!-- PRE HEADER -->
+								<tr>
+									<td>
+										<table cellspacing="0" cellpadding="0" border="0" width="600" align="center" bgcolor="#ffffff">
+											<tr>
+												<td>
+													<img src="{$image}spacer.gif" width="600" height="15" alt="" style="display:block;" />
+												</td>
+											</tr>
+											<tr>
+												<td width="600" align="center">
+													<font face="Arial, Helvetica, sans-serif" size="2" style="font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#333333;">
+															<strong><xsl:value-of select="$subjects/pre_header" /></strong>
+														</font>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<img src="{$image}spacer.gif" width="600" height="8" alt="" style="display:block;" />
+												</td>
+											</tr>
+											<tr>
+												<td width="600" align="center">
+													<a href="{$labels/read_online_url}" target="_blank" alias="{$labels/read_online_url_alias}" style="font-family:Verdana, Geneva, sans-serif; font-size:10px; text-decoration:none; color:#333333;">
+														<font face="Verdana, Arial, Helvetica, sans-serif" color="#333333" size="1" style="font-family:Verdana, Geneva, sans-serif; font-size:10px; text-decoration:none; color:#333333;">
+																<u><xsl:value-of select="$labels/read_online_body_1" /></u>
+															</font>
+													</a>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<img src="{$image}spacer.gif" width="600" height="20" alt="" style="display:block;" />
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+								<!-- HERO IMAGE -->
+								<tr>
+									<td>
+										<table width="600" border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													<a href="{$common/hero_link}" target="_blank" alias="{$common/hero_alias}" style="color:#ffffff;">
+														<font face="Arial, Helvetica, sans-serif" size="2" color="#ffffff">
+																<img src="{$image}hero.jpg" width="600" height="325" alt="{$common/hero_img_alt}" title="{$common/hero_img_alt}" border="0" style="display:block;" />
+															</font>
+													</a>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+
+								<tr>
+									<td>
+										<img src="{$image}spacer.gif" width="1" height="1" alt="" style="display:block;" />
+									</td>
+								</tr>
+
+								<!-- MAIN HEADING -->
+								<tr>
+									<td>
+										<table width="600" border="0" cellspacing="0" cellpadding="0">
+											<tr>
+												<td width="50">
+													<img src="{$image}spacer.gif" width="50" height="1" alt="" style="display:block;" />
+												</td>
+												<td width="500" align="center" style="line-height:40px;">
+													<font class="segoelight" face="'Segoe UI Light', Verdana, Arial, Helvetica, sans-serif" color="#ffffff" size="1" style="font-family:'Segoe UI Light', Verdana, Geneva, sans-serif; font-size:30px; color:#ffffff; line-height:40px; letter-spacing: 2px;">
+															<xsl:value-of select="$common/heading_copy" />
+														</font>
+												</td>
+												<td width="50">
+													<img src="{$image}spacer.gif" width="50" height="1" alt="" style="display:block;" />
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+
+								<tr>
+									<td>
+										<img src="{$image}spacer.gif" width="1" height="30" alt="" style="display:block;" />
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<img src="{$image}spacer.gif" width="1" height="20" alt="" style="display:block;" />
+						</td>
+					</tr>
+					<tr>
+						<td bgcolor="#000000">
+							<table width="600" cellpadding="0" cellspacing="0" border="0">
+								<tr>
+									<td>
+										<img src="{$image}spacer.gif" width="1" height="30" alt="" style="display:block;" />
+									</td>
+								</tr>
+								<tr>
+									<td width="25">
+										<img src="{$image}spacer.gif" width="25" height="1" alt="" style="display:block;" />
+									</td>
+									<td align="center" width="550" style="line-height:18px;">
+										<font face="Verdana, Helvetica, sans-serif" size="1" color="#ffffff" style="font-family:Verdana, Geneva, sans-serif; font-size:10px; color:#ffffff;"> 
+												<xsl:value-of select="$legal/legal_marketing_body_1"/><xsl:text> </xsl:text>
+												<xsl:if test="$legal/legal_marketing_url != ''">
+													<a href="{$legal/legal_marketing_url}" alias="{$legal/legal_marketing_url_alias}" target="_blank" style="color:#ffffff; text-decoration:none;"><b><u><xsl:value-of select="$legal/legal_marketing_body_2"/></u></b></a>
+												</xsl:if>
+												<xsl:if test="$locale = 'de-de' or $locale = 'de-at' or $locale = 'de-ch' or $locale = 'hu-hu'">
+													<xsl:text> </xsl:text>
+												</xsl:if>
+												<xsl:value-of select="$legal/legal_marketing_body_3"/> <br />
+												<br />
+
+												<!-- unsubscribe link --> 
+
+												<xsl:value-of select="$legal/legal_contactpref_body_1"/><xsl:text> </xsl:text><a href="{$legal/legal_contactpref_url}" alias="{$legal/legal_contactpref_url_alias}" target="_blank" style="color:#ffffff; text-decoration:none;"><b><u><xsl:value-of select="$legal/legal_contactpref_body_2"/></u></b></a>
+												<xsl:if test="$locale = 'da-dk' or $locale = 'nb-no'">
+													<xsl:text> </xsl:text>
+												</xsl:if>
+												<xsl:value-of select="$legal/legal_contactpref_body_3"/> <br />
+												<br />
+
+												<!-- end of unsubscribe link --> 
+
+												<a href="{$privacy/privacy_statement_url}" target="_blank" alias="{$privacy/privacy_statement_url_alias}" style="color:#ffffff; text-decoration:none;">
+													<b><u><xsl:value-of select="$privacy/privacy_statement_body_1" /></u></b>
+												</a>
+												 | 
+												<a href="{$terms/terms_use_url}" target="_blank" alias="{$terms/terms_use_url_alias}" style="color:#ffffff; text-decoration:none;">
+													<b><u><xsl:value-of select="$terms/terms_use_body_1" /></u></b>
+												</a>
+												<br />
+												<br />
+												<xsl:copy-of select="$copyright/copyright_body_1/node()"/>
+											</font>
+									</td>
+									<td width="25">
+										<img src="{$image}spacer.gif" width="25" height="1" alt="" style="display:block;" />
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img src="{$image}spacer.gif" width="1" height="30" alt="" style="display:block;" />
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<img src="{$image}spacer.gif" width="1" height="30" alt="" style="display:block;" />
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+</body>
+
+</html>
