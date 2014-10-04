@@ -1333,6 +1333,8 @@ var pages = {
 									}
 									var ria = (report.state === 'approved')
 									
+									console.log(approved, ria, report)
+									
 									if(ria !== approved) {
 										//An already approved report can't be reapproved by cheaty form editing
 										res.locals.pageErrors.push('That report has already been '+(!ria?'rejected':'approved'))
