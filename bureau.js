@@ -1101,7 +1101,6 @@ var Bureau = {
 		
 		getReport: function(reportid, callback) {
 			Bureau.report.getReports({'kills.id':reportid},{'value.id':reportid},function(err, reports) {
-				console.log(reportid, reports)
 				if(reports.length < 1) {
 					callback('There is no report with that id', {})
 					return
