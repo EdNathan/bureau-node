@@ -34,7 +34,7 @@
 				</div>
 			</header>
 			<section>
-				<div title="time">{{report.time}}</div>
+				<div title="time">{{report.time|prettyTimestamp}}</div>
 				{% if report.coords %}
 					<div class="mapcontainer" data-coords="{{report.coords}}"></div>
 				{% endif %}
