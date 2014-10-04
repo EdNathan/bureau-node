@@ -10,8 +10,8 @@
 	<div class="kill-report-inner">
 		<form method="post" action="" autocomplete="off">
 			{{form.t(token)}}
-			<input type="hidden" name="gameid" value="{{gameid}}">
-			<input type="hidden" name="victimid" value="{{victimid|default(victim._id|safe)}}">
+			<input type="hidden" name="gameid" value="{{gameid}}" autocomplete="off">
+			<input type="hidden" name="victimid" value="{{victimid|default(victim._id|safe)}}" autocomplete="off">
 			
 			<header>
 				<span>You Killed</span>
@@ -21,7 +21,7 @@
 			</header>
 			<section id="method" class="dropdown">
 				<span><label for="killmethod-dropdown">method</label>
-				<select id="killmethod-dropdown" name="killmethod">
+				<select id="killmethod-dropdown" name="killmethod" autocomplete="off">
 				{% for method in killmethods %}
 					{% if !method.retired %}
 						<option {% if method.id == killmethod %}selected{% endif %}
@@ -33,26 +33,26 @@
 				</select>
 				</span>
 				<div>
-					<input id="killMethodQuestionInput" name="killmethod-detail" type="text" value="{{methoddetail}}">
+					<input id="killMethodQuestionInput" name="killmethod-detail" type="text" value="{{methoddetail}}" autocomplete="off">
 				</div>
 			</section>
 			<section id="time">
 				<span><label for="time-input">time</label>
-				<input id="time-input" type="text" name="time" value="{{now|prettyTimestamp}}">
+				<input id="time-input" type="text" name="time" value="{{now|prettyTimestamp}}" autocomplete="off">
 				</span>
 			</section>
 			
 			<section id="place">
 				<span><label for="place-input">place</label>
 				<div id="coords-btn" class="hidden"></div>
-				<input id="place-input" name="place" type="text" placeholder="e.g. Outside the Library" value="{{place}}">
-				<input id="coords-input" name="coords" type="hidden" value="{{coords}}">
+				<input id="place-input" name="place" type="text" placeholder="e.g. Outside the Library" value="{{place}}" autocomplete="off">
+				<input id="coords-input" name="coords" type="hidden" value="{{coords}}" autocomplete="off">
 				</span>
 			</section>
 			
 			<section id="report-text">
 				<span>report</span>
-				<textarea name="report-text" id="killreport-textarea" placeholder="Describe what happened">{{text}}</textarea>
+				<textarea name="report-text" id="killreport-textarea" placeholder="Describe what happened" autocomplete="off">{{text}}</textarea>
 			</section>
 			
 			<div class="targetdecor"></div>
