@@ -152,8 +152,8 @@
 {% endmacro %}
 
 {% macro gamePlayer(a, g) %}
-	{% if !a.hasBeenKilledBy %}
-	<li class="player-row {% if a.hasKilled %}has-killed{% endif %}" data-index="{{a.forename|lower}} {{a.surname|lower}} {{a.nickname|lower}}">
+	<li class="player-row {% if a.hasKilled %}has-killed{% endif %}" data-index="{{a.forename|lower}} {{a.surname|lower}} {{a.nickname|lower}}"
+	{% if a.hasBeenKilledBy %}style="display:none"{% endif %}>
 		<section>
 			<header>
 				<div class="name">{{ a.forename }} {{ a.surname }}</div>
@@ -186,5 +186,5 @@
 			
 		</div>
 	</li>
-	{% endif %}
+	
 {% endmacro %}
