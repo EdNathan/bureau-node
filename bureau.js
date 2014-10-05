@@ -638,6 +638,7 @@ var Bureau = {
 					'kills.victimid':uid,
 					'kills.gameid':gameid
 				},
+				statequery = includePending ? {$not:'rejected'} : 'approved',
 				map = function() {
 					var id = this._id.valueOf(),
 						ggid = this.gamegroup
@@ -667,7 +668,7 @@ var Bureau = {
 						callback('There was an error finding the deaths', null)
 						return
 					}
-					collection.find({'value.victimid': uid, 'value.gameid': gameid}, function(err, cursor) {
+					collection.find({'value.victimid': uid, 'value.gameid': gameid, 'value.state':statequery}, function(err, cursor) {
 						cursor.toArray(function(err, docs) {
 							if(err) {
 								callback(err, [])

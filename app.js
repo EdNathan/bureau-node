@@ -659,9 +659,7 @@ var pages = {
 						})
 					})
 				})
-			},
-			
-			
+			},	
 			
 			personal: function(req, res) {
 				
