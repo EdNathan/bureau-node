@@ -1624,6 +1624,7 @@ Bureau.init(function (err, db) {
 	utils.addressFormat.safe = true
 	swig.setFilter('address', utils.addressFormat)
 	swig.setFilter('plural', utils.plural)
+	swig.setFilter('autolink', utils.autolink)
 	
 	var port = (process.env.VMC_APP_PORT || 3000);
 	var host = (process.env.VCAP_APP_HOST || 'localhost');

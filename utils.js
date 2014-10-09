@@ -1,6 +1,7 @@
 var crypto = require('crypto'),
 	passwords = require('./passwords'),
-	bcrypt = require('bcrypt')
+	bcrypt = require('bcrypt'),
+	Autolinker = require('autolinker')
 
 var utils = {
 	production: process.env.PLATFORM === 'nodejitsu',
@@ -89,6 +90,10 @@ var utils = {
 			}
 		}
 		return n
+	},
+	
+	autolink: function(input) {
+		return Autolinker.link(input)
 	}
 }
 

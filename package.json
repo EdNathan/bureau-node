@@ -12,6 +12,7 @@
     "url": "https://github.com/jamtat/bureau-node.git"
   },
   "dependencies": {
+    "autolinker": "^0.12.3",
     "aws-sdk": "~2.0.0-rc10",
     "bcrypt": "^0.8.0",
     "connect-mongo": "^0.4.1",
