@@ -216,7 +216,6 @@ var pages = {
 					games.forEach(function(g) {
 						var gameid = g.gameid
 						Bureau.assassin.getDeathsFromGame(uid, gameid, true, function(err, deaths) {
-						
 							g.deaths = deaths
 							var deathIds = deaths.map(function(d) {
 								return d.killerid

@@ -578,7 +578,7 @@ var Bureau = {
 			var filter = {
 					'kills.victimid':uid
 				},
-				statequery = includePending ? {$not:'rejected'} : 'approved',
+				statequery = includePending ? {$ne:'rejected'} : 'approved',
 				map = function() {
 					var id = this._id.valueOf(),
 						ggid = this.gamegroup
@@ -639,7 +639,7 @@ var Bureau = {
 					'kills.victimid':uid,
 					'kills.gameid':gameid
 				},
-				statequery = includePending ? {$not:'rejected'} : 'approved',
+				statequery = includePending ? {$ne:'rejected'} : 'approved',
 				map = function() {
 					var id = this._id.valueOf(),
 						ggid = this.gamegroup
