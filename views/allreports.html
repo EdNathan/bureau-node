@@ -6,7 +6,7 @@
 
 
 <div id="kill-reports">
-	{% for game in reportsByGame %}
+	{% for game in reportsByGame|reverse %}
 	<div class="game-reports {% if now > game.end %}historic{% endif %}">
 		<h6>{{game.name}}</h6>
 		{% for report in game.reports %}
