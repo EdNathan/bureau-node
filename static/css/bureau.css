@@ -2420,6 +2420,16 @@ h6::after {
   color: white;
   cursor: pointer;
 }
+#page-home .csv-link {
+  font-size: 12px;
+  color: #333;
+  max-width: 960px;
+  margin: auto;
+}
+#page-home .csv-link a {
+  color: inherit;
+  cursor: pointer;
+}
 #page-home #map-canvas {
   background: #d0d0d0;
   height: 300px;

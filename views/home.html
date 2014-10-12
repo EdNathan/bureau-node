@@ -29,6 +29,11 @@
 				{% endif %}
 			{% endfor %}
 		</ul>
+		{% if assassin.guild %}
+		<div class="csv-link">
+			<a href="/data/players/{{game.gameid}}.csv">Download players as .csv</a>
+		</div>
+		{% endif %}
 		
 	{% endfor %}
 {% endif %}

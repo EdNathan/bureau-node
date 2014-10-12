@@ -494,6 +494,27 @@ var pages = {
 						})
 					})
 				}
+			},
+			
+			data: {
+				players: {
+					':gameid.csv': function(req, res) {
+						Bureau.game.getAssassins(req.params.gameid, function(err, assassins) {
+							assassins.unshift({
+								forename:'Forename',
+								surname:'Surname',
+								college:'College',
+								course:'Course',
+								address:'Address'
+							})
+							var out = assassins.map(function(a) {
+								return '"'+[a.forename,a.surname,a.college,a.course,a.address].join('","')+'"'
+							})
+							res.set('Content-Type', 'text/csv')
+							res.end(out.join('\n'))
+						})
+					}
+				}
 			}
 		},
 		post: {
@@ -1630,10 +1651,11 @@ Bureau.init(function (err, db) {
 		return [
 			a.forename,
 			a.surname,
-			a.college,
-			a.course
+			a.college
 		].filter(function(el) {
 			return !!el && el.toLowerCase() !== 'none'
+		}).map(function(el) {
+			return el.toLowerCase()
 		}).join(' ')
 	})
 	
