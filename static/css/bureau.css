@@ -2287,6 +2287,8 @@ h6::after {
   left: 0;
   right: 80px;
   text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 .player-table .addplayer-row form,
 #page-gamestate .player-table .addplayer-row form {
@@ -2413,6 +2415,10 @@ h6::after {
   -webkit-column-span: all;
   -moz-column-span: all;
   column-span: all;
+}
+#page-home #motd a {
+  color: white;
+  cursor: pointer;
 }
 #page-home #map-canvas {
   background: #d0d0d0;

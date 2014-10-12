@@ -10,7 +10,7 @@
 {% if !games.length %}
 	<div id="game-title" class="container">
 		<h2>No Games Running</h2>
-		<div id="motd">{{gamegroup.motd|autolink}}</div>
+		<div id="motd">{{gamegroup.motd|default('Welcome to Bureau!')|autolink}}</div>
 	</div>
 {% else %}
 	{% for game in games %}
@@ -18,7 +18,7 @@
 		<div id="game-title" class="container">
 			<h2>{{game.name}}</h2>
 			{% if loop.first %}
-			<div id="motd">{{gamegroup.motd|default('Welcome to Bureau!')}}</div>
+			<div id="motd">{{gamegroup.motd|default('Welcome to Bureau!')|autolink}}</div>
 			{% endif %}
 		</div>
 		<div class="game-info">{{game.kills.length}} kill{{game.kills.length|plural}}, {{game.deaths.length}} death{{game.deaths.length|plural}}</div>

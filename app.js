@@ -1624,6 +1624,7 @@ Bureau.init(function (err, db) {
 	utils.addressFormat.safe = true
 	swig.setFilter('address', utils.addressFormat)
 	swig.setFilter('plural', utils.plural)
+	utils.autolink.safe = true
 	swig.setFilter('autolink', utils.autolink)
 	swig.setFilter('search', function(a) {
 		return [
