@@ -465,7 +465,9 @@ var pages = {
 							Bureau.game.getAssassins(g.gameid, (function(j) {
 								return function(err, assassins) {
 									loaded++
-									games[j].assassins = assassins
+									games[j].assassins = assassins.sort(function(a,b) {
+										return games[j].players[b._id+''].score - games[j].players[a._id+''].score
+									})
 									if(loaded === l*2) {
 										displayPage(games)
 									}
