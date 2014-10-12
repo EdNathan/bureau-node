@@ -505,10 +505,11 @@ var pages = {
 								surname:'Surname',
 								college:'College',
 								course:'Course',
-								address:'Address'
+								address:'Address',
+								liverin:'Living In'
 							})
 							var out = assassins.map(function(a) {
-								return '"'+[a.forename,a.surname,a.college,a.course,a.address].join('","')+'"'
+								return '"'+[a.forename,a.surname,a.college,a.course,a.address,a.liverin].join('","')+'"'
 							})
 							res.set('Content-Type', 'text/csv')
 							res.end(out.join('\n'))
