@@ -1625,6 +1625,16 @@ Bureau.init(function (err, db) {
 	swig.setFilter('address', utils.addressFormat)
 	swig.setFilter('plural', utils.plural)
 	swig.setFilter('autolink', utils.autolink)
+	swig.setFilter('search', function(a) {
+		return [
+			a.forename,
+			a.surname,
+			a.college,
+			a.course
+		].filter(function(el) {
+			return !!el && el.toLowerCase() !== 'none'
+		}).join(' ')
+	})
 	
 	var port = (process.env.VMC_APP_PORT || 3000);
 	var host = (process.env.VCAP_APP_HOST || 'localhost');

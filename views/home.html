@@ -10,7 +10,7 @@
 {% if !games.length %}
 	<div id="game-title" class="container">
 		<h2>No Games Running</h2>
-		<div id="motd">{{gamegroup.motd|default('Welcome to Bureau!')|autolink}}</div>
+		<div id="motd">{{gamegroup.motd|autolink}}</div>
 	</div>
 {% else %}
 	{% for game in games %}
