@@ -4642,6 +4642,11 @@ h6::after {
 #kill-reports article.killreport section div[title="report text"] {
   margin-top: 20px;
   margin-bottom: 5px;
+  -ms-user-select: text;
+  -moz-user-select: text;
+  -webkit-user-select: text;
+  user-select: text;
+  cursor: text;
 }
 #kill-reports article.killreport section .zone {
   display: inline-block;
