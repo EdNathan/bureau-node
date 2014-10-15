@@ -162,6 +162,9 @@
 			<div class="fields">
 				<div title="address" class="address-group">
 					<p>{{ a.address|address }}</p>
+					{% if a.liverin %}
+					<p>(Living In)</p>
+					{% endif %}
 				</div>
 				
 				<div class="academic-group">
