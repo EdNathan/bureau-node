@@ -977,6 +977,37 @@ var bureau = {
 			
 			colourItems(a)
 			
+			//Prime colour switching area
+			$('.colours [data-colour]').each(function(i, el) {
+				var colour = $(this).attr('data-colour')
+				if(colours.indexOf(colour) > -1) {
+					console.log($(this).find('input[type=checkbox]'))
+					$(this).find('input[type=checkbox]')[0].checked = true
+				}
+			})
+			$('.colours label').on('click', function(e) {
+				var checked = !($(this).siblings('input')[0].checked),
+					colour = $(this).siblings('input')[0].value
+				console.log(checked, colour)
+				if(checked) {
+					if(colours.indexOf(colour) < 0) {
+						colours.push(colour)
+					}
+				} else {
+					if(colours.length <= 1) {
+						alert('You must have at least 1 interface colour!')
+						stopEvent(e)
+						return
+					} else {
+						colours = colours.filter(function(el) {
+							return el !== colour
+						})
+					}
+				}
+				storeObj('bureau-colours', colours)
+			})
+			
+			
 			//Setup the editable regions with their forms
 			var editButtons = document.querySelectorAll('.edit-button'),
 				l = editButtons.length,
@@ -1099,14 +1130,20 @@ var bureau = {
 }
 
 
+//Grab saved colours
+var colours = retrieveObj('bureau-colours')
 
-var colours = [
-	'#0e83cd', //Bureau Blue
-	'#f06060', //Relaxed Red
-	//'#fcd04b', //Yi-Fan Yellow  <-  Not used, too light and illegible
-	'#2ecc71', //Groves Green
-	'#9e54bd'  //Pavan Purple
-]
+//If there aren't any saved then just use the defaults
+if(!colours) {
+	colours = [
+		'#0e83cd', //Bureau Blue
+		'#f06060', //Relaxed Red
+		//'#fcd04b', //Yi-Fan Yellow  <-  Not used, too light and illegible
+		'#2ecc71', //Groves Green
+		'#9e54bd'  //Pavan Purple
+	]
+	storeObj('bureau-colours', colours)
+}
 
 
 CHOSEN_COLOUR = colours[Math.floor(Math.random()*colours.length)];
