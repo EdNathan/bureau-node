@@ -72,6 +72,7 @@ var zombiesgame = {
 		var self = this,
 			gameid = game.gameid,
 			maxDeathCount = game.custom['zombies-kill-limit'],
+			killedBySurvivor = !game.players[killerid].zombie,
 			addScore = function() {
 				self.Bureau.game.changeScore(game.gameid, killerid, 1, callback)
 			}
@@ -79,7 +80,7 @@ var zombiesgame = {
 		self.Bureau.assassin.getDeathsFromGame(victimid, gameid, false, function(err, deaths) {
 			var deathCount = deaths.length
 
-			if(deathCount >= maxDeathCount) {
+			if(deathCount >= maxDeathCount || killedBySurvivor) {
 				//We need to make the person a zombie!
 				self.Bureau.game.setPlayerData(gameid, victimid, {zombie: true}, function(err, game) {
 					//Add 1 to the score
@@ -98,6 +99,7 @@ var zombiesgame = {
 		var self = this,
 			gameid = game.gameid,
 			maxDeathCount = game.custom['zombies-kill-limit'],
+			killedBySurvivor = !game.players[killerid].zombie,
 			subtractScore = function() {
 				self.Bureau.game.changeScore(game.gameid, killerid, -1, callback)
 			}
@@ -107,7 +109,7 @@ var zombiesgame = {
 			self.Bureau.assassin.getDeathsFromGame(victimid, gameid, false, function(err, deaths) {
 				var deathCount = deaths.length
 
-				if(deathCount == maxDeathCount && !player.permaZombie) {
+				if((deathCount == maxDeathCount && !player.permaZombie) || killedBySurvivor) {
 					//We need to make the person alive again!
 					self.Bureau.game.setPlayerData(gameid, victimid, {zombie: false}, function(err, game) {
 						//Add 1 to the score
