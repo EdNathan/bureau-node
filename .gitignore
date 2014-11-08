@@ -2,3 +2,4 @@ node_modules/
 passwords.js
 temp/**
 build/
+**.DS_Store

@@ -25,7 +25,7 @@ var pages = {
 						gamegroups: gamegroups
 					})
 				})
-				
+
 			},
 			goodbye: function(req, res) {
 				req.session.destroy()
@@ -43,7 +43,7 @@ var pages = {
 			confirmemail: function(req, res) {
 				var email = req.query.e,
 					token = req.query.t
-				
+
 				Bureau.register.confirmEmail(email, token, function(err, assassin) {
 					if(err) {
 						res.locals.pageErrors = [err]
@@ -72,7 +72,7 @@ var pages = {
 					consent = (req.body.consent.toLowerCase() === 'i agree'),
 					rememberme = req.body.rememberme == 'yes',
 					errors = []
-					
+
 				//Check if registering or logging in
 				if(!!passwordconfirm || !!forename || !!surname || !!address || !!course || !!gamegroup || !!college || !!consent) {
 					//Registering!
@@ -113,13 +113,13 @@ var pages = {
 					if(!college && gamegroup === 'DURHAM') {
 						errors.push('No college selected')
 					}
-					
+
 					//Check to make sure email is not in use
 					Bureau.register.emailExists(email, function(err, yes) {
 						if(yes) {
 							errors.push('Email address is already in use')
 						}
-						
+
 						if(errors.length === 0) {
 						//Register a new user
 							var newAssassin = {
@@ -151,7 +151,7 @@ var pages = {
 								})
 							})
 						}
-						
+
 					})
 				} else if(!!email || !!password) {
 					Bureau.register.loginAssassin(email, password, function(err, assassin) {
@@ -163,7 +163,7 @@ var pages = {
 									gamegroups: gamegroups
 								})
 							})
-							
+
 						} else {
 							var uid = assassin._id+''
 							if(true) {
@@ -183,7 +183,7 @@ var pages = {
 				}
 			}
 		}
-	
+
 	},
 
 	authPages = {
@@ -196,58 +196,37 @@ var pages = {
 					var games = Bureau.game.toArray(games),
 						numGames = games.length,
 						gamesComplete = 0
-						
+
 					if(numGames < 1) {
 						res.render('home')
 						return
-					}	
-					
+					}
+
 					var gameLoaded = function() {
-					
+
 						gamesComplete++
-						
+
 						if(gamesComplete === numGames) {
 							res.render('home', {
 								games: games
 							})
 						}
 					}
-					
+
 					games.forEach(function(g) {
 						var gameid = g.gameid
-						Bureau.assassin.getDeathsFromGame(uid, gameid, true, function(err, deaths) {
-							g.deaths = deaths
-							var deathIds = deaths.map(function(d) {
-								return d.killerid
-							})
-
-							Bureau.assassin.getKillsFromGame(uid, gameid, true, function(err, kills) {
-							
-								g.kills = kills
-								var killedIds = kills.map(function(k) {
-									return k.victimid
-								})
-								
-								Bureau.game.getAssassins(gameid, function(err, assassins) {
-								
-									g.assassins = assassins
-									g.assassins.forEach(function(a) {
-										a.hasKilled = killedIds.indexOf(a._id+'')>-1
-										a.hasBeenKilledBy = deathIds.indexOf(a._id+'')>-1
-									})
-									
-									gameLoaded()
-									
-								})
-							})
+						Bureau.game.render(gameid, g, uid, res.locals.gamegroup, function(err, gameRendered) {
+							g = gameRendered
+							gameLoaded()
 						})
+
 					})
-					
-					
+
+
 				})
-				
+
 			},
-			
+
 			personal: function(req, res) {
 				var uid = req.session.uid,
 					assassin = res.locals.assassin
@@ -268,15 +247,15 @@ var pages = {
 					})
 				})
 			},
-			
+
 			updatedetails: function(req, res) {
 				res.render('updatedetails')
 			},
-			
+
 			changepassword: function(req, res) {
 				res.render('changepassword')
 			},
-			
+
 			admin: {
 				'/': function(req, res) {
 					if(!res.locals.isAdmin) {
@@ -289,7 +268,7 @@ var pages = {
 						})
 					})
 				},
-				
+
 				':gamegroup': function(req, res) {
 					if(!res.locals.isAdmin) {
 						res.redirect('/home')
@@ -297,7 +276,7 @@ var pages = {
 					}
 					var ggid = req.params.gamegroup.toUpperCase()
 					Bureau.gamegroup.getGamegroup(ggid, function(err, gg) {
-						
+
 						if(err) {
 							res.write('No such gamegroup!')
 							return;
@@ -309,17 +288,17 @@ var pages = {
 							})
 						})
 					})
-					
+
 				}
-				
+
 			},
-			
+
 			report: function(req, res) {
 				var uid = res.locals.uid,
 					victimid = res.fromPost ? req.body.victimid:req.query.victimid,
 					gameid = res.fromPost ? req.body.gameid:req.query.gameid,
 					ggid = res.locals.gamegroup.ggid
-				
+
 				Bureau.game.isPlayerInGame(victimid, gameid, function(err, isInGame){
 					if(err || !isInGame) {
 						req.session.pageErrors = ['That player isn\'t in the game!']
@@ -332,14 +311,14 @@ var pages = {
 							res.redirect('home')
 							return
 						}
-					
+
 						Bureau.assassin.getAssassin(victimid, function(err, victim) {
 							if(victim.gamegroup !== res.locals.assassin.gamegroup) {
 								req.session.pageErrors = ['You can\'t kill someone from another gamegroup!']
 								res.redirect('home')
 								return
 							}
-											
+
 							Bureau.gamegroup.getKillMethods(ggid, function(err, killmethods) {
 								res.render('report', {
 									killmethods: killmethods,
@@ -351,14 +330,14 @@ var pages = {
 					})
 				})
 			},
-			
+
 			guild: {
 				'/': function(req, res) {
 					if(!res.locals.isGuild) {
 						res.redirect('/home')
 						return
 					}
-					
+
 					var ggid = res.locals.gamegroup.ggid,
 						resumeLoading = function(reports) {
 							Bureau.assassin.getAssassins({'detailsChangeRequest.state':'waiting', gamegroup:ggid}, function(err, addressChangeRequests) {
@@ -371,7 +350,7 @@ var pages = {
 								})
 							})
 						}
-					
+
 					Bureau.report.getPendingReports(ggid, function(err, reports) {
 						var numReportsDone = 0,
 							reports = reports,
@@ -380,31 +359,31 @@ var pages = {
 									resumeLoading(reports)
 								}
 							}
-						
+
 						if(!reports || err || reports.length < 1) {
 							resumeLoading([])
 						}
-						
+
 						reports.forEach(function(report) {
 							Bureau.report.fullReport(report, function(err, fullReport) {
 								report = fullReport
 								reportDone()
 							})
 						})
-						
+
 					})
 				},
-				
+
 				killmethods: function(req, res) {
 					if(!res.locals.isGuild) {
 						res.redirect('/home')
 						return
 					}
 					res.render('killmethods', {
-						
+
 					})
 				},
-				
+
 				newgame: function(req, res) {
 					if(!res.locals.isGuild) {
 						res.redirect('/home')
@@ -423,43 +402,43 @@ var pages = {
 										add(15,'days'))
 						})
 					})
-					
+
 				},
-				
+
 				gamestate: function(req, res) {
 					if(!res.locals.isGuild) {
 						res.redirect('/home')
 						return
 					}
-					
+
 					var ggid = res.locals.gamegroup.ggid,
 						displayPage = function(games) {
 							res.render('gamestate', {
 								games: games.sort(function(a,b) {return b.end-a.end})
 							})
 						}
-					
+
 					Bureau.game.getGamesInGamegroupAsArray(ggid, function(err, games) {
 						if(err) {
 							res.locals.pageErrors.push(err)
 						}
-						
+
 						//Remove archived games
 						games = games.filter(function(g) {
 							return !g.archived
 						})
-						
+
 						var i = 0,
 							l = games.length,
 							loaded = 0,
 							g = null
-						
+
 						//If we don't have any games...
 						if(l === 0) {
 							displayPage([])
 						}
-						
-						
+
+
 						for(i;i<l;i++) {
 							g = games[i]
 							Bureau.game.getAssassins(g.gameid, (function(j) {
@@ -483,10 +462,10 @@ var pages = {
 								}
 							})(i))
 						}
-						
+
 					})
 				},
-				
+
 				allreports: function(req, res) {
 					var ggid = res.locals.gamegroup.ggid,
 						start = new Date()
@@ -497,7 +476,7 @@ var pages = {
 					})
 				}
 			},
-			
+
 			data: {
 				players: {
 					':gameid.csv': function(req, res) {
@@ -535,7 +514,7 @@ var pages = {
 									name: ggname,
 									ggid: ggname.replace(/[^\w\s]|_/g, "").replace(/\s+/g, "").toUpperCase()
 								}, function(err, gg) {
-									authPages.get.admin['/'](req,res)	
+									authPages.get.admin['/'](req,res)
 								})
 							} else {
 								authPages.get.admin['/'](req,res)
@@ -543,7 +522,7 @@ var pages = {
 							break;
 					}
 				},
-				
+
 				':gamegroup': function(req, res) {
 					switch(req.body.action) {
 						case 'changeguild':
@@ -556,11 +535,11 @@ var pages = {
 						case 'changeemail':
 							var email = req.body.email,
 								ggid = req.params.gamegroup.toUpperCase()
-							
+
 							Bureau.gamegroup.setEmail(ggid, email, function(err, gg) {
 								authPages.get.admin[':gamegroup'](req, res)
 							})
-							
+
 							break;
 						default:
 							authPages.get.admin[':gamegroup'](req, res)
@@ -568,7 +547,7 @@ var pages = {
 					}
 				}
 			},
-			
+
 			report: function(req, res) {
 				var uid = res.locals.uid,
 					victimid = req.body.victimid,
@@ -578,7 +557,7 @@ var pages = {
 					place = req.body.place,
 					coords = req.body.coords,
 					text = req.body['report-text'],
-					time = !!req.body.time ? utils.dateFromPrettyTimestamp(req.body.time) : false, 
+					time = !!req.body.time ? utils.dateFromPrettyTimestamp(req.body.time) : false,
 					ggid = res.locals.gamegroup.ggid,
 					now = new Date(),
 					errs = [],
@@ -595,9 +574,9 @@ var pages = {
 					}
 				console.log('Loading report page')
 				console.log(req.body, report)
-					
+
 				res.locals = utils.merge(res.locals, report)
-					
+
 				res.fromPost = true
 				//Let's validate some shiii
 				if(!text || text.length < 11) {
@@ -615,7 +594,7 @@ var pages = {
 				if (!(!!time && !isNaN(time.getMonth()) && time < now && req.body.time.length === 19 && utils.dateRegex.test(req.body.time))) {
 					errs.push('Invalid time of kill!')
 				}
-				
+
 				if(errs.length > 0) {
 					res.locals.pageErrors = errs
 					authPages.get.report(req, res)
@@ -677,15 +656,15 @@ var pages = {
 										console.log(err)
 										res.redirect('home')
 									})
-								})		
+								})
 							})
 						})
 					})
 				})
-			},	
-			
+			},
+
 			personal: function(req, res) {
-				
+
 				switch(req.body.action) {
 					case 'picturechange':
 						var imgPath = req.files.picture.path,
@@ -694,7 +673,7 @@ var pages = {
 							if(!err && !!size) {
 								var w = size.width > size.height ? Math.floor(size.width*128/size.height) : 128,
 									tempName = __dirname + '/temp/'+utils.md5(new Date().toString() + Math.random().toString())+'.jpg'
-								this								
+								this
 								.resize(w)
 								.gravity('Center')
 								.extent(128, 128)
@@ -728,7 +707,7 @@ var pages = {
 															authPages.get.personal(req, res)
 														})
 													})
-													
+
 												}
 											})
 										}
@@ -754,9 +733,9 @@ var pages = {
 						authPages.get.personal(req, res)
 						break;
 				}
-				
+
 			},
-			
+
 			updatedetails: function(req, res) {
 				var loadPage = function() {
 					Bureau.assassin.markDetailsUpdated(req.session.uid, function(err, assassin) {
@@ -771,18 +750,18 @@ var pages = {
 						break;
 					default:
 						loadPage()
-						break;		
+						break;
 				}
-				
+
 			},
-			
+
 			changepassword: function(req, res) {
 				var oldpassword = req.body.oldpassword,
 					newpassword = req.body.newpassword,
 					verifypassword = req.body.verifypassword,
 					uid = req.session.uid,
 					errs = []
-				
+
 				if(!oldpassword) {
 					errs.push('You must enter your old password')
 				}
@@ -790,25 +769,25 @@ var pages = {
 					if(!correct) {
 						errs.push('The old password was incorrect')
 					}
-					
+
 					if(!newpassword || newpassword.length < 6) {
 						errs.push('Your new password must be at least 6 characters long')
 					} else if(newpassword !== verifypassword) {
 						errs.push('Your new password didn\'t match! You might have typed it incorrectly')
 					}
-					
+
 					if(errs.length < 1) {
 						Bureau.assassin.setPassword(uid, newpassword, function(err, success) {
 							if(err) {
 								req.session.pageErrors.push(err)
-								
+
 							} else {
 								Bureau.assassin.addNotification(uid, 'Your password was successfully changed')
 							}
 							res.redirect('/personal')
 						})
 					} else {
-						
+
 						if(!res.locals.assassin.temppassword) {
 							req.session.pageErrors = errs
 							res.redirect('/personal')
@@ -817,10 +796,10 @@ var pages = {
 							authPages.get.changepassword(req, res)
 						}
 					}
-					
+
 				})
 			},
-			
+
 			guild: {
 				'/': function(req, res) {
 					if(!res.locals.isGuild) {
@@ -828,7 +807,7 @@ var pages = {
 						return
 					}
 					switch(req.body.action) {
-										
+
 						case 'forcedetailsupdate':
 							var ggid = res.locals.gamegroup.ggid
 							Bureau.gamegroup.forceDetailsUpdate(ggid, function(err, misery) {
@@ -842,7 +821,7 @@ var pages = {
 								}
 							})
 							break;
-					
+
 						case 'killreportprocess':
 							var approved = req.body.state == '✓',
 								state = approved?'approved':'rejected',
@@ -853,7 +832,7 @@ var pages = {
 								loadPage = function() {
 									authPages.get.guild['/'](req, res)
 								}
-							
+
 							if(approved) {
 								Bureau.report.acceptReport(reportid,function(err, report) {
 									Bureau.game.getGame(gameid, function(err, game) {
@@ -870,9 +849,9 @@ var pages = {
 									})
 								})
 							}
-							
+
 							break;
-					
+
 						case 'setmotd':
 							var motd = req.body.motd
 							Bureau.gamegroup.setMotd(res.locals.gamegroup.ggid, motd, function(err, doc) {
@@ -891,7 +870,7 @@ var pages = {
 							var uid = req.body.requester,
 								state = req.body.state,
 								message = req.body.message
-							
+
 							if(!state) {
 								authPages.get.guild['/'](req, res)
 								return
@@ -906,7 +885,7 @@ var pages = {
 										d.detailsChangeRequest = {}
 										d.detailsUpdated = true
 										d.detailsLastUpdated = new Date()
-										
+
 										Bureau.assassin.updateAssassin(uid, d, function(err, assassin) {
 											Bureau.assassin.addNotification(uid, 'Your details change request was approved.')
 											authPages.get.guild['/'](req, res)
@@ -924,7 +903,7 @@ var pages = {
 									})
 								}
 							})
-							
+
 							break;
 						case 'notifymembers':
 							var msg = req.body.notifytext
@@ -936,16 +915,16 @@ var pages = {
 							Bureau.gamegroup.notifyGamegroup(res.locals.gamegroup.ggid, msg.trim(), 'from '+res.locals.gamegroup.name+' Guild', false, function(err, assassins) {
 								authPages.get.guild['/'](req, res)
 							})
-							
-							
+
+
 							break;
 						default:
 							authPages.get.guild['/'](req, res)
 							break;
-							
+
 					}
 				},
-				
+
 				killmethods: function(req, res) {
 					if(!res.locals.isGuild) {
 						res.redirect('/home')
@@ -959,8 +938,8 @@ var pages = {
 								detail = req.body.methoddetailquestion,
 								verb = req.body.methodverb,
 								rules = req.body.methodrules,
-								errs = []								
-							
+								errs = []
+
 							if(!name || name.trim().length < 3) {
 								errs.push('Invalid name specified')
 							}
@@ -982,14 +961,14 @@ var pages = {
 							if(!rules || rules.trim().length < 11) {
 								errs.push('Please specify rules')
 							}
-							
+
 							res.locals.pageErrors = errs
-							
+
 							if(errs.length > 0) {
 								authPages.get.guild.killmethods(req, res)
 								return
 							}
-							
+
 							var method = {
 									id: name.toLowerCase().replace(/\s+/, ''),
 									name: name.trim(),
@@ -1000,7 +979,7 @@ var pages = {
 							if(hasDetail) {
 								method.detailquestion = detail.trim()
 							}
-							
+
 							Bureau.gamegroup.addKillMethod(res.locals.gamegroup.ggid, method, function(err, methods) {
 								if(err) {
 									res.locals.pageErrors.push('Error adding the new killmethod "'+name+'": '+err)
@@ -1009,7 +988,7 @@ var pages = {
 								}
 								authPages.get.guild.killmethods(req, res)
 							})
-							
+
 							break;
 						case 'editkillmethod':
 							var id = req.body.methodid,
@@ -1018,7 +997,7 @@ var pages = {
 								rules = req.body.methodrules,
 								retired = !req.body.enabled,
 								errs = []
-							
+
 							Bureau.gamegroup.getKillMethod(res.locals.gamegroup.ggid, id, function(err, method) {
 								if(err) {
 									res.locals.pageErrors.push('Invalid kill method id')
@@ -1026,7 +1005,7 @@ var pages = {
 									return
 								} else {
 									var hasDetail = !!method.detailquestion
-									
+
 									if(hasDetail && (!detail || detail.trim().length < 6)) {
 										errs.push('No detail question specified!')
 									}
@@ -1043,23 +1022,23 @@ var pages = {
 										errs.push('Please specify rules')
 									}
 									res.locals.pageErrors = errs
-									
+
 									if(errs.length > 0) {
 										authPages.get.guild.killmethods(req, res)
 										return
 									}
-									
-									
+
+
 									var m = {
 										verb: verb,
 										retired: retired,
 										rules: rules
 									}
-									
+
 									if(hasDetail) {
 										m.detailquestion = detail
 									}
-									
+
 									Bureau.gamegroup.updateKillMethod(res.locals.gamegroup.ggid, id, m, function(err, methods) {
 										if(err) {
 											res.locals.pageErrors.push('Error editing the killmethod "'+method.name+'": '+err)
@@ -1069,17 +1048,17 @@ var pages = {
 										authPages.get.guild.killmethods(req, res)
 									})
 								}
-								
+
 							})
-							
+
 							break;
-							
+
 						default:
 							authPages.get.guild.killmethods(req, res)
 							break;
 					}
 				},
-				
+
 				newgame: function(req, res) {
 					if(!res.locals.isGuild) {
 						res.redirect('/home')
@@ -1095,7 +1074,7 @@ var pages = {
 								now = new Date(),
 								ggid = res.locals.gamegroup.ggid,
 								errs = []
-							
+
 							if(!Bureau.game.isGameType(gametype)) {
 								errs.push('"'+gametype+'" is not a valid game type')
 							}
@@ -1111,15 +1090,15 @@ var pages = {
 							if (!(!!end && !isNaN(end.getMonth()) && end > now && req.body.end.length === 19 && utils.dateRegex.test(req.body.end))) {
 								errs.push('Invalid game end date')
 							}
-							
-							
+
+
 							res.locals.pageErrors = errs
-							
+
 							if(errs.length > 0) {
 								authPages.get.guild.newgame(req, res)
 								return
 							}
-							
+
 							var gameData = {
 									name: title,
 									players: playerIds,
@@ -1130,7 +1109,7 @@ var pages = {
 								},
 								game = Bureau.games[gametype],
 								notificationString = res.locals.assassin.forename+' '+res.locals.assassin.surname+' created a new '+game.label+' game starting on '+moment(start).format('MMMM Do YYYY, h:mm:ss a')
-							
+
 							//Attach all the extraneous form data that might be related to the new game. This is filthy dirty bad bad and possibly a vulnerability.
 							var exclude = ['title', 'uids', 'gametype', 'start', 'end', 'action', 'token', '']
 							for(var key in req.body) {
@@ -1138,7 +1117,7 @@ var pages = {
 									gameData.custom[key] = req.body[key]
 								}
 							}
-							
+
 							Bureau.game.newGame(ggid, gameData, function(err, game) {
 								if(!err) {
 									Bureau.gamegroup.notifyGuild(ggid, notificationString, '', false, function(err) {
@@ -1146,25 +1125,25 @@ var pages = {
 											//Don't fail completely if we only fail to send a notification
 											res.locals.pageErrors.push('Failed to send notification to guild about the new game')
 										}
-										
+
 										authPages.get.home(req, res)
-										
+
 									})
 								} else {
 									res.locals.pageErrors.push(err)
 									authPages.get.guild.newgame(req, res)
 								}
 							})
-							
+
 							break;
-							
+
 						default:
 							authPages.get.guild.newgame(req, res)
 							break;
-						
+
 					}
 				},
-				
+
 				gamestate: function(req, res) {
 					if(!res.locals.isGuild) {
 						res.redirect('/home')
@@ -1175,23 +1154,23 @@ var pages = {
 							var gameid = req.body.gameid,
 								uid = req.body.uid,
 								errs = []
-								
+
 							Bureau.game.getGame(gameid, function(err, game) {
 								if(err) {
 									res.locals.pageErrors.push(err)
 									authPages.get.guild.gamestate(req, res)
 									return
 								}
-								
+
 								var gametype = game.type
-								
+
 								Bureau.games[gametype].handlePlayerRemoved(game, uid, function(err) {
 									if(err) {
 										res.locals.pageErrors.push('There was an error removing the player from the game')
 										authPages.get.guild.gamestate(req, res)
 										return
 									}
-									
+
 									Bureau.game.removePlayer(gameid, uid, function(err) {
 										if(err) {
 											res.locals.pageErrors.push('There was an error removing the player from the game')
@@ -1199,34 +1178,34 @@ var pages = {
 										authPages.get.guild.gamestate(req, res)
 									})
 								})
-								
+
 							})
-								
+
 							break;
-							
+
 						case 'addplayer':
 							var gameid = req.body.gameid,
 								uid = req.body.uid,
 								errs = []
-								
+
 							Bureau.game.getGame(gameid, function(err, game) {
 								if(err) {
 									res.locals.pageErrors.push(err)
 									authPages.get.guild.gamestate(req, res)
 									return
 								}
-								
+
 								var gametype = game.type
-								
-								
-									
+
+
+
 								Bureau.game.addPlayer(gameid, uid, function(err) {
 									if(err) {
 										res.locals.pageErrors.push('There was an error adding the player to the game')
 										authPages.get.guild.gamestate(req, res)
 										return
 									}
-									
+
 									Bureau.games[gametype].handlePlayerAdded(game, uid, function(err) {
 										if(err) {
 											res.locals.pageErrors.push('There was an error adding the player to the game')
@@ -1236,91 +1215,91 @@ var pages = {
 										authPages.get.guild.gamestate(req, res)
 									})
 								})
-								
+
 							})
 							break;
-							
+
 						case 'changegametime':
 							var gameid = req.body.gameid,
 								start = utils.dateFromPrettyTimestamp(req.body.start),
 								end = utils.dateFromPrettyTimestamp(req.body.end),
 								ggid = res.locals.gamegroup.ggid,
 								errs = []
-							
+
 							if (!(!!start && !isNaN(start.getMonth()) && req.body.start.length === 19 && utils.dateRegex.test(req.body.start))) {
 								errs.push('Invalid game start date')
 							}
 							if (!(!!end && !isNaN(end.getMonth()) && req.body.end.length === 19 && utils.dateRegex.test(req.body.end))) {
 								errs.push('Invalid game end date')
 							}
-							
-							
+
+
 							res.locals.pageErrors = errs
-							
+
 							if(errs.length > 0) {
 								authPages.get.guild.newgame(req, res)
 								return
 							}
-							
+
 							Bureau.game.changeGameTimes(gameid, start, end, function(err, game) {
 								if(err) {
 									res.locals.pageErrors.push(err)
 								}
-								
+
 								var notificationString = res.locals.assassin.forename+' '+res.locals.assassin.surname+' changed the start+end dates of game "'+game.name+'" to run from '+moment(start).format('MMMM Do YYYY, h:mm:ss a')+' to '+moment(end).format('MMMM Do YYYY, h:mm:ss a')
-								
+
 								if(!err) {
 									Bureau.gamegroup.notifyGuild(ggid, notificationString, '', false, function(err) {
 										if(err) {
 											res.locals.pageErrors.push('Failed to send notification to guild about changing the game dates')
 										}
 										authPages.get.guild.gamestate(req, res)
-										
+
 									})
 								} else {
 									res.locals.pageErrors.push(err)
 									authPages.get.guild.gamestate(req, res)
 								}
 							})
-							
+
 							break;
-						
+
 						case 'archivegame':
 							var gameid = req.body.gameid,
 								ggid = res.locals.gamegroup.ggid
-								
+
 							Bureau.game.archiveGame(gameid, function(err, game) {
 								if(err) {
 									res.locals.pageErrors.push(err)
 									authPages.get.guild.gamestate(req, res)
 									return
 								}
-								
+
 								var notificationString = res.locals.assassin.forename+' '+res.locals.assassin.surname+' archived the game "'+game.name+'"'
-								
+
 								if(!err) {
 									Bureau.gamegroup.notifyGuild(ggid, notificationString, '', false, function(err) {
 										if(err) {
 											res.locals.pageErrors.push('Failed to send notification to guild about archiving the game')
 										}
-										
+
 										authPages.get.guild.gamestate(req, res)
-										
+
 									})
 								} else {
 									res.locals.pageErrors.push(err)
 									authPages.get.guild.gamestate(req, res)
 								}
-								
+
 							})
 							break;
-							
+
 						default:
 							authPages.get.guild.gamestate(res, res)
 							break;
 					}
 				},
-				
+
 				allreports: function(req, res) {
 					if(!res.locals.isGuild) {
 						res.redirect('/home')
@@ -1339,7 +1318,7 @@ var pages = {
 									}
 									authPages.get.guild.allreports(res, res)
 								}
-							
+
 							Bureau.game.getGame(gameid, function(err, game) {
 								if(err) {
 									res.locals.pageErrors.push(err)
@@ -1353,21 +1332,21 @@ var pages = {
 										return
 									}
 									var ria = (report.state === 'approved')
-									
+
 									console.log(approved, ria, report)
-									
+
 									if(ria !== approved) {
 										//An already approved report can't be reapproved by cheaty form editing
 										res.locals.pageErrors.push('That report has already been '+(!ria?'rejected':'approved'))
 										authPages.get.guild.allreports(res, res)
 										return
 									}
-									
+
 									if(approved) {
 										//Retroactively reject the kill
 										Bureau.games[game.type].undoKill(game, report.killerid, report.victimid, report, function(err, game) {
 											Bureau.report.rejectReport(reportid, comment, loadPage)
-										}) 
+										})
 									} else {
 										//Retroactively approve the kill
 										Bureau.games[game.type].handleKill(game, report.killerid, report.victimid, report, function(err, game) {
@@ -1377,15 +1356,15 @@ var pages = {
 								})
 							})
 							break;
-							
+
 						default:
 							authPages.get.guild.allreports(res, res)
 							break;
-						
+
 					}
 				}
 			},
-			
+
 			api: {
 				read: {
 					notifications: function(req, res) {
@@ -1397,7 +1376,7 @@ var pages = {
 							})
 						})
 					},
-					
+
 					gamesetupfragment: function(req, res) {
 						var uid = req.body.uid,
 							gametype = req.body.data.gametype
@@ -1413,11 +1392,11 @@ var pages = {
 							res.json({gamesetupfragment: fragment})
 						})
 					},
-					
+
 					gamestatefragment: function(req, res) {
 						var uid = req.body.data.uid,
 							gameid = req.body.data.gameid
-						
+
 						Bureau.game.getGame(gameid, function(err, game) {
 							if(err) {
 								res.send(400, err)
@@ -1451,7 +1430,7 @@ var pages = {
 							})
 						})
 					},
-					
+
 					resetPassword: function(req, res) {
 						if(!res.locals.isGuild) {
 							res.send(500, 'You do not have sufficient privileges to perform this action')
@@ -1459,7 +1438,7 @@ var pages = {
 						}
 						var uid = req.body.uid,
 							resetuid = req.body.data.resetuid
-						
+
 						Bureau.assassin.createTempPassword(resetuid, function(err, pwd) {
 							if(err) {
 								res.send(500, err)
@@ -1498,7 +1477,7 @@ app.engine('html', swig.renderFile);
 app.set('view engine', 'html');
 app.set('views', __dirname + '/views');
 //app.set('view cache', false);
-if(process.env.NODE_ENV !== 'production') { 
+if(process.env.NODE_ENV !== 'production') {
 	swig.setDefaults({
 		cache: false
 	})
@@ -1510,7 +1489,7 @@ function checkAuth(req, res, next) {
 		var parts = req.cookies.BAC.split('sheepworks'),
 			cUID = parts[0],
 			cTOK = parts[1]
-		
+
 		Bureau.assassin.getSalt(cUID, function(err, salt) {
 			if(cTOK === salt) {
 				Bureau.assassin.getAssassin(cUID, function(err, assassin) {
@@ -1560,7 +1539,7 @@ function addLocals(req, res, next) {
 		Bureau.gamegroup.getGamegroup(req.session.gamegroup, function(err, gamegroup) {
 			//Update when we last saw them
 			Bureau.assassin.updateLastHere(req.session.uid)
-			
+
 			res.locals.now = new Date()
 			res.locals.isGuild = assassin.guild
 			res.locals.isAdmin = password.adminEmails.indexOf(assassin.email) > -1
@@ -1580,7 +1559,7 @@ function checkToken(req, res, next) {
 	var seshtoken = req.session.token,
 		formtoken = req.body.token
 
-	if(!seshtoken) { 
+	if(!seshtoken) {
 		res.send('Error! No session token :( Try <a href="/goodbye">logging in again</a>.')
     } else if(!formtoken) {
 		res.send('Error! No authentication. Nice hax bro.')
@@ -1642,7 +1621,7 @@ app.use(function (req, res, next) {
 
 Bureau.init(function (err, db) {
 	if (err) throw err;
-	
+
 	//Set some filters
 	swig.setFilter('prettyTimestamp', utils.prettyTimestamp)
 	utils.addressFormat.safe = true
@@ -1661,7 +1640,7 @@ Bureau.init(function (err, db) {
 			return el.toLowerCase()
 		}).join(' ')
 	})
-	
+
 	var port = (process.env.VMC_APP_PORT || 3000);
 	var host = (process.env.VCAP_APP_HOST || 'localhost');
 	app.listen(port, host)

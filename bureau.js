@@ -4,7 +4,8 @@ var MongoClient = require('mongodb').MongoClient,
 	lethalities = require('./lethalities'),
 	passwords = require('./passwords'),
 	moment = require('moment'),
-	Mail = require('./mail')
+	Mail = require('./mail'),
+	swig = require('swig')
 
 function id(uid) {
 	return new mongo.ObjectID(uid)
@@ -41,7 +42,7 @@ function unique(arr) {
 			return last
 		}
 	},[])
-	
+
 	return u
 }
 
@@ -111,13 +112,13 @@ var Bureau = {
 						})
 					}
 					log('Admin ids saved')
-					
+
 					//Load Games
 					line()
 					log('Loading games')
 					Bureau.loadGames()
 					log('Finished loading games')
-					
+
 					//Fetch and cache gamegroups
 					Bureau.gamegroup.getGamegroups(function(err, ggs) {
 						var end = new Date()
@@ -128,12 +129,12 @@ var Bureau = {
 						callback(undefined, db)
 					})
 				})
-				
-				
+
+
 			}
 		})
 	},
-	
+
 	loadGames: function() {
 		var fs = require('fs'),
 			gameFiles = fs.readdirSync('./games').filter(function(x) {
@@ -146,38 +147,39 @@ var Bureau = {
 			log('Found game '+title,2)
 			var g = Bureau.games[title] = require('./games/'+x)
 			g.Bureau = Bureau
+			g.swig = swig
 			g.title = title
 			g.init()
 			log('Finished loading game '+title,2)
 		})
 		line(1)
 	},
-	
+
 	admins: [],
-	
+
 	register: {
 		emailExists: function(email, callback) {
 			Bureau.db.collection('assassins').find({'email':email}).toArray(function(err, docs) {
 				callback(err, docs.length > 0)
 			})
 		},
-		
+
 		registerNewAssassin: function(data, callback) {
 			data.joindate = new Date()
 			data.guild = false
-			
+
 			var now = new Date()
-			
+
 			//Hash the password
 			data.password = utils.hash(data.password)
-			
+
 			//Add an empty array of kills
 			data.kills = []
-			
+
 			//Mark details up to date
 			data.detailsUpdated = true
 			data.detailsLastUpdated = new Date()
-			
+
 			//Add some welcome notifications
 			data.notifications = [{
 					added: now,
@@ -194,19 +196,19 @@ var Bureau = {
 				}]
 			//Add the email confirmation token
 			data.token = utils.md5(data.email+data.password)
-			
+
 			Bureau.db.collection('unconfirmed-assassins').insert(data, {safe: true}, function(err, docs) {
 				//Send an email to gamegroup master email
 				Bureau.gamegroup.getGamegroup(data.gamegroup, function(err, gg) {
-				
+
 					Mail.sendText(gg.email, 'New Bureau User', utils.fullname(data)+' has joined Bureau', function(err, res) {
 						console.log(err, res)
 					})
-					
+
 					Mail.sendWelcome(data, function(err, res) {
 						console.log(err, res)
 					})
-				
+
 					//Notify guild of them joining
 					var notif = data.forename+' '+data.surname+' has joined Bureau'
 					Bureau.gamegroup.getGuild(data.gamegroup, function(err, guild) {
@@ -218,10 +220,10 @@ var Bureau = {
 				})
 			})
 		},
-		
+
 		confirmEmail: function(email, token, callback) {
 			var query = {email: email, token: token}
-			
+
 			Bureau.db.collection('unconfirmed-assassins').findOne(query, {_id:0,token:0}, function(err, doc) {
 				if(!doc || empty(doc)) {
 					callback('Invalid token or email', {})
@@ -243,7 +245,7 @@ var Bureau = {
 				})
 			})
 		},
-		
+
 		loginAssassin: function(email, password, callback) {
 			Bureau.db.collection('assassins').find({
 				$or: [
@@ -253,19 +255,19 @@ var Bureau = {
 			}).toArray(function(err, doc) {
 				var assassin = doc[0],
 					correctDetails = !!assassin && utils.test(password, assassin.password)
-					
+
 				if(correctDetails) {
 					log(utils.fullname(assassin)+' logged in')
 				}
-				
+
 				callback(err, correctDetails ? assassin : false)
 			})
 		}
 	},
-	
+
 	assassin: {
 		cachedAssassins: {}, //This object exists to massively speed up page loading
-	
+
 		getAssassin: function(uid, callback) {
 			if(Bureau.assassin.cachedAssassins.hasOwnProperty(uid)) {
 				callback(null, Bureau.assassin.cachedAssassins[uid])
@@ -281,7 +283,7 @@ var Bureau = {
 				})
 			}
 		},
-		
+
 		getAssassins: function(filter, callback) {
 			if(empty(filter)) {
 				callback(null, [])
@@ -308,7 +310,7 @@ var Bureau = {
 				})
 			})
 		},
-		
+
 		updateAssassin: function(uid, stuff, callback) {
 			if(Bureau.assassin.cachedAssassins.hasOwnProperty(uid)) {
 				delete Bureau.assassin.cachedAssassins[uid]
@@ -316,8 +318,8 @@ var Bureau = {
 			var objID = id(uid),
 				toUpdate = {$set: {}},
 				filters = {_id: objID}
-			
-			//Check if we have any special things	
+
+			//Check if we have any special things
 			for(key in stuff) {
 				if(key !== 'filter') {
 					if(stuff.hasOwnProperty(key) && key[0] === '$') {
@@ -331,12 +333,12 @@ var Bureau = {
 					filters = merge(filters, stuff.filter)
 				}
 			}
-			
+
 			//Prune empty $set
 			if(empty(toUpdate.$set)){
 				delete toUpdate.$set
 			}
-			
+
 			Bureau.db.collection('assassins').update(filters, toUpdate, function(err, doc) {
 				if(!!doc) {
 					Bureau.assassin.getAssassin(uid, function(err, doc) {
@@ -348,13 +350,13 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		updateAssassins: function(filter, stuff, callback) {
 			//We don't need to invalidate the whole cache, we'll refetch the assassins after we update them
-					
+
 			var toUpdate = {$set: {}}
-			
-			//Check if we have any special things	
+
+			//Check if we have any special things
 			for(key in stuff) {
 				if(key !== 'filter') {
 					if(stuff.hasOwnProperty(key) && key[0] === '$') {
@@ -368,12 +370,12 @@ var Bureau = {
 					filter = merge(filter, stuff.filter)
 				}
 			}
-			
+
 			//Prune empty $set
 			if(empty(toUpdate.$set)){
 				delete toUpdate.$set
 			}
-			
+
 			Bureau.db.collection('assassins').update(filter, toUpdate, {multi: true}, function(err, docs) {
 				Bureau.assassin.getAssassins(filter, function(err, assassins) {
 					if(err) {
@@ -384,12 +386,12 @@ var Bureau = {
 				})
 			})
 		},
-		
+
 		updateLastHere: function(uid) {
 			var now = new Date()
 			Bureau.assassin.updateAssassin(uid, {lastonline: now}, function(){})
 		},
-		
+
 		checkPassword: function(uid, password, callback) {
 			Bureau.assassin.getAssassin(uid, function(err, assassin) {
 				if(err) {
@@ -399,7 +401,7 @@ var Bureau = {
 				callback(null, utils.test(password, assassin.password))
 			})
 		},
-		
+
 		setPassword: function(uid, password, callback) {
 			if(!password || password.length < 6) {
 				callback('Password must be 6 chars or longer', false)
@@ -413,10 +415,10 @@ var Bureau = {
 				callback(null, true)
 			})
 		},
-		
+
 		createTempPassword: function(uid, callback) {
 			var pwd = utils.hash(utils.md5((new Date())+''))
-			
+
 			Bureau.assassin.updateAssassin(uid, {password: utils.hash(pwd), temppassword: true}, function(err, assassin) {
 				if(err) {
 					callback(err, false)
@@ -425,7 +427,7 @@ var Bureau = {
 				callback(null, pwd)
 			})
 		},
-		
+
 		submitReport: function(uid, report, callback) {
 			var now = new Date()
 			report.submitted = now
@@ -449,11 +451,11 @@ var Bureau = {
 						Bureau.assassin.addNotification(uid,notif)
 						callback(null, a)
 					})
-					
+
 				})
 			})
 		},
-		
+
 		getNotifications: function(uid, limit, callback) {
 			Bureau.assassin.getAssassin(uid, function(err, a) {
 				if(a.notifications && a.notifications.length > 0) {
@@ -463,7 +465,7 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		addNotification: function(uid, notification, source, priority) {
 			var now = new Date(),
 				n = {
@@ -477,7 +479,7 @@ var Bureau = {
 			}
 			Bureau.assassin.updateAssassin(uid, {$push: {notifications: n}}, function(){})
 		},
-		
+
 		markNotificationRead: function(uid, notificationid, callback) {
 			Bureau.assassin.updateAssassin(uid, {
 				'notifications.$.read': true,
@@ -486,32 +488,32 @@ var Bureau = {
 				}
 			}, callback)
 		},
-		
+
 		getGamegroup: function(uid, callback) {
 			Bureau.assassin.getAssassin(uid, function(err, doc) {
 				callback(err, doc.gamegroup)
 			})
 		},
-		
+
 		getSalt: function(uid, callback) {
 			Bureau.assassin.getAssassin(uid, function(err, doc) {
 				callback(err, utils.md5(uid+'~'+doc.joindate))
 			})
 		},
-		
+
 		isGuild: function(uid, callback) {
 			Bureau.assassin.getAssassin(uid, function(err, doc) {
 				callback(err, doc.guild)
 			})
 		},
-		
+
 		hasDetailsChangeRequest: function(uid, callback) {
 			Bureau.assassin.getAssassin(uid, function(err, doc) {
 				var hasReq = doc.hasOwnProperty('detailsChangeRequest') && !empty(doc.detailsChangeRequest)
 				callback(err, hasReq)
 			})
 		},
-		
+
 		submitDetailsChangeRequest: function(uid, data, callback) {
 			var whitelisted = ['address', 'course', 'liverin'],
 				details = {}
@@ -527,32 +529,32 @@ var Bureau = {
 				callback(err, doc)
 			})
 		},
-		
+
 		setPicture: function(uid, picture, callback) {
 			Bureau.assassin.updateAssassin(uid, {imgname: picture}, function(err, doc) {
 				callback(err, doc)
 			})
 		},
-		
+
 		markDetailsUpdated: function(uid, callback) {
 			var now = new Date()
 			Bureau.assassin.updateAssassin(uid, {detailsUpdated: true, detailsLastUpdated: now}, function(err, doc) {
 				callback(err, doc)
 			})
 		},
-		
+
 		setNickname: function(uid, nickname, callback) {
 			Bureau.assassin.updateAssassin(uid, {nickname: nickname}, function(err, doc) {
 				callback(err, doc)
 			})
 		},
-		
+
 		setGuild: function(uid, shouldBeGuild, callback) {
 			Bureau.assassin.updateAssassin(uid, {guild: shouldBeGuild}, function(err, doc) {
 				callback(err, doc)
 			})
 		},
-		
+
 		getKills: function(uid, includePending, callback) {
 			Bureau.assassin.getAssassin(uid, function(err, assassin) {
 				if(err) {
@@ -573,7 +575,7 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		getDeaths: function(uid, includePending, callback) {
 			var filter = {
 					'kills.victimid':uid
@@ -582,7 +584,7 @@ var Bureau = {
 				map = function() {
 					var id = this._id.valueOf(),
 						ggid = this.gamegroup
-					
+
 					this.kills.forEach(function(k) {
 						k.killerid = id
 						k.gamegroup = ggid
@@ -595,9 +597,9 @@ var Bureau = {
 				getVal = function(o) {
 					return o.value
 				}
-			
+
 			Bureau.db.collection('assassins').mapReduce(
-				map, 
+				map,
 				reduce,
 				{
 					out:{merge:'kills'},
@@ -620,7 +622,7 @@ var Bureau = {
 				}
 			)
 		},
-		
+
 		getKillsFromGame: function(uid, gameid, includePending, callback) {
 			Bureau.assassin.getKills(uid, includePending, function(err, kills) {
 				if(err) {
@@ -633,7 +635,7 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		getDeathsFromGame: function(uid, gameid, includePending, callback) {
 			var filter = {
 					'kills.victimid':uid,
@@ -643,7 +645,7 @@ var Bureau = {
 				map = function() {
 					var id = this._id.valueOf(),
 						ggid = this.gamegroup
-					
+
 					this.kills.forEach(function(k) {
 						k.killerid = id
 						k.gamegroup = ggid
@@ -656,9 +658,9 @@ var Bureau = {
 				getVal = function(o) {
 					return o.value
 				}
-			
+
 			Bureau.db.collection('assassins').mapReduce(
-				map, 
+				map,
 				reduce,
 				{
 					out:{merge:'kills'},
@@ -681,7 +683,7 @@ var Bureau = {
 				}
 			)
 		},
-		
+
 		hasKilledInGame: function(uid, gameid, includePending, callback) {
 			Bureau.assassin.getKillsFromGame(uid, gameid, includePending, function(err, kills) {
 				if(err) {
@@ -691,7 +693,7 @@ var Bureau = {
 				callback(null, kills.length > 0)
 			})
 		},
-		
+
 		hasDiedInGame: function(uid, gameid, includePending, callback) {
 			Bureau.assassin.getDeathsFromGame(uid, gameid, includePending, function(err, deaths) {
 				if(err) {
@@ -701,7 +703,7 @@ var Bureau = {
 				callback(null, deaths.length > 0)
 			})
 		},
-		
+
 		getPlayersKilled: function(uid, includePending, callback) {
 			Bureau.assassin.getKills(uid, includePending, function(err, kills) {
 				if(err) {
@@ -714,7 +716,7 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		getPlayersKilledFromGame: function(uid, gameid, includePending, callback) {
 			Bureau.assassin.getKillsFromGame(uid, gameid, includePending, function(err, kills) {
 				if(err) {
@@ -727,7 +729,7 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		hasKilledPlayerInGame: function(uid, victimid, gameid, includePending, callback) {
 			Bureau.assassin.getPlayersKilledFromGame(uid, gameid, includePending, function(err, playersKilled) {
 				if(err) {
@@ -737,7 +739,7 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		totalKills: function(uid, callback) {
 			Bureau.assassin.getKills(uid, true, function(err, kills) {
 				if(err) {
@@ -747,7 +749,7 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		totalDeaths: function(uid, callback) {
 			Bureau.assassin.getDeaths(uid, true, function(err, deaths) {
 				if(err) {
@@ -757,7 +759,7 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		stats: function(uid, callback) {
 			Bureau.assassin.totalKills(uid, function(err, k) {
 				Bureau.assassin.totalDeaths(uid, function(err, d) {
@@ -770,7 +772,7 @@ var Bureau = {
 				})
 			})
 		},
-		
+
 		getLethality: function(uid, callback) {
 			Bureau.assassin.totalKills(uid, function(err, count) {
 				var lethality,
@@ -782,12 +784,12 @@ var Bureau = {
 				callback(err, lethality)
 			})
 		},
-		
+
 	},
-	
+
 	gamegroup: {
 		cachedGamegroups: {},
-		
+
 		getGamegroups: function(callback) {
 			if(!empty(Bureau.gamegroup.cachedGamegroups)) {
 				callback(null, Bureau.gamegroup.cachedGamegroups)
@@ -808,7 +810,7 @@ var Bureau = {
 				log('Gamegroup cache rebuilt')
 			}
 		},
-		
+
 		getGamegroup: function(ggid, callback) {
 			if(Bureau.gamegroup.cachedGamegroups.hasOwnProperty(ggid)) {
 				callback(null, Bureau.gamegroup.cachedGamegroups[ggid])
@@ -825,16 +827,16 @@ var Bureau = {
 				})
 			}
 		},
-		
+
 		updateGamegroup: function(ggid, stuff, callback) {
 			if(Bureau.gamegroup.cachedGamegroups.hasOwnProperty(ggid)) {
 				delete Bureau.gamegroup.cachedGamegroups[ggid]
 			}
-			
+
 			var toUpdate = {$set: {}},
 				filters = {ggid: ggid}
-			
-			//Check if we have any special things	
+
+			//Check if we have any special things
 			for(key in stuff) {
 				if(key !== 'filter') {
 					if(stuff.hasOwnProperty(key) && key[0] === '$') {
@@ -848,12 +850,12 @@ var Bureau = {
 					filters = merge(filters, stuff.filter)
 				}
 			}
-			
+
 			//Prune empty $set
 			if(empty(toUpdate.$set)){
 				delete toUpdate.$set
 			}
-			
+
 			Bureau.db.collection('gamegroups').update(filters, toUpdate, function(err, doc) {
 				if(!!doc) {
 					Bureau.gamegroup.getGamegroup(ggid, function(err, doc) {
@@ -865,7 +867,7 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		getKillMethods: function(ggid, callback) {
 			Bureau.gamegroup.getGamegroup(ggid, function(err, gg) {
 				if(!gg.killmethods) {
@@ -875,13 +877,13 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		getKillMethod: function(ggid, methodid, callback) {
 			Bureau.gamegroup.getKillMethods(ggid, function(err, killmethods) {
 				var m = killmethods.filter(function(el) {
 					return el.id === methodid
 				})
-				
+
 				if(m[0]) {
 					callback(null, m[0])
 				} else {
@@ -889,15 +891,15 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		addKillMethod: function(ggid, method, callback) {
 			//Check if method exists before adding it
 			Bureau.gamegroup.getKillMethods(ggid, function(err, methods) {
-			
+
 				var methodExistsAlready = methods.filter(function(el) {
 					return el.id === method.id
 				}).length > 0;
-				
+
 				if(methodExistsAlready) {
 					callback('The kill method already exists')
 				} else {
@@ -906,31 +908,31 @@ var Bureau = {
 					})
 				}
 			})
-			
+
 		},
-		
+
 		updateKillMethod: function(ggid, methodid, stuff, callback) {
 			var o = {
 				filter: {
 					'killmethods.id': methodid
 				}
 			}
-			
+
 			//'killmethods.$.read': true
-			
+
 			for(key in stuff) {
 				if(stuff.hasOwnProperty(key)) {
 					o['killmethods.$.'+key] = stuff[key]
 				}
 			}
-			
+
 			Bureau.gamegroup.updateGamegroup(ggid, o, function(err, gg) {
 				Bureau.gamegroup.getKillMethods(ggid, function(err, killmethods) {
 					callback(err, killmethods)
 				})
 			})
 		},
-		
+
 		notifyGamegroup: function(ggid, notification, source, priority, callback) {
 			var now = new Date(),
 				n = {
@@ -952,7 +954,7 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		notifyGuild: function(ggid, notification, source, priority, callback) {
 			var now = new Date(),
 				n = {
@@ -974,7 +976,7 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		forceDetailsUpdate: function(ggid, callback) {
 			Bureau.assassin.updateAssassins({gamegroup: ggid}, {detailsUpdated: false}, function(err, assassins){
 				if(callback) {
@@ -983,35 +985,35 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		setMotd: function(ggid, motd, callback) {
 			log('setting motd for '+ggid+' to ' + motd)
 			Bureau.gamegroup.updateGamegroup(ggid, {motd: motd}, callback)
 		},
-		
+
 		setEmail: function(ggid, email, callback) {
 			log('setting email for '+ggid+' to ' + email)
 			Bureau.gamegroup.updateGamegroup(ggid, {email: email}, callback)
 		},
-		
+
 		getAssassins: function(ggid, callback) {
 			Bureau.assassin.getAssassins({gamegroup: ggid}, function(err, assassins) {
 				callback(err, assassins)
 			})
 		},
-		
+
 		getGuild: function(ggid, callback) {
 			Bureau.assassin.getAssassins({guild: true, gamegroup: ggid}, function(err, guild) {
 				callback(err, guild)
 			})
 		},
-		
+
 		getAssassinsCount: function(ggid, callback) {
 			Bureau.db.collection('assassins').count({gamegroup: ggid}, function(err, callback) {
 				callback(err, count)
 			})
 		},
-		
+
 		addGamegroup: function(data, callback) {
 			if(!Bureau.gamegroup.cachedGamegroups.hasOwnProperty(data.ggid)) {
 				Bureau.db.collection('gamegroups').insert(data, {safe: true}, function(err, docs) {
@@ -1022,16 +1024,16 @@ var Bureau = {
 				callback(new Error('Gamegroup already exists'), {})
 			}
 		},
-				
+
 	},
-	
+
 	report: {
 		getReports: function(query, filter, callback) {
 			var f = query,
 				map = function() {
 					var id = this._id.valueOf(),
 						ggid = this.gamegroup
-					
+
 					this.kills.forEach(function(k) {
 						k.killerid = id
 						k.gamegroup = ggid
@@ -1044,9 +1046,9 @@ var Bureau = {
 				getVal = function(o) {
 					return o.value
 				}
-			
+
 			Bureau.db.collection('assassins').mapReduce(
-				map, 
+				map,
 				reduce,
 				{
 					out:{merge:'kills'},
@@ -1069,7 +1071,7 @@ var Bureau = {
 				}
 			)
 		},
-		
+
 		getProcessedReportsByGame: function(ggid, callback) {
 			//Get reports
 			Bureau.report.getReports({gamegroup:ggid}, {$or:[{'value.state':'approved'},{'value.state':'rejected'}],'value.gamegroup':ggid}, function(err, reports) {
@@ -1082,8 +1084,8 @@ var Bureau = {
 								callback(null, games)
 							}
 						}
-					
-						
+
+
 					games.forEach(function(g,i) {
 						g.reports = []
 						idMap[g.gameid] = i
@@ -1100,7 +1102,7 @@ var Bureau = {
 				})
 			})
 		},
-		
+
 		getReport: function(reportid, callback) {
 			Bureau.report.getReports({'kills.id':reportid},{'value.id':reportid},function(err, reports) {
 				if(reports.length < 1) {
@@ -1110,12 +1112,12 @@ var Bureau = {
 				callback(null,reports[0])
 			})
 		},
-		
+
 		updateReport: function(reportid, stuff, callback) {
 			var toUpdate = {$set: {}},
 				filters = {'kills.id': reportid}
-			
-			//Check if we have any special things	
+
+			//Check if we have any special things
 			for(key in stuff) {
 				if(key !== 'filter') {
 					if(stuff.hasOwnProperty(key) && key[0] === '$') {
@@ -1135,13 +1137,13 @@ var Bureau = {
 					filters = merge(filters, stuff.filter)
 				}
 			}
-			
+
 			//Prune empty $set
 			if(empty(toUpdate.$set)){
 				delete toUpdate.$set
 			}
 
-			
+
 			Bureau.db.collection('assassins').update(filters, toUpdate, function(err, count) {
 				if(!!count) {
 					Bureau.db.collection('assassins').findOne(filters, function(err, doc) {
@@ -1158,23 +1160,23 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		getPendingReports: function(ggid, callback) {
 			Bureau.report.getReports({gamegroup:ggid}, {'value.state':'waiting','value.gamegroup':ggid}, callback)
 		},
-		
+
 		getProcessedReports: function(ggid, callback) {
 			Bureau.report.getReports({gamegroup:ggid}, {$or:[{'value.state':'approved'},{'value.state':'rejected'}],'value.gamegroup':ggid}, callback)
 		},
-		
+
 		acceptReport: function(reportid, callback) {
 			Bureau.report.updateReport(reportid, {state: 'approved'}, callback)
 		},
-		
+
 		rejectReport: function(reportid, comment, callback) {
 			Bureau.report.updateReport(reportid, {state: 'rejected', comment: comment}, callback)
 		},
-		
+
 		fullReport: function(report, callback) {
 			//We need killer, victim, killmethod and sentence
 			Bureau.assassin.getAssassin(report.killerid, function(err, killer) {
@@ -1189,7 +1191,7 @@ var Bureau = {
 				})
 			})
 		},
-		
+
 		getKillSentence: function(report) {
 			var killmethod = report.killmethod,
 				verb = killmethod.verb,
@@ -1198,14 +1200,14 @@ var Bureau = {
 			return verb.replace('#v', utils.fullname(victim)).replace('#k', utils.fullname(killer)).replace('#d', report.methoddetail)
 		}
 	},
-	
+
 	games: {},
-	
+
 	game: {
 		isGameType: function(gtype) {
 			return Bureau.games.hasOwnProperty(gtype)
 		},
-		
+
 		getGamesInGamegroupAsArray: function(ggid, callback) {
 			Bureau.gamegroup.getGamegroup(ggid, function(err, gamegroup) {
 				var games = {}
@@ -1216,22 +1218,22 @@ var Bureau = {
 				} else {
 					callback(err, gamegroup.games)
 				}
-				
+
 			})
 		},
-		
+
 		toArray: function(games) {
 			var arr = []
-			
+
 			for(var key in games) {
 				arr.push(games[key])
 			}
-			
+
 			return arr.sort(function(a,b) {
 				return b.start-a.start
 			})
 		},
-		
+
 		getGamesInGamegroup: function(ggid, callback) {
 			Bureau.gamegroup.getGamegroup(ggid, function(err, gamegroup) {
 				var games = {}
@@ -1245,10 +1247,10 @@ var Bureau = {
 					})
 					callback(err, games)
 				}
-				
+
 			})
 		},
-		
+
 		getLastGameInGamegroup: function(ggid, callback) {
 			Bureau.gamegroup.getGamegroup(ggid, function(err, gamegroup) {
 				var games = {}
@@ -1261,10 +1263,10 @@ var Bureau = {
 						return b.start - a.start
 					})[0])
 				}
-				
+
 			})
 		},
-		
+
 		getPlayersForNewGame: function(ggid, callback) {
 			//Fetch the details of the last game
 			Bureau.game.getLastGameInGamegroup(ggid, function(err, game) {
@@ -1287,12 +1289,12 @@ var Bureau = {
 						player.autoinclude = player.lastonline > autoIncludeDate
 						return player
 					})
-					
+
 					callback(null, potentialPlayers)
 				})
 			})
 		},
-		
+
 		getPossibleAssassins: function(gameid, ggid, callback) {
 			Bureau.game.getPlayerIds(gameid, function(err, playerIds) {
 				if(err) {
@@ -1310,7 +1312,7 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		getGames: function(callback) {
 			Bureau.gamegroup.getGamegroups(function(err, gamegroups) {
 				var games = {}
@@ -1323,11 +1325,11 @@ var Bureau = {
 						}
 					}
 				}
-				
+
 				callback(null, games)
 			})
 		},
-		
+
 		getGamesWithPlayer: function(id, callback) {
 			//Note: error not thrown if players does not exist
 			Bureau.game.getGames(function(err, games) {
@@ -1342,7 +1344,7 @@ var Bureau = {
 				callback(null, gamesWithPlayer)
 			})
 		},
-		
+
 		isPlayerInGame: function(id, gameid, callback) {
 			Bureau.game.getGamesWithPlayer(id, function(err, gamesWithPlayer) {
 				if(err) {
@@ -1350,9 +1352,9 @@ var Bureau = {
 				} else {
 					callback(null, gamesWithPlayer.hasOwnProperty(gameid))
 				}
-			})	
+			})
 		},
-		
+
 		getCurrentGamesWithPlayer: function(id, callback) {
 			Bureau.game.getGamesWithPlayer(id, function(err, games) {
 				var currentGamesWithPlayer = {},
@@ -1367,7 +1369,7 @@ var Bureau = {
 				callback(null, currentGamesWithPlayer)
 			})
 		},
-		
+
 		getGame: function(gameid, callback) {
 			Bureau.game.getGames(function(err, games) {
 				if(!err && games[gameid]) {
@@ -1379,7 +1381,7 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		newGame: function(ggid, gameData, callback) {
 			if(!Bureau.game.isGameType(gameData.type)) {
 				callback('Invalid game type')
@@ -1390,36 +1392,36 @@ var Bureau = {
 				return
 			}
 			gameData.gameid = utils.md5(new Date()+'')
-			
+
 			//Map the player array to an object
 			var playersArray = gameData.players,
 				playersObj = {}
-			
+
 			playersArray.forEach(function(player) {
 				playersObj[player] = {
 					score:0
 				}
-			})	
+			})
 			gameData.players = playersObj
-			
+
 			Bureau.games[gameData.type].constructGame(gameData, function(err, gameObj) {
 				if(err) {
 					callback(err)
 					return
 				}
-				
+
 				Bureau.gamegroup.updateGamegroup(ggid, {$push: {games: gameObj}}, function(err, gg){
 					callback(err, gameObj.id)
 				})
 			})
-			
+
 		},
-		
+
 		updateGame: function(gameid, stuff, callback) {
 			var toUpdate = {$set: {}},
 				filters = {'games.gameid': gameid}
-			
-			//Check if we have any special things	
+
+			//Check if we have any special things
 			for(key in stuff) {
 				if(key !== 'filter') {
 					if(stuff.hasOwnProperty(key) && key[0] === '$') {
@@ -1439,7 +1441,7 @@ var Bureau = {
 					filters = merge(filters, stuff.filter)
 				}
 			}
-			
+
 			//Prune empty $set
 			if(empty(toUpdate.$set)){
 				delete toUpdate.$set
@@ -1460,20 +1462,20 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		archiveGame: function(gameid, callback) {
 			Bureau.game.getGame(gameid, function(err, game) {
 				if(err) {
 					callback(err, {})
 					return
 				}
-				
+
 				var now = new Date()
 				if(game.end > now) {
 					callback('Cannot archive a game before it has finished', {})
 					return
 				}
-				
+
 				Bureau.game.updateGame(gameid, {archived: true}, function(err, gg) {
 					if(err) {
 						callback('There was an error archiving the game', {})
@@ -1489,7 +1491,7 @@ var Bureau = {
 				})
 			})
 		},
-		
+
 		changeGameTimes: function(gameid, start, end, callback) {
 			if(start > end) {
 				callback('Invalid game start date: game start date is after game end date')
@@ -1507,9 +1509,9 @@ var Bureau = {
 						}
 					})
 				}
-			})	
+			})
 		},
-	
+
 		getPlayers: function(gameid, callback) {
 			Bureau.game.getGame(gameid, function(err, game) {
 				if(err) {
@@ -1521,7 +1523,7 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		getPlayerIds: function(gameid, callback) {
 			Bureau.game.getPlayers(gameid, function(err, players) {
 				if(err) {
@@ -1533,7 +1535,7 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		getAssassins: function(gameid, callback) {
 			Bureau.game.getPlayerIds(gameid, function(err, playerIds) {
 				if(err) {
@@ -1551,7 +1553,7 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		addPlayer: function(gameid, playerid, callback) {
 			var o = {}
 			o['players.'+playerid] = {score:0}
@@ -1563,7 +1565,7 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		removePlayer: function(gameid, playerid, callback) {
 			var o = {}
 			o['players.'+playerid] = 1
@@ -1575,7 +1577,7 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		getPlayer: function(gameid, playerid, callback) {
 			Bureau.game.getPlayers(gameid, function(err, players) {
 				if(err) {
@@ -1587,7 +1589,7 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		getScore: function(gameid, playerid, callback) {
 			Bureau.game.getPlayer(gameid, playerid, function(err, player) {
 				if(err) {
@@ -1599,17 +1601,52 @@ var Bureau = {
 				}
 			})
 		},
-		
+
 		setScore: function(gameid, playerid, score, callback) {
 			var o = {}
 			o['players.'+playerid+'.score'] = score
 			Bureau.game.updateGame(gameid, o, callback)
 		},
-		
+
 		changeScore: function(gameid, playerid, delta, callback) {
 			var o = {}
 			o['players.'+playerid+'.score'] = delta
 			Bureau.game.updateGame(gameid, {$inc: o}, callback)
+		},
+
+		render: function(gameid, g, uid, gamegroup, callback) {
+			Bureau.assassin.getDeathsFromGame(uid, gameid, true, function(err, deaths) {
+				g.deaths = deaths
+				var deathIds = deaths.map(function(d) {
+					return d.killerid
+				})
+
+				Bureau.assassin.getKillsFromGame(uid, gameid, true, function(err, kills) {
+
+					g.kills = kills
+					var killedIds = kills.map(function(k) {
+						return k.victimid
+					})
+
+					Bureau.game.getAssassins(gameid, function(err, assassins) {
+
+						g.assassins = assassins
+						g.assassins.forEach(function(a) {
+							a.hasKilled = killedIds.indexOf(a._id+'')>-1
+							a.hasBeenKilledBy = deathIds.indexOf(a._id+'')>-1
+						})
+
+						Bureau.assassin.getAssassin(uid, function(err, assassin) {
+
+							Bureau.games[g.type].renderGame(g, assassin, gamegroup, function(err, output) {
+
+								g.output = output
+								callback(null, g)
+							})
+						})
+					})
+				})
+			})
 		}
 	}
 }

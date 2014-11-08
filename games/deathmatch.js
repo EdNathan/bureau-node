@@ -1,7 +1,7 @@
 //The game automatically has a reference to Bureau shoved on to it
 var deathmatchgame = {
 	init: function(Bureau) {
-		
+
 	},
 	label: 'Deathmatch',
 	//This should output html/text for displaying when setting up a game. Use form fields for extra parameters when setting up
@@ -15,13 +15,26 @@ var deathmatchgame = {
 		/* modifications if you're a more complicated game */
 		callback(null, game)
 	},
-	
+
 	//Given a player uid, construct a game state fragment for the player
 	getGameStateForUid: function(game, playerid, callback) {
 		var err = null
 		callback(err, '')
 	},
-	
+
+	renderGame: function(game, assassin, gamegroup, callback) {
+		var self = this
+		console.log(game, assassin, gamegroup)
+		self.swig.renderFile('./games/views/deathmatch.html', {game:game, assassin:assassin, gamegroup:gamegroup}, function(err, output) {
+			if(err) {
+				console.log('ERROR RENDERING GAME',err)
+				callback(err, '')
+				return
+			}
+			callback(null, output)
+		})
+	},
+
 	//Given killer, victim, kill method, time and everything else in the report if needed, determine whether the kill is valid
 	checkKillValid: function(game, killerid, victimid, killmethod, time, report, callback) {
 		console.log('Checking if killer killed victim')
@@ -44,26 +57,26 @@ var deathmatchgame = {
 			}
 		})
 	},
-	
+
 	//Given killer, victim, kill method and the report, handle the kill
 	handleKill: function(game, killerid, victimid, report, callback) {
 		//Add 1 to the score
 		this.Bureau.game.changeScore(game.gameid, killerid, 1, callback)
 	},
-	
+
 	//Given killer, victim, kill method and the report, undo the effects of the kill (if possible)
 	undoKill: function(game, killerid, victimid, report, callback) {
 		//Remove 1 from the score
 		this.Bureau.game.changeScore(game.gameid, killerid, -1, callback)
 	},
-	
+
 	//Given the uid of a new player added, handle all in game effects
 	handlePlayerAdded: function(game, playerid, callback) {
 		//No effect
 		console.log('Adding '+playerid+' to game '+game.name)
 		callback(null)
 	},
-	
+
 	//Given the uid of a player just removed, handle all in game effects
 	handlePlayerRemoved: function(game, playerid, callback) {
 		//No effect

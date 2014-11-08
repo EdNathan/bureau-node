@@ -1,0 +1,9 @@
+{% include './basegame.html' %}
+<div class="game-info">{{game.kills.length}} kill{{game.kills.length|plural}}, {{game.deaths.length}} death{{game.deaths.length|plural}}</div>
+<ul id="game-{{game.gameid}}" class="player-table searchable {{game.type}}">
+    {% for a in game.assassins %}
+        {% if a._id|safe != uid %}
+            {{ rows.gamePlayer(a,game) }}
+        {% endif %}
+    {% endfor %}
+</ul>
