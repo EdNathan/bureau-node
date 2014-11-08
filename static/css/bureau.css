@@ -1997,7 +1997,7 @@ h6::after {
   -o-transition: all 0.3s ease 0s;
   transition: all 0.3s ease 0s;
   /*
-					
+
 					@media(@twocol) {
 						border-left: @t solid white;
 						border-right: 0px;
@@ -2111,6 +2111,9 @@ h6::after {
     left: -10px;
     right: auto;
   }
+}
+.player-table[data-searchmethod=inclusive] li {
+  display: none;
 }
 @media (min-width:900px) {
   .player-table {
@@ -4373,7 +4376,7 @@ h6::after {
   line-height: 1em;
   margin-right: 30px;
 }
-#page-newgame .new-game-inner section input {
+#page-newgame .new-game-inner section input:not([type="checkbox"]) {
   background: none;
   border: none;
   padding: 0;
@@ -4414,6 +4417,24 @@ h6::after {
 #page-newgame .new-game-inner section#game-setup-fragment-container.fragment-loading {
   text-align: center;
   color: #888 !important;
+}
+#page-newgame .new-game-inner section#game-setup-fragment-container .param {
+  margin: 10px;
+  padding: 10px;
+  border-color: inherit;
+  border-top: 1px solid;
+  border-bottom: 1px solid;
+}
+#page-newgame .new-game-inner section#game-setup-fragment-container .param + .param {
+  border-top: none;
+  margin-top: 0;
+}
+#page-newgame .new-game-inner section#game-setup-fragment-container .param input {
+  float: none;
+  display: block;
+  text-align: left;
+  width: 100%;
+  padding-right: 0;
 }
 #page-newgame .new-game-inner .addplayer-search {
   margin-top: 20px;

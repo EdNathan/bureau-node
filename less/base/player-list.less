@@ -1,31 +1,31 @@
 .player-table {
 	@t: 5px;
 	@tb: @t solid transparent;
-	
+
 	.clearfix();
-	
+
 	max-width: 960px;
-	
+
 	ul, li { //Reset stupid padding and margin
 		list-style: none;
 		padding: 0;
 		margin: 0;
 	}
-	
+
 	.player-row {
 		width: 100%;
 		float: left;
 		position: relative;
 		height: 60px;
 		.transition(0.4s, ease, height);
-		
+
 		&.has-killed {
-			opacity: 0.5; 
-			
+			opacity: 0.5;
+
 			.form-wrapper {
 				display: none;
 			}
-			
+
 			&::after {
 				content: "deceased";
 				display: block;
@@ -35,28 +35,28 @@
 				right:10px;
 			}
 		}
-		
+
 		section {
 			background: white;
 			width: 100%;
 			height: 100%;
 			overflow: hidden;
 			padding-left: 1em;
-			
+
 			@rpadding: 150px;
 			@rpaddingm: 5px;
-			
-			
+
+
 			header {
 				.box-shadow(~"0 5px 0px white, 0px 10px 25px -20px rgba(0, 0, 0, 1)");
 				//padding-right: @rpadding;
 				//@media (@mobile) {
 				//	padding-right: @rpaddingm;
 				//}
-				
+
 				min-height:53px;
-				
-				
+
+
 				.name {
 					color: #666;
 					height: 45px;
@@ -69,7 +69,7 @@
 					overflow: hidden;
 		/* 			text-align: center; */
 				}
-			
+
 				.nickname-rank {
 					font-size: 12px;
 		/* 			border-bottom: 1px solid #dfdfdf; */
@@ -81,14 +81,14 @@
 					display: block;
 					line-height: 1em;
 					font-weight: 300;
-					
+
 					span:not(:empty)::after {
 						//content:", ";
 					}
-					
+
 				}
 			}
-			
+
 			.fields {
 				padding-right: @rpadding;
 				@media (@mobile) {
@@ -99,7 +99,7 @@
 					margin-bottom: 5px;
 					padding-bottom: 8px;
 				}
-				
+
 				*[title]::after {
 					content: attr(title);
 					position: absolute;
@@ -108,32 +108,32 @@
 					font-size: 12px;
 					line-height: 12px;
 				}
-				
+
 				*[title]:empty {
-					display:none;	
+					display:none;
 					&::after {
 						display:none;
 					}
 				}
 			}
 		}
-		
+
 		aside {
 			.flex-container();
 			.flex-column();
 			.flex-justify(center);
-			
+
 			position: absolute;
 			top:0;
 			left:-60px;
 			height: 60px;
 			.transition(0);
-			
+
 			@media (@notmobile) {
 				.transition(0.3s);
 				height: 100%;
 			}
-			
+
 			.display-picture {
 				width: 50px;
 				height: 50px;
@@ -144,13 +144,13 @@
 				.border-radius(50%);
 				.box-shadow(~"0 0 0 1px white, 0px 5px 5px -5px rgba(0, 0, 0, 1)");
 				.transition(0.3s);
-				
+
 				//If they don't have a picture give them the default one
 				&[style*="pictures/.jpg)"] {
 					background-image: url(../images/target.svg) !important;
 					.box-shadow(~"0 0 0 1px @{DUASred}, 0px 5px 5px -5px rgba(0, 0, 0, 1)");
 				}
-				
+
 				&::after { //Add a cutie pie little triangle to the display picture!
 					content: "";
 					display: block;
@@ -163,7 +163,7 @@
 					opacity:1;
 					.transition(0.3s);
 /*
-					
+
 					@media(@twocol) {
 						border-left: @t solid white;
 						border-right: 0px;
@@ -172,12 +172,12 @@
 						right: auto;
 					}
 */
-					
+
 				}
 			}
 		}
-		
-		
+
+
 		.form-wrapper {
 			position: absolute;
 			top:0;
@@ -187,16 +187,16 @@
 			width: 112px;
 			overflow: hidden;
 			z-index: 100;
-			
+
 			form {
 				//display: none; //Hide the form so they can't click it when the row is not expanded
-				
+
 				width: 100%;
 				height:100%;
 				.transform(translateX(100%) translateZ(0));
 				opacity: 0;
 				.transition(0.5s);
-				
+
 				input[type="submit"] {
 					margin: 0 auto;
 					display: block;
@@ -214,27 +214,27 @@
 				}
 			}
 		}
-		
+
 		&.expanded:not(.gamestate-row) {
 			height: 250px;
-			
+
 			form {
 				display: block;
 				.transform(translateX(0%) translateZ(0));
 				opacity: 1;
 			}
-			
+
 			@media (@notmobile) {
 				aside {
 					left:100%;
 					height:100%;
 					margin-left:-140px;
 					.transition(0.5s);
-				
+
 					.display-picture {
 						width:128px;
 						height:128px;
-					
+
 						&::after {
 							opacity: 0;
 						}
@@ -245,35 +245,35 @@
 				aside .display-picture {
 					margin-left: -10px;
 				}
-			
+
 				&:nth-child(2n) {
 					aside {
-						
+
 						.display-picture {
 							//margin-left: -200px;
 						}
-					}				
+					}
 				}
-				
+
 			}
 		}
-		
-		
-		
+
+
+
 		@media (@twocol) {
 			@gutter: 1em;
 			width:50%;
 			padding-right:@gutter/2;
-			
+
 			&.expanded {
 				.form-wrapper {
 					width: 122px;
 				}
 			}
-			
+
 			float: left;
 			clear: left;
-			
+
 			&:nth-child(2n) {
 				padding-left: @gutter/2;
 				padding-right: 0;
@@ -284,11 +284,11 @@
 						width: 115px;
 					}
 				}
-				
+
 				aside {
 					left: auto;
 					right: -60px;
-					
+
 					.display-picture::after {
 						border-left: @t solid white;
 						border-right: 0px;
@@ -296,27 +296,33 @@
 						left:-10px;
 						right: auto;
 					}
-				}				
+				}
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	& {
 		list-style: none;
 		padding: 0 0 0 60px;
 		margin:0 auto 50px; //Now add margin right back in so nothing clips...
 	}
-	
+
+	&[data-searchmethod=inclusive] {
+		li {
+			display: none;
+		}
+	}
+
 	@media (@twocol) {
 		padding: 0 60px;
 	}
-	
+
 	@media (@mobile) {
 		padding-left: 65px;
 	}
-	
+
 	&.gamestate {
 		.player-row {
 			&.expanded {
@@ -342,7 +348,7 @@
 							label {
 								float: left;
 							}
-							
+
 							input[name=scorefield] {
 								float: right;
 								width: 60px;
@@ -362,7 +368,7 @@
 			}
 		}
 	}
-	
+
 	&.membership {
 		.player-row {
 			section {
@@ -383,7 +389,7 @@
 					margin-bottom: 5px;
 					padding-bottom: 8px;
 				}
-				
+
 				*[title]::after {
 					content: attr(title);
 					position: absolute;
@@ -397,14 +403,14 @@
 					line-height: 12px;
 					padding-left: 10px;
 				}
-				
+
 				*[title]:empty {
-					display:none;	
+					display:none;
 					&::after {
 						display:none;
 					}
 				}
-				
+
 				p {
 					margin-right: 150px;
 					line-height: 1.3em;
@@ -450,11 +456,11 @@
 					-moz-appearance: none;
 					-webkit-appearance: none;
 					appearance: none;
-					
+
 					-webkit-border-radius: 0;
 					-moz-border-radius: 0;
 					border-radius: 0;
-					
+
 					color: #666666;
 					.transition(0.2s);
 					cursor: pointer;
@@ -471,7 +477,7 @@
 			}
 		}
 	}
-	
+
 	.addplayer-row, #page-gamestate & .addplayer-row {
 		display: none;
 		height: 50px;
@@ -480,11 +486,11 @@
 		background: white;
 		margin-bottom: 5px;
 		position: relative;
-		
+
 		&:last-child {
 			margin-bottom: 30px;
 		}
-		
+
 		.name {
 			float: left;
 			height: 50px;
@@ -498,7 +504,7 @@
 			overflow: hidden;
 			white-space: nowrap;
 		}
-		
+
 		form {
 			float: right;
 			height: 100%;
@@ -518,7 +524,7 @@
 			}
 		}
 	}
-	
+
 	.addplayer-row-newgame {
 		display: block;
 	}
@@ -540,10 +546,10 @@
 	&:focus {
 		background-color: white;
 	}
-	
+
 	&.addplayer-search {
 		margin-top: -30px;
 		background-image: url(../images/plus.svg);
-		
+
 	}
 }

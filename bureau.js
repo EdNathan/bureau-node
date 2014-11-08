@@ -1614,6 +1614,16 @@ var Bureau = {
 			Bureau.game.updateGame(gameid, {$inc: o}, callback)
 		},
 
+		setPlayerData: function(gameid, playerid, toSet, callback) {
+			var o = {}
+			for(var key in toSet) {
+				if(toSet.hasOwnProperty(key)) {
+					o['players.'+playerid+'.'+key] = toSet[key]
+				}
+			}
+			Bureau.game.updateGame(gameid, o, callback)
+		},
+
 		render: function(gameid, g, uid, gamegroup, callback) {
 			Bureau.assassin.getDeathsFromGame(uid, gameid, true, function(err, deaths) {
 				g.deaths = deaths

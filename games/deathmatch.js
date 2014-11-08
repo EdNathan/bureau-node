@@ -6,7 +6,9 @@ var deathmatchgame = {
 	label: 'Deathmatch',
 	//This should output html/text for displaying when setting up a game. Use form fields for extra parameters when setting up
 	getGameSetupFragment: function(callback) {
-		callback(null, 'Standard pair locking deathmatch<br>At the start of the game everyone in the game has everyone else in the game as a target. so if we take players A, B and C.<br><br>Player A kills player B. the pairing of player A and player B is now locked. this means that Player B cant kill A and A cant kill be again. However both players can kill player C')
+		this.swig.renderFile('./games/fragments/deathmatchSetupFragment.html', {}, function(err, output) {
+			callback(null, output)
+		})
 	},
 	//Passed all the form data from game setup, should modify the data and return a 'game' object for insertion into the database
 	constructGame: function(data, callback) {
@@ -24,8 +26,7 @@ var deathmatchgame = {
 
 	renderGame: function(game, assassin, gamegroup, callback) {
 		var self = this
-		console.log(game, assassin, gamegroup)
-		self.swig.renderFile('./games/views/deathmatch.html', {game:game, assassin:assassin, gamegroup:gamegroup}, function(err, output) {
+		self.swig.renderFile('./games/views/deathmatch.html', {game:game, assassin:assassin, uid:assassin._id+'', gamegroup:gamegroup}, function(err, output) {
 			if(err) {
 				console.log('ERROR RENDERING GAME',err)
 				callback(err, '')

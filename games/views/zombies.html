@@ -1,0 +1,79 @@
+{% include './basegame.html' %}
+
+
+{% macro zombiesGamePlayer(a, g, verb) %}
+    <li class="player-row" data-index="{{a|search}}">
+        <section>
+            <header>
+                <div class="name">{{ a.forename }} {{ a.surname }}</div>
+                <div class="nickname-rank"><span class="nickname">{{a.nickname}}</span><!--  Lethality: #lethality --></div>
+            </header>
+            <div class="fields">
+                <div title="address" class="address-group">
+                    <p>{{ a.address|address }}</p>
+                    {% if a.liverin %}
+                    <p>(Living In)</p>
+                    {% endif %}
+                </div>
+
+                <div class="academic-group">
+                    <p title="college">{{ a.college }}</p>
+                    <p title="course">{{ a.course }}</p>
+                </div>
+            </div>
+            <div class="form-wrapper">
+                <form action="/report" method="get">
+                    <input type="hidden" name="victimid" value="{{a._id|safe}}">
+                    <input type="hidden" name="gameid" value="{{g.gameid}}">
+                    <input type="submit" name="kill" value="{{{true:verb, false:"Kill"}[!!verb]}}">
+                </form>
+            </div>
+
+        </section>
+        <aside>
+            <div class="display-picture" style="background-image:url({{a.imgname}})"></div>
+        </aside>
+
+        <div>
+
+        </div>
+    </li>
+{% endmacro %}
+
+
+{% if isZombie %}
+<!-- ZOMBIE DISPLAY -->
+    <div class="game-info">{{game.kills.length}} kill{{game.kills.length|plural}}, {{game.deaths.length}} death{{game.deaths.length|plural}}</div>
+    <div class="game-info"><br>There are {{survivors.length}} survivors remaining. Fix it.</div>
+    <ul id="game-{{game.gameid}}" class="player-table searchable {{game.type}}" data-search="search brains">
+        {% for a in game.assassins %}
+            {% if a._id|safe != uid %}
+                {{ zombiesGamePlayer(a,game,'brains') }}
+            {% endif %}
+        {% endfor %}
+    </ul>
+{% else %}
+<!-- SURVIVOR DISPLAY -->
+    <div class="game-info">{{survivors.length}} survivors remain</div>
+    {% if game.custom['zombies-show-count'] %}
+    <!-- ONLY SHOW SURVIVOR COUNT -->
+        <div class="game-info"><br>{{game.kills.length}} kill{{game.kills.length|plural}}</div>
+        <ul id="game-{{game.gameid}}" class="player-table searchable {{game.type}}" data-search="find players" data-searchmethod="inclusive">
+            {% for a in game.assassins %}
+                {% if a._id|safe != uid %}
+                    {{ zombiesGamePlayer(a,game) }}
+                {% endif %}
+            {% endfor %}
+        </ul>
+    {% else %}
+    <!-- SHOW ALL SURVIVORS -->
+        <div class="game-info"><br>{{game.kills.length}} kill{{game.kills.length|plural}}</div>
+        <ul id="game-{{game.gameid}}" class="player-table searchable {{game.type}}" data-search="search players">
+            {% for a in survivors %}
+                {% if a._id|safe != uid %}
+                    {{ zombiesGamePlayer(a,game) }}
+                {% endif %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endif %}
