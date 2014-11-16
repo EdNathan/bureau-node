@@ -37,6 +37,9 @@ var zombiesgame = {
 				return
 			}
 			var state = {
+				game: game,
+				playerid: playerid,
+				player: game.players[playerid],
 				hits: deaths.length,
 				isZombie: !!game.players[playerid].zombie
 			}
@@ -47,6 +50,35 @@ var zombiesgame = {
 					return
 				}
 				callback(null, output)
+			})
+
+		})
+	},
+
+	changeGameState: function(game, playerid, data, callback) {
+		var permaZombie = !!data.permazombie,
+			toSet = {permaZombie: permaZombie},
+			maxDeathCount = game.custom['zombies-kill-limit'],
+			gameid = game.gameid
+			self = this
+
+		self.Bureau.assassin.getDeathsFromGame(playerid, gameid, false, function(err, deaths) {
+			var deathCount = deaths.length
+
+			if(permaZombie) {
+				toSet.zombie = true
+			} else if(deathCount >= maxDeathCount) {
+				toSet.zombie = true
+			} else {
+				toSet.zombie = false
+			}
+
+			self.Bureau.game.setPlayerData(gameid, playerid, toSet, function(err, game) {
+				if(err) {
+					callback(err, {})
+				} else {
+					callback(null, game)
+				}
 			})
 
 		})

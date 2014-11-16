@@ -2126,7 +2126,7 @@ h6::after {
   }
 }
 .player-table.gamestate .player-row.expanded {
-  height: 250px;
+  height: auto;
 }
 .player-table.gamestate .player-row section {
   padding: 0 15px;
@@ -2159,9 +2159,12 @@ h6::after {
   height: 100%;
   line-height: 60px;
 }
+.player-table.gamestate .player-row section .removeplayerform {
+  margin-bottom: 10px;
+}
 .player-table.gamestate .player-row section .removeplayerform input[type="submit"] {
-  color: #ba2025;
-  outline-color: #ba2025;
+  color: #ba2025 !important;
+  outline-color: #ba2025 !important;
 }
 .player-table.membership .player-row section {
   padding: 0 15px;
@@ -4589,6 +4592,24 @@ h6::after {
 #page-gamestate .game-state .gamedate-form.archive-form input[type="submit"]:hover {
   background: rgba(186, 32, 37, 0.9);
   color: white;
+}
+#page-gamestate .gamestate-block .param {
+  margin: 10px;
+  padding: 10px;
+  border-color: inherit;
+  border-top: 1px solid;
+  border-bottom: 1px solid;
+}
+#page-gamestate .gamestate-block .param + .param {
+  border-top: none;
+  margin-top: 0;
+}
+#page-gamestate .gamestate-block .param input {
+  float: none;
+  display: block;
+  text-align: left;
+  width: 100%;
+  padding-right: 0;
 }
 #kill-reports {
   margin: 30px auto 30px;

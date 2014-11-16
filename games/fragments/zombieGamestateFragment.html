@@ -1,3 +1,7 @@
-{% if isZombie %}Zombie{% else %}Survivor{% endif %}
+{% if isZombie %}Zombie{% else %}Survivor{% endif %}, {{hits}} hit{{hits|plural}} taken
 <br>
-{{hits}} hit{{hits|plural}} taken
+<div class="param">
+<label for="permazombie-{{playerid}}">Force Zombie</label>
+<input type="checkbox" name="permazombie" id="permazombie-{{playerid}}" value="yes" {% if player.permaZombie %}checked{% endif %}>
+</div>
+<input type="submit" name="changegamestatebtn" value="Alter Player">

@@ -1294,6 +1294,22 @@ var pages = {
 							})
 							break;
 
+						case 'changegamestate':
+							var gameid = req.body.gameid,
+								playerid = req.body.playerid,
+								data = req.body
+
+							delete req.body.token
+
+							console.log(req.body)
+							Bureau.game.changeGameState(gameid, playerid, data, function(err, game) {
+								if(err) {
+									res.locals.pageErrors.push(err)
+								}
+								authPages.get.guild.gamestate(req, res)
+							})
+							break;
+
 						default:
 							authPages.get.guild.gamestate(res, res)
 							break;

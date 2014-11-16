@@ -326,7 +326,7 @@
 	&.gamestate {
 		.player-row {
 			&.expanded {
-				height: 250px;
+				height: auto;
 			}
 			section {
 				padding: 0 15px;
@@ -360,9 +360,10 @@
 					}
 				}
 				.removeplayerform {
+					margin-bottom: 10px;
 					input[type="submit"] {
-						color: @DUASred;
-						outline-color: @DUASred;
+						color: @DUASred !important;
+						outline-color: @DUASred !important;
 					}
 				}
 			}

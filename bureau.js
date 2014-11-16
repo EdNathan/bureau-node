@@ -1657,6 +1657,12 @@ var Bureau = {
 					})
 				})
 			})
+		},
+
+		changeGameState: function(gameid, playerid, data, callback) {
+			Bureau.game.getGame(gameid, function(err, game) {
+				Bureau.games[game.type].changeGameState(game, playerid, data, callback)
+			})
 		}
 	}
 }

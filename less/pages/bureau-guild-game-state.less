@@ -45,7 +45,7 @@ input[type="submit"]:hover {
 				&:first-child {
 					float: left;
 				}
-				
+
 				@media(@mobile) {
 					width: 100%;
 					float: none;
@@ -53,7 +53,7 @@ input[type="submit"]:hover {
 						float: none;
 					}
 				}
-				
+
 				&::before {
 					content: "";
 					display: block;
@@ -64,13 +64,13 @@ input[type="submit"]:hover {
 					height: 100%;
 					background: transparent;
 				}
-				
+
 				&.problem {
 					&::before {
 						background: @DUASred;
 					}
 				}
-				
+
 				&:hover {
 					background: fade(white, 90%);
 					color: #333;
@@ -102,7 +102,7 @@ input[type="submit"]:hover {
 			}
 			outline-offset: 0px;
 		}
-		
+
 		&.archive-form {
 			input[type="submit"] {
 				color: @DUASred;
@@ -112,6 +112,29 @@ input[type="submit"]:hover {
 					color: white;
 				}
 			}
+		}
+	}
+}
+
+.gamestate-block {
+	.param {
+		margin: 10px;
+		padding: 10px;
+		border-color: inherit;
+		border-top: 1px solid;
+		border-bottom: 1px solid;
+
+		&+.param {
+			border-top: none;
+			margin-top:0;
+		}
+
+		input {
+			float: none;
+			display: block;
+			text-align: left;
+			width: 100%;
+			padding-right: 0;
 		}
 	}
 }

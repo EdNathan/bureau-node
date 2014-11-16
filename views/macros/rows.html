@@ -123,9 +123,15 @@
 				<input type="hidden" name="uid" value="{{ a._id|safe }}">
 				<input type="submit" name="playeraction" value="Remove player">
 			</form>
-			<div class="gamestate-block">
-				LOADING GAME STATE
-			</div>
+			<form action="" method="post" class="gamestateform">
+				{{form.t(token)}}
+				{{form.a('changegamestate')}}
+				<input type="hidden" name="gameid" value="{{ g.gameid }}">
+				<input type="hidden" name="playerid" value="{{ a._id|safe }}">
+				<div class="gamestate-block">
+					LOADING GAME STATE
+				</div>
+			</form>
 		</div>
 	</section>
 	<aside>
