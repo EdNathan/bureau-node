@@ -27,8 +27,29 @@ var zombiesgame = {
 
 	//Given a player uid, construct a game state fragment for the player
 	getGameStateForUid: function(game, playerid, callback) {
-		var err = null
-		callback(err, !!game.players[playerid].zombie ? 'Zombie' : 'Survivor')
+		var self = this,
+			gameid = game.gameid
+		self.Bureau.assassin.getDeathsFromGame(playerid, gameid, false, function(err, deaths) {
+			err = !!err ? err : null
+			if(err) {
+				console.log('ERROR RENDERING GAME STATE',err)
+				callback(err, '')
+				return
+			}
+			var state = {
+				hits: deaths.length,
+				isZombie: !!game.players[playerid].zombie
+			}
+			self.swig.renderFile('./games/fragments/zombieGamestateFragment.html', state, function(err, output) {
+				if(err) {
+					console.log('ERROR RENDERING GAME STATE',err)
+					callback(err, '')
+					return
+				}
+				callback(null, output)
+			})
+
+		})
 	},
 
 	renderGame: function(game, assassin, gamegroup, callback) {

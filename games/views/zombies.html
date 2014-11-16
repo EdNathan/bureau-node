@@ -46,7 +46,7 @@
     <div class="game-info">{{game.kills.length}} kill{{game.kills.length|plural}}, {{game.deaths.length}} death{{game.deaths.length|plural}}</div>
     <div class="game-info"><br>There are {{survivors.length}} survivors remaining. Fix it.</div>
     <ul id="game-{{game.gameid}}" class="player-table searchable {{game.type}}" data-search="search brains">
-        {% for a in game.assassins %}
+        {% for a in survivors %}
             {% if a._id|safe != uid %}
                 {{ zombiesGamePlayer(a,game,'brains') }}
             {% endif %}
