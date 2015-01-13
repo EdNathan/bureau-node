@@ -3,3 +3,5 @@ passwords.js
 temp/**
 build/
 **.DS_Store
+
+durham.json

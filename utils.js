@@ -61,22 +61,26 @@ var utils = {
 		d = d+'';
 		return d.length>1?d:'0'+d;
 	},
-	
+
 	addressFormat: function(input) {
 		return input.replace(/(\s)*,/g, '<br>')
 	},
-	
+
 	fullname: function(assassin) {
 		return !!assassin.nickname ? assassin.nickname : assassin.forename+' '+assassin.surname
 	},
-	
+
 	plural: function(num) {
 		if(typeof num != 'number') {
 			throw new Error('Must pass in a number')
 		}
 		return num===1?'':'s'
 	},
-	
+
+	shuffle: function(arr) {
+
+	},
+
 	merge: function(o1, o2) {
 		var n = {}
 		for(key in o1) {
@@ -91,9 +95,24 @@ var utils = {
 		}
 		return n
 	},
-	
+
 	autolink: function(input) {
 		return Autolinker.link(input)
+	},
+
+	shuffle: function(v) {
+		for(var j, x, i = v.length; i; j = parseInt(Math.random() * i), x = v[--i], v[i] = v[j], v[j] = x);
+		return v
+	},
+
+	choose: function(arr, excluded) {
+		excluded = excluded || []
+		while(true) {
+			var choice = arr[Math.floor(Math.random()*arr.length)]
+			if(excluded.indexOf(choice) < 0) {
+				return choice
+			}
+		}
 	}
 }
 

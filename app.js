@@ -1645,6 +1645,7 @@ Bureau.init(function (err, db) {
 	swig.setFilter('plural', utils.plural)
 	utils.autolink.safe = true
 	swig.setFilter('autolink', utils.autolink)
+	swig.setFilter('fullname', utils.fullname)
 	swig.setFilter('search', function(a) {
 		return [
 			a.forename,

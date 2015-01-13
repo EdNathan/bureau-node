@@ -1,0 +1,12 @@
+{% for h in history %}
+{{ h.target | fullname }}<br>
+{{ h.deadline | prettyTimestamp }}<br>
+{{ h.targetstatus }}
+{%if !loop.last %}<hr>{% endif %}
+{% endfor %}
+<br>
+<div class="param">
+<label for="permacircle-{{playerid}}">Force Stay In Circle</label>
+<input type="checkbox" name="permacircle" id="permacircle-{{playerid}}" value="yes" {% if player.permaCircle %}checked{% endif %}>
+</div>
+<input type="submit" name="changegamestatebtn" value="Alter Player">

@@ -311,6 +311,18 @@ var Bureau = {
 			})
 		},
 
+		getAssassinsFromIds: function(ids, callback) {
+			Bureau.assassin.getAssassins({_id: {$in: ids.map(id)}}, callback)
+		},
+
+		objFromAssassins: function(assassins) {
+			var o = {}
+			assassins.forEach(function(a) {
+				o[a._id] = a
+			})
+			return o
+		},
+
 		updateAssassin: function(uid, stuff, callback) {
 			if(Bureau.assassin.cachedAssassins.hasOwnProperty(uid)) {
 				delete Bureau.assassin.cachedAssassins[uid]
@@ -1267,9 +1279,27 @@ var Bureau = {
 			})
 		},
 
+		getLastNonTestGameInGamegroup: function(ggid, callback) {
+			Bureau.gamegroup.getGamegroup(ggid, function(err, gamegroup) {
+				var games = {}
+				if(err) {
+					callback(err, {})
+				} else if(!gamegroup.games) {
+					callback(null, {})
+				} else {
+					callback(err, gamegroup.games.sort(function(a,b) {
+						return b.start - a.start
+					}).filter(function(game) {
+						game.name.toLowerCase().indexOf('test') === -1
+					})[0])
+				}
+
+			})
+		},
+
 		getPlayersForNewGame: function(ggid, callback) {
 			//Fetch the details of the last game
-			Bureau.game.getLastGameInGamegroup(ggid, function(err, game) {
+			Bureau.game.getLastNonTestGameInGamegroup(ggid, function(err, game) {
 				//Flag people who have logged in since the start of the last game to be auto included
 				var autoIncludeDate = empty(game) ? new Date(0) : game.start,
 				//Don't include people in the list who haven't logged in in the past 2 years
@@ -1550,6 +1580,20 @@ var Bureau = {
 					})
 				} else {
 					callback(null, [])
+				}
+			})
+		},
+
+		getAssassinsObj: function(gameid, callback) {
+			Bureau.game.getAssassins(gameid, function(err, assassins) {
+				if(err) {
+					callback(err, [])
+				} else {
+					var o = {}
+					assassins.forEach(function(a) {
+						o[a._id] = a
+					})
+					callback(null, o)
 				}
 			})
 		},

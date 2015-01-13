@@ -1,4 +1,4 @@
-/* @override 
+/* @override
 	http://www.dur.ac.uk/b.t.tattersley/bureau/css/bureau-home.css
 	http://localhost:8888/bureau/css/bureau-home.css */
 
@@ -61,7 +61,7 @@
 	padding-bottom: 3px;
 	padding-right: 5px;
 	padding-left: 5px;
-	
+
 	-webkit-column-span: all;
 	-moz-column-span: all;
 	column-span: all;
@@ -119,12 +119,12 @@ a[title="Click to see this area on Google Maps"] {display: none !important;}
 	margin-top: -30px;
 	z-index: 10000000000;
 	position: relative;
-	
+
 	background-image: url("../images/dots.png");
 	background-size: 200px 200px;
 	background-repeat: repeat;
 	background-color: rgba(255,255,255,0.9);
-	
+
 	box-shadow: inset 0px -5px 15px -15px rgba(0,0,0,0.9);
 }
 
@@ -133,7 +133,7 @@ a[title="Click to see this area on Google Maps"] {display: none !important;}
 }
 
 /* @group Todo List */
-	
+
 	.container.todo > ul {
 		list-style-position: outside;
 		padding-left: 10px;
@@ -142,7 +142,7 @@ a[title="Click to see this area on Google Maps"] {display: none !important;}
 		margin-top: -5px;
 		padding-top: 5px;
 	}
-	
+
 	.container.todo > ul > li {
 		border-bottom: 1px solid #eee;
 		margin-left: 15px;
@@ -154,16 +154,16 @@ a[title="Click to see this area on Google Maps"] {display: none !important;}
 		font-size: 14px;
 		list-style-type: square;
 	}
-	
+
 	.container.todo > ul ul {
 		padding-left: 10px;
 		list-style-type: "+";
 	}
-	
+
 	.container.todo > ul > li {
-		
+
 	}
-	
+
 	li.done {
 		text-decoration: line-through;
 		color: #bbb;
@@ -171,11 +171,11 @@ a[title="Click to see this area on Google Maps"] {display: none !important;}
 		list-style-position: outside !important;
 		margin-left: -17px;
 	}
-	
+
 	li li.done li.done {
 		margin: 0;
 	}
-	
+
 	li.done::before {
 		content: "✓";
 		text-decoration: none;
@@ -183,7 +183,7 @@ a[title="Click to see this area on Google Maps"] {display: none !important;}
 		float: left;
 		margin-right: 7px;
 	}
-	
+
 	.container.todo > ul > li.done::before {
 		content: "✓";
 		text-decoration: none;
@@ -191,5 +191,66 @@ a[title="Click to see this area on Google Maps"] {display: none !important;}
 		margin-left: -17px;
 		color: #2ecc71;
 	}
-	
+
 	/* @end */
+
+.spiral-kill-button {
+	display: block;
+	width: 100%;
+	max-width: 450px;
+	margin: -7px auto 60px;
+	color: white;
+	background-color: @DUASred;
+	border: none;
+	padding: 0;
+	line-height: 50px;
+	font-size: 30px;
+	text-align: center;
+}
+
+div.spiral-kill-button {
+	opacity: 0.7;
+	cursor: not-allowed;
+	margin-bottom: 10px;
+}
+
+.spiral-reassurance {
+	text-align: center;
+	color: #333;
+	font-size: 11px;
+	display: block;
+	margin-bottom: 30px;
+}
+
+form.spiral::before {
+	content: "↑";
+	color: @DUASred;
+	display: block;
+	text-align: center;
+	margin-top: 10px;
+	font-size: 30px;
+}
+
+.spiral-deadline {
+	max-width: 450px;
+	margin: auto;
+	width: 100%;
+	padding: 10px;
+	border: 1px solid #333;
+	color: #444;
+	font-size: 25px;
+	text-align: center;
+	&::before {
+		content: "By the deadline of";
+		color:#333;
+		font-size: 0.5em;
+		display: block;
+	}
+
+	&::after {
+		content: "Good Luck";
+		color:#333;
+		font-size: 0.8em;
+		display: block;
+	}
+}

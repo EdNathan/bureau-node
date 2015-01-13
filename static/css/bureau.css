@@ -1660,6 +1660,7 @@ h6::after {
   -o-transition: all 0.5s ease 0s;
   transition: all 0.5s ease 0s;
   max-height: 300px;
+  margin: auto;
   /*
 &::before {
 		content: attr(data-uid);
@@ -2356,7 +2357,7 @@ h6::after {
 }
 /* Home Page */
 #page-home {
-  /* @override 
+  /* @override
 	http://www.dur.ac.uk/b.t.tattersley/bureau/css/bureau-home.css
 	http://localhost:8888/bureau/css/bureau-home.css */
   /* Styling the game title section, note that MotD goes in here too! [and the welcome message too, but only by some sneaky margin shuftying] */
@@ -2532,6 +2533,61 @@ h6::after {
   margin-right: 7px;
   margin-left: -17px;
   color: #2ecc71;
+}
+#page-home .spiral-kill-button {
+  display: block;
+  width: 100%;
+  max-width: 450px;
+  margin: -7px auto 60px;
+  color: white;
+  background-color: #ba2025;
+  border: none;
+  padding: 0;
+  line-height: 50px;
+  font-size: 30px;
+  text-align: center;
+}
+#page-home div.spiral-kill-button {
+  opacity: 0.7;
+  cursor: not-allowed;
+  margin-bottom: 10px;
+}
+#page-home .spiral-reassurance {
+  text-align: center;
+  color: #333;
+  font-size: 11px;
+  display: block;
+  margin-bottom: 30px;
+}
+#page-home form.spiral::before {
+  content: "↑";
+  color: #ba2025;
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+  font-size: 30px;
+}
+#page-home .spiral-deadline {
+  max-width: 450px;
+  margin: auto;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #333;
+  color: #444;
+  font-size: 25px;
+  text-align: center;
+}
+#page-home .spiral-deadline::before {
+  content: "By the deadline of";
+  color: #333;
+  font-size: 0.5em;
+  display: block;
+}
+#page-home .spiral-deadline::after {
+  content: "Good Luck";
+  color: #333;
+  font-size: 0.8em;
+  display: block;
 }
 #page-report {
   padding-top: 0px !important;
