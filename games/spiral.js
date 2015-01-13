@@ -141,7 +141,7 @@ var spiralgame = {
 			push = {},
 			toSet = {}
 
-		console.log('Finding players that need updating')
+		// console.log('Finding players that need updating')
 		//Find players that need updating!
 		for(var playerId in game.players) {
 			var p = game.players[playerId],
@@ -160,11 +160,11 @@ var spiralgame = {
 			}
 		}
 
-		console.log('Finding inner circle')
+		// console.log('Finding inner circle')
 		var innerCircle = self.getInnerCircle(game)
-		console.log(innerCircle)
-		console.log('Mapping failed players')
-		console.log(failed)
+		// console.log(innerCircle)
+		// console.log('Mapping failed players')
+		// console.log(failed)
 		failed.map(function(pid) {
 			//Set the new deadline to incomplete
 			toSet['players.'+pid+'.targetstatuses'] = game.players[pid].targetstatuses.concat(0)
@@ -174,23 +174,22 @@ var spiralgame = {
 			push['players.'+pid+'.targets'] = utils.choose(innerCircle, [pid])
 		})
 
-		console.log('Mapping successful players')
-		console.log(success)
+		// console.log('Mapping successful players')
+		// console.log(success)
 		success.map(function(pid) {
 			//Set the new deadline to incomplete
 			push['players.'+pid+'.targetstatuses'] = 0
 			//Set a new deadline
 			push['players.'+pid+'.deadlines'] = newDeadline
 			//Randomly set a new target
-			console.log('kek',innerCircle)
 			push['players.'+pid+'.targets'] = utils.choose(innerCircle, [pid])
 		})
 
 		if(failed.length > 0 || success.length > 0) {
 			toSet['$push'] = push
-			console.log('Updating game state')
+			// console.log('Updating game state')
 			self.Bureau.game.updateGame(game.gameid, toSet, function(err, gg) {
-				console.log('Updated game')
+				// console.log('Updated game')
 				if(err) {
 					console.log('ERROR TICKING GAME',err,game)
 					callback(err, false)
@@ -199,7 +198,7 @@ var spiralgame = {
 				}
 			})
 		} else {
-			console.log('Had to do nothing!')
+			// console.log('Had to do nothing!')
 			callback(null, true)
 		}
 	},
@@ -270,26 +269,26 @@ var spiralgame = {
 		//Case 1, the target or hunter is the latest one
 		if(killedCurrentTarget || killedCurrentHunter) {
 			if(killedCurrentTarget) {
-				console.log('Is current target')
+				// console.log('Is current target')
 				//We need to give them a new target
 				var newstatuses = game.players[killerid].targetstatuses
 				newstatuses.pop()
 				newstatuses.push(1)
 
 				self.Bureau.game.setPlayerData(gameid, killerid, {targetstatuses: newstatuses}, function(err, gamegroup) {
-					console.log('Set new target status')
+					// console.log('Set new target status')
 					self.Bureau.game.getGame(gameid, function(err, game) {
-						console.log('Got game')
-						console.log(game)
+						// console.log('Got game')
+						// console.log(game)
 						self.tick(game, function() {
-							console.log('Tick completed')
+							// console.log('Tick completed')
 							//Add 1 to the score
 							addScore()
 						})
 					})
 				})
 			} else if(killedCurrentHunter) {
-				console.log('Is current hunted')
+				// console.log('Is current hunted')
 				//The hunter needs a new target
 				var newstatuses = game.players[victimid].targetstatuses
 				newstatuses.pop()
