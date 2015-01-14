@@ -1,6 +1,6 @@
 {
   "name": "bureau",
-  "version": "1.0.2",
+  "version": "1.0.2-10",
   "description": "A nodeJS + MongoDB rewrite of Bureau",
   "main": "app.js",
   "scripts": {
