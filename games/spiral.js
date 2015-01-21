@@ -13,6 +13,32 @@ var spiralgame = {
 			callback(null, output)
 		})
 	},
+	getParamChangeFragment: function(game, callback) {
+		this.swig.renderFile('./games/fragments/spiralParamChangeFragment.html', game, function(err, output) {
+			callback(null, output)
+		})
+	},
+	changeGameParams: function(game, data, callback) {
+		var deadlineDays = parseInt(data['spiral-deadline-days']),
+			gameid = game.gameid,
+			self = this
+
+		if(!isNaN(deadlineDays) && deadlineDays > 0) {
+			//We're chillin'
+			game.custom['spiral-deadline-days'] = deadlineDays
+		} else {
+			callback('Invalid number of deadline days', game)
+			return
+		}
+
+		self.Bureau.game.updateGame(gameid, {custom: game.custom}, function(err, gg) {
+			if(err) {
+				callback(err, game)
+			} else {
+				callback(null, game)
+			}
+		})
+	},
 	//Passed all the form data from game setup, should modify the data and return a 'game' object for insertion into the database
 	constructGame: function(data, callback) {
 		var game = data,

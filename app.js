@@ -447,7 +447,7 @@ var pages = {
 									games[j].assassins = assassins.sort(function(a,b) {
 										return games[j].players[b._id+''].score - games[j].players[a._id+''].score
 									})
-									if(loaded === l*2) {
+									if(loaded === l*3) {
 										displayPage(games)
 									}
 								}
@@ -456,11 +456,27 @@ var pages = {
 								return function(err, assassins) {
 									loaded++
 									games[j].possibleAssassins = assassins
-									if(loaded === l*2) {
+									if(loaded === l*3) {
 										displayPage(games)
 									}
 								}
 							})(i))
+							if(Bureau.games[g.type].getParamChangeFragment) {
+								Bureau.games[g.type].getParamChangeFragment(g, (function(j) {
+									return function(err, frag) {
+										loaded++
+										games[j].paramChangeFragment = frag
+										if(loaded === l*3) {
+											displayPage(games)
+										}
+									}
+								})(i))
+							} else {
+								loaded++
+								if(loaded === l*3) {
+									displayPage(games)
+								}
+							}
 						}
 
 					})
@@ -1307,6 +1323,25 @@ var pages = {
 									res.locals.pageErrors.push(err)
 								}
 								authPages.get.guild.gamestate(req, res)
+							})
+							break;
+
+						case 'changegameparams':
+							var gameid = req.body.gameid,
+								data = req.body
+
+							delete data.token
+							delete data.action
+							delete data.submit
+							delete data.gameid
+
+							Bureau.game.getGame(gameid, function(err, g) {
+								Bureau.games[g.type].changeGameParams(g, data, function(err, game) {
+									if(err) {
+										res.locals.pageErrors.push(err)
+									}
+									authPages.get.guild.gamestate(req, res)
+								})
 							})
 							break;
 

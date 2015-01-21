@@ -31,21 +31,31 @@
 			<input type="submit" name="submit" id="archive-button-{{ game.gameid }}" data-name="{{ game.name }}" value="Archive Game">
 		</form>
 	{% endif %}
+	{% if game.paramChangeFragment %}
+		<form action="" method="post" class="changeparams-form line">
+			<h4>Change Game Params</h4>
+			{{form.a('changegameparams')}}
+			{{form.t(token)}}
+			{{game.paramChangeFragment|raw}}
+			<input type="hidden" name="gameid" value="{{ game.gameid }}">
+			<input type="submit" name="submit" id="changeparams-button-{{ game.gameid }}" data-name="{{ game.name }}" value="Change Game Params">
+		</form>
+	{% endif %}
 	</div>
-	
-	
+
+
 	<ul id="gamestate-{{ game.gameid }}" class="player-table searchable gamestate {{ game.type }}">
 		{% for assassin in game.assassins %}
 			{{ rows.gamestatePlayer(assassin, game) }}
 		{% endfor %}
 	</ul>
-	
+
 	<ul id="gamestate-addplayers-{{ game.gameid }}" data-search="add players" data-searchclass="addplayer-search" data-searchmethod="inclusive" class="player-table searchable gamestate {{ game.type }}">
 		{% for assassin in game.possibleAssassins %}
 			{{ rows.gamestateAddPlayer(assassin, game) }}
 		{% endfor %}
 	</ul>
-	
+
 {% endfor %}
 
 {% if games.length < 1 %}
