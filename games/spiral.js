@@ -358,8 +358,21 @@ var spiralgame = {
 					})
 				})
 			} else {
-				self.tick(game, function(err, success) {
+				//Old way of doing nothing
+				/* self.tick(game, function(err, success) {
 					callback(err, game)
+				}) */
+
+				//Now the person who was killed kind of unfairly has to be shifted out of the circle
+				var newstatuses = game.players[victimid].targetstatuses
+				newstatuses[newstatuses.length-1] = -1
+
+				self.Bureau.game.setPlayerData(gameid, victimid, {targetstatuses: newstatuses}, function(err, gamegroup) {
+					self.Bureau.game.getGame(gameid, function(err, game) {
+						self.tick(game, function(err, success) {
+							callback(err, game)
+						})
+					})
 				})
 			}
 		}
