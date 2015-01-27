@@ -186,29 +186,29 @@ var spiralgame = {
 			}
 		}
 
-		console.log('Finding inner circle')
+		// console.log('Finding inner circle')
 		var innerCircle = self.getInnerCircle(game)
-		console.log(innerCircle)
-		console.log('Mapping failed players')
-		console.log(failed)
+		// console.log(innerCircle)
+		// console.log('Mapping failed players')
+		// console.log(failed)
 		failed.map(function(pid) {
 			//Set the new deadline to incomplete
 			toSet['players.'+pid+'.targetstatuses'] = game.players[pid].targetstatuses.concat(0)
 			//Set a new deadline
 			push['players.'+pid+'.deadlines'] = newDeadline
 			//Randomly set a new target
-			push['players.'+pid+'.targets'] = utils.choose(innerCircle, [pid, game.players.playerid.targets.slice(-1)[0]])
+			push['players.'+pid+'.targets'] = utils.choose(innerCircle, [pid, game.players[pid].targets.slice(-1)[0]])
 		})
 
-		console.log('Mapping successful players')
-		console.log(success)
+		// console.log('Mapping successful players')
+		// console.log(success)
 		success.map(function(pid) {
 			//Set the new deadline to incomplete
 			push['players.'+pid+'.targetstatuses'] = 0
 			//Set a new deadline
 			push['players.'+pid+'.deadlines'] = newDeadline
 			//Randomly set a new target
-			push['players.'+pid+'.targets'] = utils.choose(innerCircle, [pid, game.players.playerid.targets.slice(-1)[0]])
+			push['players.'+pid+'.targets'] = utils.choose(innerCircle, [pid, game.players[pid].targets.slice(-1)[0]])
 		})
 
 		if(failed.length > 0 || success.length > 0) {
