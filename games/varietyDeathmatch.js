@@ -1,3 +1,5 @@
+var utils = require('../utils')
+
 //The game automatically has a reference to Bureau shoved on to it
 var varietydeathmatchgame = {
 	init: function(Bureau) {
@@ -93,6 +95,18 @@ var varietydeathmatchgame = {
 		//No effect
 		console.log('Removing '+playerid+' from game '+game.name)
 		callback(null)
+	},
+
+	//Given the uid of a player, filter out which kill methods can and can't be used
+	getUnavailableKillMethods: function(game, playerid, callback) {
+		this.Bureau.assassin.getKillsFromGame(playerid, game.gameid, true, function(err, kills) {
+
+			var usedWeapons = utils.unique(kills.map(function(kill) {
+				return kill.killmethod;
+			}))
+
+			callback(null, usedWeapons);
+		})
 	}
 }
 
