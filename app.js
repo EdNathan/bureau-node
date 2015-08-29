@@ -305,6 +305,7 @@ var pages = {
 						res.redirect('home')
 						return
 					}
+
 					Bureau.game.isPlayerInGame(uid, gameid, function(err, isInGame){
 						if(err || !isInGame) {
 							req.session.pageErrors = ['You\'re not in that game!']
@@ -320,10 +321,30 @@ var pages = {
 							}
 
 							Bureau.gamegroup.getKillMethods(ggid, function(err, killmethods) {
-								res.render('report', {
-									killmethods: killmethods,
-									victim: victim,
-									gameid: gameid
+
+								var unavailableKillMethods = {};
+								var renderReportPage = function() {
+									res.render('report', {
+										killmethods: killmethods,
+										unavailablekillmethods: unavailableKillMethods,
+										victim: victim,
+										gameid: gameid
+									})
+								}
+
+								Bureau.game.getGame(gameid, function(err, game) {
+									if(Bureau.games[game.type].getUnavailableKillMethods) {
+
+										Bureau.games[game.type].getUnavailableKillMethods(game, uid, function(err, killmethods) {
+											killmethods.map(function(killmethod) {
+												unavailableKillMethods[killmethod] = true
+											})
+											renderReportPage()
+										})
+
+									} else {
+										renderReportPage()
+									}
 								})
 							})
 						})

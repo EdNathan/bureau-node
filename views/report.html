@@ -12,7 +12,7 @@
 			{{form.t(token)}}
 			<input type="hidden" name="gameid" value="{{gameid}}" autocomplete="off">
 			<input type="hidden" name="victimid" value="{{victimid|default(victim._id|safe)}}" autocomplete="off">
-			
+
 			<header>
 				<span>You Killed</span>
 				<figure>
@@ -20,14 +20,16 @@
 				</figure>
 			</header>
 			<section id="method" class="dropdown">
+
 				<span><label for="killmethod-dropdown">method</label>
 				<select id="killmethod-dropdown" name="killmethod" autocomplete="off">
 				{% for method in killmethods %}
 					{% if !method.retired %}
 						<option {% if method.id == killmethod %}selected{% endif %}
-							value="{{method.id}}" 
+							value="{{method.id}}"
 							data-zone="{{method.zone}}"
-							data-question="{{method.detailquestion}}">{{method.name}}</option>
+							data-question="{{method.detailquestion}}"
+							{%if method.id in unavailablekillmethods %}disabled{% endif %}>{{method.name}}{%if method.id in unavailablekillmethods %} [unavailable]{% endif %}</option>
 					{% endif %}
 				{% endfor %}
 				</select>
@@ -41,7 +43,7 @@
 				<input id="time-input" type="text" name="time" value="{{now|prettyTimestamp}}" autocomplete="off">
 				</span>
 			</section>
-			
+
 			<section id="place">
 				<span><label for="place-input">place</label>
 				<div id="coords-btn" class="hidden"></div>
@@ -49,16 +51,16 @@
 				<input id="coords-input" name="coords" type="hidden" value="" autocomplete="off">
 				</span>
 			</section>
-			
+
 			<section id="report-text">
 				<span>report</span>
 				<textarea name="report-text" id="killreport-textarea" placeholder="Describe what happened" autocomplete="off"></textarea>
 			</section>
-			
+
 			<div class="targetdecor"></div>
-			
+
 			<div id="submit-button" class="fancy-submit">Submit</div>
-			
+
 		</form>
 	</div>
 </div>
