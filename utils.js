@@ -49,7 +49,7 @@ var utils = {
 		return s;
 	},
 	dateFromPrettyTimestamp: function(d) {
-//			2014-01-06 06:00:00
+		//2014-01-06 06:00:00
 		var parts = d.split(' '),
 			dat = parts[0].split('-'),
 			tim = parts[1].split(':')
@@ -124,7 +124,22 @@ var utils = {
 		}
 
 		return true;
+	},
+
+	unique: function(arr) {
+		//Reduces array to unique values
+		var u = arr.reduce(function(last, current) {
+			if(last.indexOf(current) < 0) {
+				last.push(current)
+				return last
+			} else {
+				return last
+			}
+		},[])
+
+		return u
 	}
+
 }
 
 
