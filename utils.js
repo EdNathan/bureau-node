@@ -10,6 +10,16 @@ var utils = {
 		    var env = JSON.parse(process.env.VCAP_SERVICES);
 		    var mongo = env['mongodb2-2.4.8'][0]['credentials'];
 		    console.log(mongo)
+		} else if(process.env.OPENSHIFT_NODEJS_IP) {
+			var mongo = {
+				hostname: process.env.OPENSHIFT_MONGODB_DB_HOST,
+				port: process.env.OPENSHIFT_MONGODB_DB_PORT,
+				username: process.env.OPENSHIFT_MONGODB_DB_USERNAME,
+				password: process.env.OPENSHIFT_MONGODB_DB_PASSWORD,
+				name:'',
+				db: process.env.OPENSHIFT_APP_NAME
+
+			}
 		} else {
 		    var mongo = {
 				"hostname":"localhost",

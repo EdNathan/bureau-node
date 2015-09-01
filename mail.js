@@ -1,17 +1,17 @@
 var nodemailer = require('nodemailer'),
 	swig = require('swig'),
 	passwords = require('./passwords')
-	Address = passwords.mail.address,
+	Address = passwords.mail.address || process.env.BUREAU_MAIL_ADDRESS,
 	Transporter = nodemailer.createTransport({
-		host: passwords.mail.host,
-		secure: passwords.mail.secure,
-		port: passwords.mail.port,
+		host: passwords.mail.host || process.env.BUREAU_MAIL_HOST,
+		secure: true,
+		port: passwords.mail.port || Number(process.env.BUREAU_MAIL_PORT),
 		auth: {
-			user: passwords.mail.user,
-			pass: passwords.mail.pass
+			user: passwords.mail.user || process.env.BUREAU_MAIL_USER,
+			pass: passwords.mail.pass || process.env.BUREAU_MAIL_PASS
 		}
 	})
-	
+
 var Mail = {
 		sendText: function(to, subject, text, callback) {
 			console.log('MAIL: '+to+'['+subject+'] - '+text)
@@ -28,12 +28,12 @@ var Mail = {
 				}
 			})
 		},
-		
+
 		sendWelcome: function(data, callback) {
 			var to = data.email,
 				subject = 'Welcome To Bureau',
 				text = swig.renderFile('./mail/welcome.txt', data)
-				
+
 			Mail.sendText(to, subject, text, callback)
 		}
 	}
