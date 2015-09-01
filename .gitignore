@@ -3,9 +3,7 @@ passwords.js
 temp/**
 build/
 **.DS_Store
-
 durham.json
-
 *.log
-
-setEnvironment.sh
+setEnvironment*.sh
+.env
