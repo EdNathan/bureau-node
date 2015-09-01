@@ -5,7 +5,7 @@
 }
 
 h1 {
-	display: none;	
+	display: none;
 }
 
 #grabber {
@@ -18,24 +18,24 @@ h1 {
 	min-height: 100%;
 	overflow: hidden;
 	max-width: 1000px;
-	
+
 	box-shadow: 0 3px 2px rgba(0,0,0,0.1) !important;
 	border-top-style: solid;
 	border-top-width: 10px;
-	
+
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
-	
+
 	margin: auto;
-	
+
 	-webkit-transition: border-color 0.5s ease 0.5s;
 	transition: border-color 0.5s ease 0.5s;
 }
 
 .nodecor {
 	border: none !important;
-	
+
 }
 
 .light-container input:disabled {
@@ -49,24 +49,24 @@ h1 {
 	margin: 0;
 	border: none;
 	background: none;
-	
+
 	-webkit-appearance: none;
 	-moz-appearance: none;
 	appearance: none;
-	
+
 	font-weight: bold;
 	height: 45px;
 	font-size: 20px;
 	color: #e1e1e1;
-	
+
 	cursor: pointer;
-	
+
 	-webkit-transition: all 0.5s ease;
 	transition: all 0.5s ease;
 	position: absolute;
 	top: 0;
 	right: 0;
-	
+
 	pointer-events: fill;
 }
 
@@ -77,8 +77,8 @@ h1 {
 .edit-button:active {
 	color: #5c5c5c;
 }
-	
-	
+
+
 #personal-header {
 	display: inline-block;
 	margin: auto auto 20px;
@@ -89,24 +89,24 @@ h1 {
 	overflow: hidden;
 	padding-top: 15px;
 	padding-bottom: 15px;
-	
+
 	box-shadow: 0 5px 0px white,
 				0 30px 42px -45px rgba(0, 0, 0, 0.7);
 	border-bottom: 1px solid #e8e8e8;
 	text-align: center;
-	
+
 	-webkit-transition: border-color 0.5s ease 0.5s;
 	transition: border-color 0.5s ease 0.5s;
-	
+
 	#display-picture {
 		width: 128px;
 		height: 128px;
 		margin: auto;
-		
+
 		-webkit-border-radius: 50%;
 		-moz-border-radius: 50%;
 		border-radius: 50%;
-		
+
 		background-position: center center;
 		background-repeat: no-repeat;
 		background-size: cover;
@@ -115,85 +115,85 @@ h1 {
 		/*background-image: url(http://24.media.tumblr.com/tumblr_lh3ye4WvhC1qgnva2o1_250.jpg);*/
 		background-image: url(../images/target.svg);
 		background-color: white;
-		
+
 		box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.3),
 					inset 0 1px 2px rgba(0, 0, 0, 0.4);
-		
+
 		-webkit-transition: border-color 0.5s ease 0.5s;
 		transition: border-color 0.5s ease 0.5s;
-		
-		
+
+
 		position: relative;
 		z-index: 11;
-		
+
 		> form {
 			-webkit-transition: opacity 0.3s linear;
 			transition: opacity 0.3s linear;
-			
+
 			width: 100%;
 			height: 100%;
-			
+
 			line-height: 128px;
 			text-align: center;
-			
+
 			> input[type="file"] {
 				position: relative;
 				left: -9999px;
 			}
-			
+
 			#file-input-label {
 				position: absolute;
-				
+
 				width: 129px;
 				height: 129px;
-				
+
 				background: #ecedec;
 				top: -150px;
 				left: -1px;
-				
+
 				-webkit-border-radius: 50%;
 				-moz-border-radius: 50%;
 				border-radius: 50%;
-				
+
 				cursor: pointer;
 				box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4);
 				text-shadow: 0 1px #ffffff;
 				overflow: hidden;
-				
+
 				-webkit-transition: top 0.5s ease;
 			}
-			
+
 			&:hover > #file-input-label {
 				top: 0;
 			}
 		}
 	}
-	
+
 	#name {
 		font-size: 32px;
 		color: #666;
 	}
-	
+
 	#nickname {
 		font-size: 12px;
 	}
 }
-	
-	
-		
+
+
+
 #personal-content {
-	-webkit-column-width: 440px;
-	-moz-column-width: 440px;
-	column-width: 440px;
+	// -webkit-column-width: 440px;
+	// -moz-column-width: 440px;
+	// column-width: 440px;
 	width: 100%;
 	width: ~"-webkit-calc(100% - 60px)";
 	width: ~"-moz-calc(100% - 60px)";
 	width: ~"calc(100%-60px)";
 	margin: auto;
-	
+
 	overflow: visible;
 	padding-bottom: 10px;
-	
+
 	.light-container {
 		margin-bottom: 30px;
 	}
@@ -207,7 +207,7 @@ h1 {
 		position: relative;
 		margin-bottom: 4px;
 	}
-	
+
 	label {
 		color: transparent !important;
 		position: absolute;
@@ -218,21 +218,21 @@ h1 {
 		text-align: left;
 		font-size: 11px;
 		text-transform: uppercase;
-		
+
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
 
-		
+
 		-webkit-transition: color 0.5s ease;
 		transition: color 0.5s ease;
 	}
-	
+
 	input[type="text"], input[type="password"] {
 		border: none;
 		height: 40px;
 		padding: 0 0 0 8px;
-		
+
 		-webkit-appearance: none;
 		-moz-appearance: none;
 		appearance: none;
@@ -240,20 +240,20 @@ h1 {
 		display: inline-block;
 		width: 100%;
 		background: none;
-		
+
 		outline-width: 0px;
 		outline-style: solid;
 	}
-	
+
 	input[type="checkbox"] {
 		margin-top: 6px;
 		display:none;
-		
+
 		&:disabled {
 			opacity: 0;
 		}
 	}
-	
+
 	input[type="submit"] {
 		color: inherit;
 		.appearance();
@@ -267,31 +267,31 @@ h1 {
 		width: 100%;
 		font-size: 20px;
 	}
-	
+
 	&.edit, &:focus {
 		background: #f0f0f0 !important;
-		
+
 		.edit-button {
 			color: #f06060;
 		}
-		
+
 		label {
 			color: inherit !important;
 		}
-		
+
 		.row, .editable-row {
 			background: white !important;
 			overflow: visible;
 		}
-		
+
 		input[type="checkbox"]:focus {
 			outline-offset: 2px;
 		}
-		
+
 		input[type="checkbox"] {
 			display: block;
 		}
-		
+
 		input:focus {
 			outline-width: 1px;
 			outline-style: solid;
@@ -304,12 +304,12 @@ h1 {
 		color: inherit !important;
 	}
 }
-				
+
 #details {
 	h4 {
 		margin-bottom: 20px;
 	}
-	
+
 	label[for="liverin-input"] {
 		font-size: 20px;
 		text-transform: capitalize;
@@ -317,7 +317,7 @@ h1 {
 		height: 100%;
 		line-height: 40px;
 	}
-	
+
 	#living-in-row::after {
 		display: block;
 		content: attr(data-lio);
@@ -331,29 +331,29 @@ h1 {
 		-webkit-transition: color 0.2s linear;
 		transition: color 0.2s linear;
 	}
-	
+
 	//In edit mode
 	&.edit {
 		label[for="liverin-input"] {
 			color: black !important;
 		}
-		
+
 		#living-in-row::after {
 			color: transparent;
 		}
 	}
 }
-		
+
 #kd-ratio {
 	padding-right: 20px;
-	
+
 	span {
 		font-size: 80px;
 		position: relative;
 		display: inline-block;
 		height: 1em;
 		line-height: 1em;
-		
+
 		&::after {
 			content: attr(title);
 			font-size: 18px;
@@ -366,30 +366,30 @@ h1 {
 			font-weight: 300;
 			color: #999999;
 		}
-		
+
 		&:empty::after {
 			display: none;
 		}
 	}
-	
+
 	#colon {
 		font-weight: 100;
 		position: relative;
 		bottom: 0.1em;
 	}
-	
+
 	#ratio {
 		font-size: 40px;
 		float: right;
 		height: 41px;
 		line-height: 50px;
 		margin-bottom: 25px;
-		
+
 		&:empty {
 			margin-bottom: 5px;
 		}
 	}
-	
+
 	#rank {
 		float: left;
 	}
@@ -425,26 +425,26 @@ h1 {
 	}
 }
 
-	
+
 @media screen and (max-width: 500px) {
 	body {
 	}
-	
+
 	#personal-content {
 		width: 100%;
 	}
-	
+
 	#toolbar {
 		border-left-width: 5px;
 		border-right-width: 0;
 	}
-	
+
 	#kd-ratio span {
 		font-size: 60px;
 	}
-	
+
 	#kd-ratio > #ratio {
 					margin-top: 13px;
 	}
-	
+
 }

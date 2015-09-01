@@ -3726,9 +3726,6 @@ h6::after {
 #page-me #personal-content,
 #page-updatedetails #personal-content,
 #page-changepassword #personal-content {
-  -webkit-column-width: 440px;
-  -moz-column-width: 440px;
-  column-width: 440px;
   width: 100%;
   width: -webkit-calc(100% - 60px);
   width: -moz-calc(100% - 60px);
