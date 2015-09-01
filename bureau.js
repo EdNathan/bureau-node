@@ -101,7 +101,7 @@ var Bureau = {
 				Bureau.db = db
 				//Compile the list of admins
 				log('Fetching list of admin ids')
-				Bureau.assassin.getAssassins({email: {$in: JSON.parse(process.env.BUREAU_ADMIN_EMAILS)}}, function(err, admins) {
+				Bureau.assassin.getAssassins({email: {$in: process.env.BUREAU_ADMIN_EMAILS.split(',')}}, function(err, admins) {
 					Bureau.admins = admins.map(function(x) {
 						return x._id+''
 					})
