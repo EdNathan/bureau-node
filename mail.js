@@ -1,14 +1,14 @@
 var nodemailer = require('nodemailer'),
 	swig = require('swig'),
 	passwords = require('./passwords')
-	Address = passwords.mail.address || process.env.BUREAU_MAIL_ADDRESS,
+	Address = process.env.BUREAU_MAIL_ADDRESS,
 	Transporter = nodemailer.createTransport({
-		host: passwords.mail.host || process.env.BUREAU_MAIL_HOST,
+		host: process.env.BUREAU_MAIL_HOST,
 		secure: true,
-		port: passwords.mail.port || Number(process.env.BUREAU_MAIL_PORT),
+		port: Number(process.env.BUREAU_MAIL_PORT),
 		auth: {
-			user: passwords.mail.user || process.env.BUREAU_MAIL_USER,
-			pass: passwords.mail.pass || process.env.BUREAU_MAIL_PASS
+			user: process.env.BUREAU_MAIL_USER,
+			pass: process.env.BUREAU_MAIL_PASS
 		}
 	})
 
