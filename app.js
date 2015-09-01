@@ -1613,7 +1613,7 @@ function addLocals(req, res, next) {
 
 			res.locals.now = new Date()
 			res.locals.isGuild = assassin.guild
-			res.locals.isAdmin = password.adminEmails.indexOf(assassin.email) > -1
+			res.locals.isAdmin = JSON.parse(process.env.BUREAU_ADMIN_EMAILS).indexOf(assassin.email) > -1
 			res.locals.uid = req.session.uid
 			res.locals.gamegroup = gamegroup
 			res.locals.token = req.session.token
