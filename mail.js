@@ -1,6 +1,5 @@
 var nodemailer = require('nodemailer'),
 	swig = require('swig'),
-	passwords = require('./passwords')
 	Address = process.env.BUREAU_MAIL_ADDRESS,
 	Transporter = nodemailer.createTransport({
 		host: process.env.BUREAU_MAIL_HOST,

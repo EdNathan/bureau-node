@@ -2,7 +2,6 @@ var MongoClient = require('mongodb').MongoClient,
 	mongo = require('mongodb'),
 	utils = require('./utils'),
 	lethalities = require('./lethalities'),
-	passwords = require('./passwords'),
 	moment = require('moment'),
 	Mail = require('./mail'),
 	swig = require('swig')

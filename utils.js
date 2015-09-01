@@ -1,5 +1,4 @@
 var crypto = require('crypto'),
-	passwords = require('./passwords'),
 	bcrypt = require('bcrypt'),
 	Autolinker = require('autolinker')
 

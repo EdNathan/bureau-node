@@ -1,6 +1,5 @@
 var Bureau = require('./bureau'),
 	utils = require('./utils'),
-	passwords = password = require('./passwords'),
 	express = require('express'),
 	cons = require('consolidate'),
 	swig = require('swig'),
