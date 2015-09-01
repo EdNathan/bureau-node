@@ -42,7 +42,7 @@
     "grunt-svgmin": "~0.4.0"
   },
   "engines": {
-    "node": "0.10.x"
+    "node": "0.12.x"
   },
   "domains": [
     "www.assassinsbureau.org",
