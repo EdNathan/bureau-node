@@ -1,6 +1,5 @@
 var Bureau = require('./bureau'),
 	utils = require('./utils'),
-	passwords = password = require('./passwords'),
 	express = require('express'),
 	cons = require('consolidate'),
 	swig = require('swig'),
@@ -176,7 +175,7 @@ var pages = {
 							req.session.uid = uid
 							req.session.gamegroup = assassin.gamegroup
 							req.session.assassin = assassin
-							req.session.token = utils.md5(assassin.joindate + password.tokenSecret)
+							req.session.token = utils.md5(assassin.joindate + process.env.BUREAU_TOKEN_SECRET)
 							res.redirect('/home')
 						}
 					})
@@ -736,7 +735,7 @@ var pages = {
 													res.locals.pageErrors.push('Image uploading failed :(')
 													authPages.get.personal(req, res)
 												} else {
-													Bureau.assassin.setPicture(uid, passwords.awsPath+imgKey, function(err, doc) {
+													Bureau.assassin.setPicture(uid, process.env.AWS_PATH+imgKey, function(err, doc) {
 														if(err) console.log(err);
 														Bureau.assassin.getAssassin(uid, function(err, assassin) {
 															//Force update of page to prevent having to reload
@@ -1534,12 +1533,12 @@ var pages = {
 app.use(express.compress())
 app.use(express.static('static'))
 app.use(express.bodyParser())
-app.use(express.cookieParser(password.cookieSecret))
+app.use(express.cookieParser(process.env.BUREAU_COOKIE_SECRET))
 app.use(express.session({
 	store: new MongoStore({
 		url: utils.mongourl()
 	}),
-	secret: password.cookieSecret,
+	secret: process.env.BUREAU_COOKIE_SECRET,
 	cookie: {
 		expires: new Date(Date.now() + 60*60*24*60)
 	}
@@ -1572,7 +1571,7 @@ function checkAuth(req, res, next) {
 					req.session.uid = assassin._id+'' //Force it to be a string so we don't get crashes...
 					req.session.gamegroup = assassin.gamegroup
 					req.session.assassin = assassin
-					req.session.token = utils.md5(assassin.joindate + password.tokenSecret)
+					req.session.token = utils.md5(assassin.joindate + process.env.BUREAU_TOKEN_SECRET)
 					next()
 				})
 			} else {
@@ -1614,7 +1613,7 @@ function addLocals(req, res, next) {
 
 			res.locals.now = new Date()
 			res.locals.isGuild = assassin.guild
-			res.locals.isAdmin = password.adminEmails.indexOf(assassin.email) > -1
+			res.locals.isAdmin = JSON.parse(process.env.BUREAU_ADMIN_EMAILS).indexOf(assassin.email) > -1
 			res.locals.uid = req.session.uid
 			res.locals.gamegroup = gamegroup
 			res.locals.token = req.session.token
@@ -1714,7 +1713,7 @@ Bureau.init(function (err, db) {
 		}).join(' ')
 	})
 
-	var port = (process.env.VMC_APP_PORT || 3000);
-	var host = (process.env.VCAP_APP_HOST || 'localhost');
+	var port = (process.env.VMC_APP_PORT || process.env.OPENSHIFT_NODEJS_PORT || 3000);
+	var host = (process.env.VCAP_APP_HOST || process.env.OPENSHIFT_NODEJS_IP || 'localhost');
 	app.listen(port, host)
 })

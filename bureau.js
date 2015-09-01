@@ -2,7 +2,6 @@ var MongoClient = require('mongodb').MongoClient,
 	mongo = require('mongodb'),
 	utils = require('./utils'),
 	lethalities = require('./lethalities'),
-	passwords = require('./passwords'),
 	moment = require('moment'),
 	Mail = require('./mail'),
 	swig = require('swig')
@@ -102,7 +101,7 @@ var Bureau = {
 				Bureau.db = db
 				//Compile the list of admins
 				log('Fetching list of admin ids')
-				Bureau.assassin.getAssassins({email: {$in: passwords.adminEmails}}, function(err, admins) {
+				Bureau.assassin.getAssassins({email: {$in: JSON.parse(process.env.BUREAU_ADMIN_EMAILS)}}, function(err, admins) {
 					Bureau.admins = admins.map(function(x) {
 						return x._id+''
 					})
