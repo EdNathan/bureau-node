@@ -8,7 +8,7 @@ var bureau = {
 			this.setupNotifications()
 		}
 		setup();
-		
+
 		switch (document.body.id) {
 			case 'page-home':
 				this.setup.home();
@@ -45,20 +45,20 @@ var bureau = {
 				break;
 		}
 	},
-	
+
 	user: {
 		uid: 0,
 		gamegroup: '',
 		token: ''
 	},
-	
+
 	notifications: [],
-	
+
 	setupToolbar: function() {
 		if($I('toolbar')) {
 			var d = $I('grabber');
 			d.innerHTML = '<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="30px" height="23px" viewBox="0 0 30 23" enable-background="new 0 0 30 23" xml:space="preserve"> <rect fill-rule="evenodd" clip-rule="evenodd" fill="#888888" width="30" height="3"/> <rect y="10" fill-rule="evenodd" clip-rule="evenodd" fill="#888888" width="30" height="3"/><rect y="20" fill-rule="evenodd" clip-rule="evenodd" fill="#888888" width="30" height="3"/></svg>';
-			
+
 			//setup notification drawer
 			var drawer = $I('toolbar-notifications')
 			$('#notifications-btn, #grabber').on('click', function(e) {
@@ -66,19 +66,19 @@ var bureau = {
 				drawer.classList.toggle('open')
 			})
 		}
-		
+
 		var m = document.createElement('meta');
 		m.setAttribute('name', 'msapplication-tap-highlight');
 		m.setAttribute('content', 'no');
-		
+
 		var m2 = document.createElement('meta');
 		m2.setAttribute('http-equiv', 'X-UA-Compatible');
 		m2.setAttribute('content', 'IE=edge');
-		
+
 		document.head.appendChild(m);
 		document.head.appendChild(m2);
 	},
-	
+
 	setupNotifications: function() {
 		var cachedNotifications = retrieveObj('notifications')
 		if(!!cachedNotifications) {
@@ -105,11 +105,11 @@ var bureau = {
 			bureau.displayNotifications()
 		})
 	},
-	
+
 	cacheNotifications: function() {
 		storeObj('notifications', bureau.notifications)
 	},
-	
+
 	displayNotifications: function() {
 		try{
 		var list = $I('notifications'),
@@ -126,13 +126,13 @@ var bureau = {
 		}
 
 		list.innerHTML = out
-		
+
 		var unreadCount = bureau.notifications.reduce(function(previousValue, currentValue, index, array){
 			return previousValue + (currentValue.read?0:1);
 		}, 0)
-	
+
 		$I('unread-count').innerHTML = unreadCount>0?unreadCount:''
-			
+
 		$(list).children().on('click', function(e) {
 			stopEvent(e)
 			var link = this.getAttribute('data-link'),
@@ -157,14 +157,14 @@ var bureau = {
 			}
 		})
 	},
-	
-	
+
+
 	api: function(uid, method, endpoint, data, callback, debug) {
-	
+
 		//method 	- read/write
 		//endpoint 	- the api to be accessed
 		//data 		- a JSON object to be sent with the request
-		
+
 		var j = {
 			uid: uid,
 			token: bureau.user.token,
@@ -180,7 +180,7 @@ var bureau = {
 	 				console.log(req.responseText);
 	 				console.log(JSON.parse(req.responseText));
 				}
-				
+
 				if(callback) {
 					var response = JSON.parse(req.responseText)
 					callback(null, response)
@@ -198,7 +198,7 @@ var bureau = {
 		req.setRequestHeader('Content-type', 'application/json')
 		req.send(JSON.stringify(j))
 	},
-	
+
 	setup: {
 		search: function(important) {
 			$('.searchable').each(function() {
@@ -212,7 +212,7 @@ var bureau = {
 				i.className = 'player-table-search '+searchClass;
 				i.setAttribute('placeholder', hint);
 				f.appendChild(i);
-				
+
 				$(i).on('input', function() {
 					if (!this.value) {
 						searchStyle.innerHTML = "";
@@ -227,7 +227,7 @@ var bureau = {
 				this.parentNode.insertBefore(f, this);
 			});
 		},
-		
+
 		playerListToggle: function(useHeader, callback) {
 			var selector = '.player-table > li' + (!!useHeader ? ' header' : '');
 			$(selector).on('click', function(e) {
@@ -237,12 +237,12 @@ var bureau = {
 				$(this).closest('li').toggleClass('expanded');
 			})
 		},
-	
+
 		home: function() {
 			function timeGreeting(name) {
 				var h = (new Date()).getHours(),
 					s;
-				
+
 				if(h >= 4 && h <= 12) {
 					s = 'Good morning, ' + name;
 				} else if(h >= 13 && h <= 17) {
@@ -250,30 +250,30 @@ var bureau = {
 				} else {
 					s = 'Good evening, ' + name;
 				}
-				
+
 				$I('welcome-message').innerHTML = s;
 				$I('welcome-message').style.opacity = 1;
 			}
 			timeGreeting(displayName);
-			
-			
+
+
 			this.playerListToggle();
 			this.search();
-			
+
 			var a = [];
 			var infos = document.querySelectorAll('.game-info');
 			for(var i=0; i<infos.length; i++) {
 				a.push(makeColourItem(infos[i], 'color'));
 			}
 			colourItems(a);
-			
+
 		},
-		
+
 		guild: function() {
 			var a = [],
 				membershipRows = document.querySelectorAll('.member-row'),
 				commenttextareas = document.querySelectorAll('.killreport textarea')
-				
+
 			a.push(makeColourItem($I('kill-reports'), 'color'))
 			a.push(makeColourItem($I('guild-nav'), 'color'))
 			a.push(makeColourItem($I('motd-input'), 'outlineColor'))
@@ -282,18 +282,18 @@ var bureau = {
 				a.push(makeColourItem(commenttextareas[i], 'color'))
 				a.push(makeColourItem(commenttextareas[i], 'outline-color'))
 			}
-				
+
 			for(i=0; i<membershipRows.length; i++) {
 				a.unshift(makeColourItem(membershipRows[i].querySelector('.name'), 'color'));
 				a.unshift(makeColourItem(membershipRows[i].querySelector('.nickname-rank'), 'borderColor'))
 				a.unshift(makeColourItem(membershipRows[i], 'borderColor'))
 			}
 			colourItems(a)
-			
+
 			if(location.hash !== '') {
 				location.hash = '';
 			}
-			
+
 			if($I('motd-input')) { //We use this JS on every guild page (oops?) so we should protect against errors
 				$I('motd-input').onkeyup = function(e) { //Disable the set MotD button if there's nothing to set it to
 					if(!!this.value) {
@@ -302,7 +302,7 @@ var bureau = {
 						$I('set-motd-button').setAttribute('disabled', true);
 					}
 				}
-				
+
 				$I('reset-motd-button').onclick = function(e) { //Make sure they want to reset the MotD and aren't doing it by accident
 					var reset = confirm('Clear the MotD?');
 					if(!reset) {
@@ -310,15 +310,15 @@ var bureau = {
 					}
 				}
 			}
-			
+
 			//Make the kill report headers respond to clicks
 			$('article.killreport header').on('click', function(e) {
 				$(this).closest('.killreport').toggleClass('closed');
 			});
-			
+
 			//Autoexpand the comment textarea on kill reports
 			$('.killreport textarea').autogrow();
-			
+
 			//Make prettier maps
 			google.maps.visualRefresh = true;
 			//Populate the map containers with maps
@@ -338,7 +338,7 @@ var bureau = {
 					    icon: ((document.title.indexOf('-')!==-1)?'../':'') + 'images/target-small.svg'
 					})
 			})
-			
+
 			/*
 			bureau.api(bureau.user.uid, 'read', 'statistics', ['members'], function(result) {
 				//Make the brace headers extend and populate data
@@ -356,7 +356,7 @@ var bureau = {
 							for(key in j) {
 								max = (j.hasOwnProperty(key) && j[key] > max) ? j[key] : max;
 							}
-							
+
 							//Create the bar elements
 							for(key in j) {
 								if(j.hasOwnProperty(key)) {
@@ -379,7 +379,7 @@ var bureau = {
 					t.addClass('ready');
 				});
 			});*/
-			
+
 			//Handle resetting of passwords
 			$("input[type=submit][name=resetpassword]").on('click', function(e) {
 				var resetuid = this.getAttribute('data-uid')
@@ -389,17 +389,17 @@ var bureau = {
 					})
 				}
 			})
-			
+
 			//Setup player lists and search for guild pages that need it
 			this.playerListToggle(true);
 			this.search();
 		},
-		
+
 		guildAllReports: function() {
 			var a = [],
 				membershipRows = document.querySelectorAll('.member-row'),
 				commenttextareas = document.querySelectorAll('.killreport textarea')
-				
+
 			a.push(makeColourItem($I('kill-reports'), 'color'))
 			a.push(makeColourItem($I('guild-nav'), 'color'))
 			a.push(makeColourItem($I('motd-input'), 'outlineColor'))
@@ -409,15 +409,15 @@ var bureau = {
 				a.push(makeColourItem(commenttextareas[i], 'outline-color'))
 			}
 			colourItems(a)
-			
+
 			//Make the kill report headers respond to clicks
 			$('article.killreport header').on('click', function(e) {
 				$(this).closest('.killreport').toggleClass('closed');
 			});
-			
+
 			//Autoexpand the comment textarea on kill reports
 			$('.killreport textarea').autogrow();
-			
+
 			//Make prettier maps
 			google.maps.visualRefresh = true;
 			//Populate the map containers with maps
@@ -437,33 +437,33 @@ var bureau = {
 					    icon: ((document.title.indexOf('-')!==-1)?'../':'') + 'images/target-small.svg'
 					})
 			})
-			
+
 			//Add the confirmation dialog to approving and rejecting reports
 			$('.processing-buttons input[type="submit"]').on('click', function(e) {
 				stopEvent(e)
-				
+
 				var message = 'Are you sure you want to retroactively ' + this.className + ' this kill report? Please check to make sure that taking this action is in line with the game\'s mechanics!';
 				if(confirm(message)) {
 					$(this).closest('form').each(function() {
 						HTMLFormElement.prototype.submit.call(this);
-					});	
+					});
 				}
 			});
-			
+
 			this.playerListToggle(true);
 		},
-		
+
 		guildMembership: function() {
 			var membershipRows = document.querySelectorAll('.membership-row'),
 				items = [];
-				
+
 			for(i=0; i<membershipRows.length; i++) {
-				items.unshift(makeColourItem(membershipRows[i].querySelector('.name'), 'color'));	
+				items.unshift(makeColourItem(membershipRows[i].querySelector('.name'), 'color'));
 				items.unshift(makeColourItem(membershipRows[i].querySelector('.nickname-rank'), 'borderColor'));
 				items.unshift(makeColourItem(membershipRows[i], 'borderColor'));
 			}
 			colourItems(items);
-		
+
 			var addRule = (function (style) {
 				var sheet = document.head.appendChild(style).sheet;
 				return function (selector, css) {
@@ -473,19 +473,19 @@ var bureau = {
 					sheet.insertRule(selector + "{" + propText + "}", sheet.cssRules.length);
 				};
 			})(document.createElement("style"));
-			
+
 			addRule('.membership-row *[title]::after, header figure[class*=\"-icon\"], .membership-row .caption', {
 				color: CHOSEN_COLOUR
 			});
 			addRule('#membership-key li.active', {
 				color: CHOSEN_COLOUR
 			})
-			
-			
+
+
 			var searchBox = $('.player-table-search'),
 				typeSheet = document.createElement('style');
 			document.head.appendChild(typeSheet);
-			
+
 			$('#membership-key li').on('click', function(e) {
 				var el = $(this),
 					t = this.children[0].title;
@@ -502,15 +502,15 @@ var bureau = {
 				this.parentNode.submit();
 			});
 		},
-		
+
 		guildNewGame: function() {
 			var a = [];
 			a.push(makeColourItem($I('submit-button'), 'background-color'));
 			a.push(makeColourItem(document.querySelectorAll('.new-game-top-decor')[0], 'background-color'));
 			a.push(makeColourItem(document.querySelectorAll('.new-game-inner')[0], 'color'));
 			colourItems(a);
-			
-			
+
+
 			//Display correct fragment for game
 			function displayGameSetupFragment(e) {
 				var gtype = e.target.value,
@@ -518,7 +518,7 @@ var bureau = {
 				if(!!gtype) {
 					el.children[0].innerHTML = 'Loading '+gtype+' setup...';
 					el.className = 'fragment-loading';
-					
+
 					bureau.api(bureau.user.uid, 'read', 'gamesetupfragment', {gametype:gtype}, function(err, j) {
 						if(!err) {
 							el.className = ''
@@ -533,9 +533,9 @@ var bureau = {
 					el.children[0].innerHTML = '';
 				}
 			}
-			
+
 			$('#gametype-dropdown').on('change', displayGameSetupFragment);
-			
+
 			//Field validtion
 			var validate = {
 				results:{},
@@ -563,7 +563,7 @@ var bureau = {
 				i = 0,
 				l = fields.length,
 				f;
-			
+
 			for(i;i<l;i++) {
 				f = fields[i];
 				validate.results[f.name] = false;
@@ -575,9 +575,9 @@ var bureau = {
 						$(f).on('change', function(){updateValidation()});
 						break;
 				}
-				
+
 			}
-			
+
 			function updateValidation() {
 				var f,n,el,canSubmit=true;
 				for(i=0;i<l;i++) {
@@ -585,7 +585,7 @@ var bureau = {
 					n = validate.checks.hasOwnProperty(f.name)?f.name:'def';
 					validate.results[f.name] = validate.checks[n](f.value);
 				}
-				
+
 				for(key in validate.results) {
 					el = $('#'+key);
 					if(!validate.results[key]) {
@@ -595,12 +595,12 @@ var bureau = {
 						el.removeClass('problem')
 					}
 				}
-				
+
 				$I('submit-button').className = 'fancy-submit ' + (canSubmit ? '' : 'disabled');
 			}
-			
+
 			updateValidation();
-			
+
 			$I('submit-button').addEventListener('click', function(e) {
 				if(this.className.indexOf('disabled') === -1) {
 					document.forms[0].submit();
@@ -608,10 +608,10 @@ var bureau = {
 			}, false);
 			this.search()
 		},
-		
+
 		guildGameState: function() {
 			colourItems([])
-			
+
 			//Field validtion
 			var validate = {
 					results:{},
@@ -640,7 +640,7 @@ var bureau = {
 				i = 0,
 				l = fields.length,
 				f;
-			
+
 			for(i;i<l;i++) {
 				f = fields[i];
 				validate.results[f.id] = false;
@@ -652,7 +652,7 @@ var bureau = {
 						$(f).on('change', function(){updateValidation()});
 						break;
 				}
-				
+
 			}
 			console.log(validate);
 			function updateValidation() {
@@ -662,7 +662,7 @@ var bureau = {
 					n = validate.checks.hasOwnProperty(f.name)?f.name:'def';
 					validate.results[f.id] = validate.checks[n](f.value, f.getAttribute('data-gameid'));
 				}
-				
+
 				for(key in validate.results) {
 					console.log(key, key.indexOf('submit'))
 					if(key.indexOf('submit') === -1) { //Not the submit button
@@ -685,7 +685,7 @@ var bureau = {
 					}
 				}
 			}
-			
+
 			//Attach confirmation dialogs to the archive buttons
 			$('.archive-form input[type=submit]').on('click', function(e) {
 				stopEvent(e)
@@ -694,13 +694,13 @@ var bureau = {
 					HTMLFormElement.prototype.submit.call(this.parentNode);
 				}
 			})
-			
+
 			//Handle game state loading
 			var loadGameState = function(el) {
 					var uid = $(el).find('[name=uid]').attr('value'),
 						gameid = $(el).find('[name=gameid]').attr('value'),
 						k = uid+'-'+gameid
-						
+
 					if(clicked.indexOf(k) < 0) {
 						//Need to load in gamestate data
 						clicked.push(k)
@@ -711,25 +711,25 @@ var bureau = {
 					}
 				},
 				clicked = []
-			
+
 			this.playerListToggle(true, loadGameState)
 			this.search()
 		},
-		
+
 		report: function() {
 			var a = [];
-			
+
 			a.push(makeColourItem($I('kill-report-top-decor'), 'background-color'));
 			a.push(makeColourItem($I('submit-button'), 'background-color'));
 			a.push(makeColourItem($I('killreport-textarea'), 'outline-color'));
 			a.push(makeColourItem(document.querySelectorAll('.kill-report-inner')[0], 'color'));
 			colourItems(a);
-			
+
 			//Determine whether we should show or hide the kill method extra detail question
 			var showHideKillmethodQuestion = function() {
 				var d = $I('killmethod-dropdown'),
 					question = d.options[d.selectedIndex].getAttribute('data-question');
-				
+
 				//$I('killMethodQuestion').innerHTML = question;
 				var input = $I('killMethodQuestionInput');
 				input.value = '';
@@ -741,22 +741,22 @@ var bureau = {
 				}
 			}
 			showHideKillmethodQuestion();
-			
+
 			var reportTextHiddenInput = document.querySelectorAll('#report-text input[name="report-text"]')[0];
 			//Switch out contenteditable item from textarea
 			$('#contenteditable-report').on('keyup', function() {
 				reportTextHiddenInput.value = this.innerText;
 			});
-			
+
 			//Autoexpand the textarea
 			$('#killreport-textarea').autogrow();
-			
+
 			//Display extra question box as appropriate for different kill methods
 			$('#killmethod-dropdown').on('change', showHideKillmethodQuestion);
-			
+
 			//Fill in the client side time to the time box
 			$I('time-input').value = bureau.utils.prettyTimestamp();
-			
+
 			//Make the geolocation button work
 			if(navigator.geolocation && navigator.geolocation.getCurrentPosition) {
 				$('#coords-btn').removeClass('hidden');
@@ -793,13 +793,13 @@ var bureau = {
 					})
 				});
 			}
-			
+
 			//Field validtion
 			var validate = {
 				results:{},
 				checks: {
 					def: function(){return true},
-					
+
 					time: function(val) {
 						var d = bureau.utils.dateFromPrettyTimestamp(val),
 							now = new Date();
@@ -817,7 +817,7 @@ var bureau = {
 				i = 0,
 				l = fields.length,
 				f;
-			
+
 			for(i;i<l;i++) {
 				f = fields[i];
 				validate.results[f.name] = false;
@@ -826,9 +826,9 @@ var bureau = {
 						$(f).on('keyup', function(){updateValidation()});
 						break;
 				}
-				
+
 			}
-			
+
 			function updateValidation() {
 				var f,n,el,canSubmit=true;
 				for(i=0;i<l;i++) {
@@ -836,7 +836,7 @@ var bureau = {
 					n = validate.checks.hasOwnProperty(f.name)?f.name:'def';
 					validate.results[f.name] = validate.checks[n](f.value);
 				}
-				
+
 				for(key in validate.results) {
 					el = $('#'+key);
 					if(!validate.results[key]) {
@@ -846,12 +846,12 @@ var bureau = {
 						el.removeClass('problem')
 					}
 				}
-				
+
 				$I('submit-button').className = canSubmit ? '' : 'disabled';
 			}
-			
+
 			updateValidation();
-			
+
 			//Finally add the listener to the button for submitting the report
 			$I('submit-button').addEventListener('click', function(e) {
 				if(this.className.indexOf('disabled') === -1) {
@@ -859,7 +859,7 @@ var bureau = {
 				}
 			}, false);
 		},
-		
+
 		killmethods: function() {
 			colourItems([])
 			//Autoexpand the textarea
@@ -867,13 +867,13 @@ var bureau = {
 			$('#methoddetailneeded').on('change', function(e) {
 				$I('detail-section').className = this.checked?'':'nodetail'
 			})
-			
+
 			//Field validtion
 			var validate = {
 				results:{},
 				checks: {
 					def: function(){return true},
-					
+
 					methodname: function(val) {
 						val = val.trim()
 						return (!!val && val.length > 2)
@@ -893,8 +893,8 @@ var bureau = {
 					methodrules: function(val) {
 						val = val.trim()
 						return (!!val && val.length > 10)
-					}					
-					
+					}
+
 				}
 			},
 				fields = document.querySelectorAll('#new-kill-method input, #new-kill-method textarea'),
@@ -909,9 +909,9 @@ var bureau = {
 						$(f).on('keyup', function(){updateValidation()});
 						break;
 				}
-				
+
 			}
-			
+
 			function updateValidation() {
 				var f,n,el,canSubmit=true;
 				for(i=0;i<l;i++) {
@@ -919,7 +919,7 @@ var bureau = {
 					n = validate.checks.hasOwnProperty(f.name)?f.name:'def';
 					validate.results[f.name] = validate.checks[n](f.value);
 				}
-				
+
 				for(key in validate.results) {
 					el = $('#'+key);
 					if(!validate.results[key]) {
@@ -929,13 +929,13 @@ var bureau = {
 						el.parent().removeClass('problem')
 					}
 				}
-				
+
 				$I('submit-button').className = canSubmit ? '' : 'disabled';
 				$I('submit-button').disabled = !canSubmit;
 			}
-			
+
 			updateValidation();
-			
+
 			//Finally add the listener to the button for submitting the report
 			$I('submit-button').addEventListener('click', function(e) {
 				stopEvent(e)
@@ -943,8 +943,8 @@ var bureau = {
 					document.forms[0].submit();
 				}
 			}, false);
-			
-			
+
+
 			//Setup killmethod editing
 			$('.killmethod button').on('click', function(e) {
 				stopEvent(e)
@@ -952,31 +952,31 @@ var bureau = {
 				$(this.parentNode).find('input').removeAttr('disabled')
 				this.parentNode.classList.add('editing')
 			})
-			
-			
+
+
 			//Setup search
 			this.search(true);
 		},
-		
+
 		personal: function() {
 			var a = [];
-	
+
 			a.push(
 				makeColourItem($I('personal-header'), 'borderColor'),
 				makeColourItem($I('personal-page'), 'borderColor')
 			)
-		
-			
+
+
 			var d = document.querySelectorAll('#details input'),
 				k = d.length,
 				j = 0
-			
+
 			for(j; j<k; j++) {
 				a.push(makeColourItem(d[j], 'outlineColor'))
 			}
-			
+
 			colourItems(a)
-			
+
 			//Prime colour switching area
 			$('.colours [data-colour]').each(function(i, el) {
 				var colour = $(this).attr('data-colour')
@@ -1006,8 +1006,8 @@ var bureau = {
 				}
 				storeObj('bureau-colours', colours)
 			})
-			
-			
+
+
 			//Setup the editable regions with their forms
 			var editButtons = document.querySelectorAll('.edit-button'),
 				l = editButtons.length,
@@ -1015,7 +1015,7 @@ var bureau = {
 				toggleEdit = function(e) {
 					var container = e.target.parentNode,
 						editing;
-					
+
 					if(container.className.indexOf('edit') === -1) {
 						container.className += ' edit';
 						sexyInnerHTML(e.target, 'submit request');
@@ -1031,58 +1031,58 @@ var bureau = {
 								break;
 						}
 					}
-					
+
 					var inputs = container.querySelectorAll('.editable-row > input'),
 						l = inputs.length,
 						i = 0
-					
+
 					for(i;i<l && editing;i++) {
 						inputs[i].disabled = '';
 					}
-					
+
 				};
-			
+
 			for(i;i<l;i++) {
 				editButtons[i].addEventListener('click', toggleEdit, false);
 			}
-			
+
 			//Setup display picture changer
 			$I('picture-form').onchange = function() {
 				$I('picture-form').submit();
 			}
 		},
-		
+
 		updateDetails: function() {
 			var a = [];
-	
+
 			a.push(
 				makeColourItem($I('personal-header'), 'borderColor'),
 				makeColourItem($I('personal-page'), 'borderColor'),
 				makeColourItem(document.querySelectorAll('p')[0], 'color')
 			)
-		
-			
+
+
 			var d = document.querySelectorAll('#details input'),
 				k = d.length,
 				j = 0
-			
+
 			for(j; j<k; j++) {
 				a.push(makeColourItem(d[j], 'outlineColor'))
 			}
-			
+
 			colourItems(a)
 		},
-		
+
 		gamegroup: function() {
 			var a = [];
 			colourItems(a);
-			
-			//Setup player lists and search 
+
+			//Setup player lists and search
 			this.playerListToggle(true);
 			this.search();
 		}
 	},
-	
+
 	utils: {
 		prettyTimestamp: function() {
 			var d = new Date(),
@@ -1111,22 +1111,22 @@ var bureau = {
 					route = a[i].long_name;
 				}
 			}
-			
+
 			for(var i = 0; i < a.length;i++) {
 				if(a[i].types[0] === 'postal_code') {
 					postal_code = a[i].long_name;
 				}
 			}
-			
+
 			if(!!route && !!postal_code) {
 				return route + ', ' + postal_code;
 			} else {
 				return false;
 			}
-			
+
 		}
 	}
-	
+
 }
 
 
@@ -1159,7 +1159,7 @@ function makeColourItem(el, p, alpha) {
 function colourItems(items) {
 	if($I('toolbar')) {
 		items.unshift(makeColourItem($I('toolbar'), 'borderColor'));
-		
+
 		//Style grabber
 		var r = $I('grabber').querySelectorAll('rect');
 		for(var k=0;k<r.length;k++) {
@@ -1167,37 +1167,37 @@ function colourItems(items) {
 			r[k].setAttribute('rx', 1);
 			r[k].setAttribute('ry', 1);
 		}
-		
+
 	}
-	
+
 	var links = document.querySelectorAll('#toolbar > li > a');
 	for(var i=0; i<links.length; i++) {
 		items.unshift(makeColourItem(links[i], 'color'));
 	}
-	
+
 	var notif = document.querySelectorAll('#notification');
 	for(var i=0; i<notif.length; i++) {
 		items.unshift(makeColourItem(notif[i], 'color'));
 	}
-	
+
 	var containers = document.querySelectorAll('.container');
 	for(i=0; i<containers.length; i++) {
 		items.unshift(makeColourItem(containers[i], 'backgroundColor'));
 	}
-	
+
 	var lightcontainers = document.querySelectorAll('.light-container');
 	for(i=0; i<lightcontainers.length; i++) {
 		items.unshift(makeColourItem(lightcontainers[i], 'color'));
 	}
-	
+
 	var dropdownlists = document.querySelectorAll('.dropdown select');
 	for(i=0; i<dropdownlists.length; i++) {
 		items.unshift(makeColourItem(dropdownlists[i], 'border-color'));
 	}
-	
+
 	var playercards = document.querySelectorAll('.player-card');
 	for(i=0; i<playercards.length; i++) {
-		items.unshift(makeColourItem(playercards[i].querySelector('.name-row'), 'color'));	
+		items.unshift(makeColourItem(playercards[i].querySelector('.name-row'), 'color'));
 		items.unshift(makeColourItem(playercards[i].querySelector('.nickname-rank'), 'borderColor'));
 		items.unshift(makeColourItem(playercards[i], 'borderColor'));
 	}
@@ -1211,25 +1211,25 @@ function colourItems(items) {
 	        sheet.insertRule(selector + "{" + propText + "}", sheet.cssRules.length);
 	    };
 	})(document.createElement("style"));
-	
+
 	addRule(".player-card *[title]::after", {
 	    color: CHOSEN_COLOUR
 	});
 
-	
+
 	items.unshift(makeColourItem(document.querySelector('h1'), 'color'));
 	items.unshift(makeColourItem(document.querySelector('h1'), 'borderColor'));
 	items.unshift(makeColourItem(document.querySelector('#notifications-title'), 'color'));
 	items.unshift(makeColourItem(document.querySelector('#unread-count'), 'color'));
 	items.unshift(makeColourItem(document.querySelector('#unread-count'), 'borderColor'));
-	
+
 	var i = 0,
 		l = items.length,
 		rgb = (function() {
 					var j = hexToRgb(CHOSEN_COLOUR);
 					return (j.r + ',' + j.g + ',' + j.b + ',');
 				})();  //We just use a sneaky auto executing function to cache the RGB value. This is a cool pattern. It's a nice way to do more complicated logic in variable assignment without having to devote an entire block of your function. I'm going to nickname this "Inline self executing function variable assignment". Catchy!
-				
+
 	for(i;i<l;i++) {
 		if(!!items[i].alpha) {
 			items[i].el.style[items[i].property] = 'rgba('+rgb+items[i].alpha+')';
@@ -1298,7 +1298,7 @@ function retrieveObj(key) {
 //Just in case a particular page doesn't care about colouring anything or have its own applyColours() method then we'll specify a default here which can be overwritten
 function applyColours() {
 	var a = [];
-	
+
 	colourItems(a);
 }
 
@@ -1326,7 +1326,7 @@ function unique(arr) {
 			return last
 		}
 	},[])
-	
+
 	return u
 }
 
@@ -1337,9 +1337,9 @@ function empty(o) {
 			return false;
 		}
 	}
-	
+
 	return true;
-	
+
 } //courtesy of: http://starikovs.com/2010/03/10/test-for-empty-js-object/
 
 function getTransformProperty(element) {
@@ -1384,7 +1384,7 @@ function rgbToHex(r, g, b) {
 	    var hex = c.toString(16);
 	    return hex.length == 1 ? "0" + hex : hex;
 	}
-	
+
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
 
@@ -1396,17 +1396,17 @@ function sexyInnerHTML(el, t2) { //only works for letters, spaces and numbers!!!
 		alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789 !.,?:;',
 		j = 0,
 		k = 0;
-		
+
 	var printer = new ProgressivePrinter(el, t1);
-		
+
 	if(t1.length>t2.length) { // Pad the beginning of t2 with spaces
 		t2 = repeatStr(' ', t1.length-t2.length) + t2;
 	}
-	
+
 	for(var i = 0; i < t2.length; i++) {
 		j = (t1[i])?alphabet.indexOf(t1[i]):0;
 		k = alphabet.indexOf(t2[i]);
-		
+
 		if(j<k) {
 			for(j;j<=k;j++) {
 				t[i] = alphabet[j];
@@ -1419,17 +1419,17 @@ function sexyInnerHTML(el, t2) { //only works for letters, spaces and numbers!!!
 			}
 		}
 	}
-	
+
 	printText(t.join(''));
-	
+
 	function printText(text) {
 		printer.queue(text);
 	}
-	
+
 	function repeatStr(str, num) {
 		return (new Array(num+1).join(str));
 	}
-	
+
 }
 /* API METHODS */
 
@@ -1453,7 +1453,7 @@ function apiRequest(uid, method, api, data) {
 			api: api,
 			method: method
 		},
-		
+
 		data: data
 	}
 	var req = new XMLHttpRequest();
@@ -1471,88 +1471,6 @@ function apiRequest(uid, method, api, data) {
 	req.setRequestHeader('Content-type', 'application/json');
 	req.send(JSON.stringify(j));
 }
-
-
-/* Inline placement of placeholders.js */
-/* Placeholders.js v2.1.0 */
-!function(a){"use strict";function b(a,b,c){return a.addEventListener?a.addEventListener(b,c,!1):a.attachEvent?a.attachEvent("on"+b,c):void 0}function c(a,b){var c,d;for(c=0,d=a.length;d>c;c++)if(a[c]===b)return!0;return!1}function d(a,b){var c;a.createTextRange?(c=a.createTextRange(),c.move("character",b),c.select()):a.selectionStart&&(a.focus(),a.setSelectionRange(b,b))}function e(a,b){try{return a.type=b,!0}catch(c){return!1}}a.Placeholders={Utils:{addEventListener:b,inArray:c,moveCaret:d,changeType:e}}}(this),function(a){"use strict";function b(){}function c(a){var b;return a.value===a.getAttribute(G)&&"true"===a.getAttribute(H)?(a.setAttribute(H,"false"),a.value="",a.className=a.className.replace(F,""),b=a.getAttribute(I),b&&(a.type=b),!0):!1}function d(a){var b,c=a.getAttribute(G);return""===a.value&&c?(a.setAttribute(H,"true"),a.value=c,a.className+=" "+E,b=a.getAttribute(I),b?a.type="text":"password"===a.type&&R.changeType(a,"text")&&a.setAttribute(I,"password"),!0):!1}function e(a,b){var c,d,e,f,g;if(a&&a.getAttribute(G))b(a);else for(c=a?a.getElementsByTagName("input"):o,d=a?a.getElementsByTagName("textarea"):p,g=0,f=c.length+d.length;f>g;g++)e=g<c.length?c[g]:d[g-c.length],b(e)}function f(a){e(a,c)}function g(a){e(a,d)}function h(a){return function(){q&&a.value===a.getAttribute(G)&&"true"===a.getAttribute(H)?R.moveCaret(a,0):c(a)}}function i(a){return function(){d(a)}}function j(a){return function(b){return s=a.value,"true"===a.getAttribute(H)&&s===a.getAttribute(G)&&R.inArray(C,b.keyCode)?(b.preventDefault&&b.preventDefault(),!1):void 0}}function k(a){return function(){var b;"true"===a.getAttribute(H)&&a.value!==s&&(a.className=a.className.replace(F,""),a.value=a.value.replace(a.getAttribute(G),""),a.setAttribute(H,!1),b=a.getAttribute(I),b&&(a.type=b)),""===a.value&&(a.blur(),R.moveCaret(a,0))}}function l(a){return function(){a===document.activeElement&&a.value===a.getAttribute(G)&&"true"===a.getAttribute(H)&&R.moveCaret(a,0)}}function m(a){return function(){f(a)}}function n(a){a.form&&(x=a.form,x.getAttribute(J)||(R.addEventListener(x,"submit",m(x)),x.setAttribute(J,"true"))),R.addEventListener(a,"focus",h(a)),R.addEventListener(a,"blur",i(a)),q&&(R.addEventListener(a,"keydown",j(a)),R.addEventListener(a,"keyup",k(a)),R.addEventListener(a,"click",l(a))),a.setAttribute(K,"true"),a.setAttribute(G,v),d(a)}var o,p,q,r,s,t,u,v,w,x,y,z,A,B=["text","search","url","tel","email","password","number","textarea"],C=[27,33,34,35,36,37,38,39,40,8,46],D="#ccc",E="placeholdersjs",F=new RegExp("(?:^|\\s)"+E+"(?!\\S)"),G="data-placeholder-value",H="data-placeholder-active",I="data-placeholder-type",J="data-placeholder-submit",K="data-placeholder-bound",L="data-placeholder-focus",M="data-placeholder-live",N=document.createElement("input"),O=document.getElementsByTagName("head")[0],P=document.documentElement,Q=a.Placeholders,R=Q.Utils;if(Q.nativeSupport=void 0!==N.placeholder,!Q.nativeSupport){for(o=document.getElementsByTagName("input"),p=document.getElementsByTagName("textarea"),q="false"===P.getAttribute(L),r="false"!==P.getAttribute(M),t=document.createElement("style"),t.type="text/css",u=document.createTextNode("."+E+" { color:"+D+"; }"),t.styleSheet?t.styleSheet.cssText=u.nodeValue:t.appendChild(u),O.insertBefore(t,O.firstChild),A=0,z=o.length+p.length;z>A;A++)y=A<o.length?o[A]:p[A-o.length],v=y.attributes.placeholder,v&&(v=v.nodeValue,v&&R.inArray(B,y.type)&&n(y));w=setInterval(function(){for(A=0,z=o.length+p.length;z>A;A++)y=A<o.length?o[A]:p[A-o.length],v=y.attributes.placeholder,v&&(v=v.nodeValue,v&&R.inArray(B,y.type)&&(y.getAttribute(K)||n(y),(v!==y.getAttribute(G)||"password"===y.type&&!y.getAttribute(I))&&("password"===y.type&&!y.getAttribute(I)&&R.changeType(y,"text")&&y.setAttribute(I,"password"),y.value===y.getAttribute(G)&&(y.value=v),y.setAttribute(G,v))));r||clearInterval(w)},100)}Q.disable=Q.nativeSupport?b:f,Q.enable=Q.nativeSupport?b:g}(this);
-
-/* Shim in classList for older browsers */
-if (!("classList" in document.documentElement) && Object.defineProperty && typeof HTMLElement !== 'undefined') {
-    Object.defineProperty(HTMLElement.prototype, 'classList', {
-        get: function() {
-            var self = this;
-            function update(fn) {
-                return function(value) {
-                    var classes = self.className.split(/\s+/),
-                        index = classes.indexOf(value);
- 
-                    fn(classes, index, value);
-                    self.className = classes.join(" ");
-                }
-            }
- 
-            var ret = {                    
-                add: update(function(classes, index, value) {
-                    ~index || classes.push(value);
-                }),
- 
-                remove: update(function(classes, index) {
-                    ~index && classes.splice(index, 1);
-                }),
- 
-                toggle: update(function(classes, index, value) {
-                    ~index ? classes.splice(index, 1) : classes.push(value);
-                }),
- 
-                contains: function(value) {
-                    return !!~self.className.split(/\s+/).indexOf(value);
-                },
- 
-                item: function(i) {
-                    return self.className.split(/\s+/)[i] || null;
-                }
-            };
-            
-            Object.defineProperty(ret, 'length', {
-                get: function() {
-                    return self.className.split(/\s+/).length;
-                }
-            });
- 
-            return ret;
-        }
-    });
-}
-
-/*DEBUG SECTION*/
-
-function dupe(d){
-	var n = d.cloneNode(true);
-	d.parentElement.appendChild(n);
-}  //For quick copying of a node to test layouts
-
-/*
-document.addEventListener('keydown', function(e){
-	var link = document.querySelector('link[type]');
-	if(e.keyCode === 68) {
-		if(document.body.className.indexOf('dark') === -1) {
-			document.body.className += ' dark';
-		} else {
-			document.body.className = document.body.className.replace(' dark', '');
-		}
-
-	} else if(e.keyCode === 67) {
-		if(link.getAttribute('href') === 'css/bureau.css') {
-			link.href = 'css/bureauOLD.css';
-		} else {
-			link.href = 'css/bureau.css';
-		}
-
-	}
-	
-}, false)
-*/
 
 //Setup
 $(function() {
