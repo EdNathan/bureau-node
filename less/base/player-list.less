@@ -530,6 +530,17 @@
 	.addplayer-row-newgame {
 		display: block;
 
+		&.details-outdated {
+			.name {
+				color: #666;
+				&::after {
+					content: "(details outdated)";
+					margin-left: 0.5em;
+					font-size: 0.5em;
+				}
+			}
+		}
+
 		&.opted-out {
 			.name {
 				color: #666;
