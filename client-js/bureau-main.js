@@ -5,7 +5,7 @@ var bureau = {
 			this.user.gamegroup = $I('bureau-gamegroup').value
 			this.user.token = $I('bureau-token').value
 			this.setupToolbar()
-			this.setupNotifications()
+			this.refreshNotifications()
 		}
 		setup();
 
@@ -79,7 +79,7 @@ var bureau = {
 		document.head.appendChild(m2);
 	},
 
-	setupNotifications: function() {
+	refreshNotifications: function() {
 		var cachedNotifications = retrieveObj('notifications')
 		if(!!cachedNotifications) {
 			bureau.notifications = cachedNotifications.map(function(n) {
@@ -338,47 +338,6 @@ var bureau = {
 					    icon: ((document.title.indexOf('-')!==-1)?'../':'') + 'images/target-small.svg'
 					})
 			})
-
-			/*
-			bureau.api(bureau.user.uid, 'read', 'statistics', ['members'], function(result) {
-				//Make the brace headers extend and populate data
-				$('.brace-block').each(function() {
-					switch(this.id) {
-						case 'members-by-type':
-							var j = result.members.breakdown,
-								t = result.members.total,
-								d = document.createDocumentFragment(),
-								n = document.createElement('div'),
-								max = 1,
-								b;
-							n.className = 'graph-bar';
-							//Find the largest of the group sizes
-							for(key in j) {
-								max = (j.hasOwnProperty(key) && j[key] > max) ? j[key] : max;
-							}
-
-							//Create the bar elements
-							for(key in j) {
-								if(j.hasOwnProperty(key)) {
-//									console.log(key, j[key]);
-									b = n.cloneNode();
-									b.innerHTML = key;
-									b.setAttribute('data-val', j[key]);
-									b.style.width = j[key]/max * 100 + '%';
-									d.appendChild(b);
-								}
-							}
-							this.appendChild(d);
-							break;
-						default:
-							break;
-					}
-					var t = $(this),
-						h = t.height() + 'px';
-					t.children('.caption').css('width', h);
-					t.addClass('ready');
-				});
-			});*/
 
 			//Handle resetting of passwords
 			$("input[type=submit][name=resetpassword]").on('click', function(e) {
@@ -1050,6 +1009,14 @@ var bureau = {
 			$I('picture-form').onchange = function() {
 				$I('picture-form').submit();
 			}
+
+			$I('opt-in-input').addEventListener('click', function(e) {
+				var optout = !this.checked;
+
+				bureau.api(bureau.user.uid, 'write', 'setOptout', {optout: optout}, function(err, response) {
+					bureau.refreshNotifications()
+				})
+			})
 		},
 
 		updateDetails: function() {

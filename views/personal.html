@@ -6,7 +6,7 @@
 <div id="personal-page">
 
 	<div id="personal-header">
-		
+
 		<div id="display-picture" style="{% if assassin.imgname %}background-image: url({{assassin.imgname}}){% endif %}">
 			<form action="/personal" method="POST" enctype="multipart/form-data" id="picture-form">
 				{{form.t(token)}}
@@ -19,15 +19,15 @@
 		<div id="name">{{assassin.forename}} {{assassin.surname}}</div>
 		<div id="nickname">{% if assassin.nickname %}{{assassin.nickname}}, {% endif %}Lethality: {{lethality}}</div>
 	</div>
-	
+
 	<div id="personal-content">
-		
+
 		<div id="details" class="container light-container">
 			<h4>Personal Details</h4>
 			<button class="edit-button" {% if detailspending %}disabled="true"{% endif %}>
 				{% if detailspending %}awaiting approval{% else %}edit{% endif %}
 			</button>
-			
+
 			<form action="/personal" method="POST">
 				{{form.t(token)}}
 				<input type="hidden" name="action" value="detailschange" />
@@ -37,17 +37,17 @@
 					<label for="college-input">College</label>
 				</div>
 				{% endif %}
-				
+
 				<div class="editable-row">
 					<input type="text" name="course" disabled="true" value="{{assassin.course}}" id="course-input">
 					<label for="course-input">Course</label>
 				</div>
-				
+
 				<div class="editable-row">
 					<input type="text" name="address" disabled="true" value="{{assassin.address}}" id="address-input">
 					<label for="address-input">Address & Postcode/Block & Room Number</label>
 				</div>
-				
+
 				{% if gamegroup.ggid == 'DURHAM' %}
 				<div id="living-in-row" class="editable-row" data-lio="Living {% if assassin.liverin %}In{% else %}Out{% endif %}">
 					<input id="liverin-input" type="checkbox" name="liverin" value="Yes" {% if assassin.liverin %}checked{% endif %}>
@@ -58,82 +58,90 @@
 				{% endif %}
 			</form>
 		</div>
-		
+
 		<div id="kd-ratio" class="container light-container">
 			<h4>Kill/Death</h4>
 			<span id="kills-total" title="kills">{{ stats.kills }}</span>
 			<span id="colon">:</span>
 			<span id="deaths-total" title="deaths">{{ stats.deaths }}</span><br>
-			<span id="ratio" title="ratio">{% if stats.ratio===Infinity %}&infin;{% else %}{{ stats.ratio }}{% endif %}</span>		
+			<span id="ratio" title="ratio">{% if stats.ratio===Infinity %}&infin;{% else %}{{ stats.ratio }}{% endif %}</span>
 		</div>
-		
+
+		<div id="opt-in" class="container light-container">
+			<h4>Opt In To Games</h4>
+			<div class="row editable-row">
+				<input id="opt-in-input" type="checkbox" name="opt-in" value="Yes" {% if !assassin.optout %}checked{% endif %}>
+				<label for="opt-in-input">Automatically opt in to games</label>
+			</div>
+		</div>
+
 		<div id="change-password" class="container light-container">
 			<h4>Change Password</h4>
 			<form action="/changepassword" method="POST">
 				{{form.t(token)}}
 				{{form.a('changepassword')}}
-				
+
 				<div class="editable-row">
 					<input type="password" id="oldpassword" name="oldpassword" value="" placeholder="Old Password">
 					<label for="oldpassword">Old Password</label>
 				</div>
-				
+
 				<div class="editable-row">
 					<input type="password" id="newpassword" name="newpassword" value="" placeholder="New Password">
 					<label for="newpassword">New Password</label>
 				</div>
-				
+
 				<div class="editable-row">
 					<input type="password" id="verifypassword" name="verifypassword" value="" placeholder="Verify Password">
 					<label for="verifypassword">Verify Password</label>
 				</div>
-				
+
 				<input type="submit" value="Change Password">
-				
+
 			</form>
 		</div>
-		
+
 		<div id="set-colours" class="container light-container">
 			<h4>Set Interface Colours</h4>
 			<form action="" method="post">
 				{{form.t(token)}}
 				{{form.a('changecolours')}}
-				
-				
+
+
 				<div class="colours">
-					
-					
-					
+
+
+
 					<div data-colour="#0e83cd">
 						<input type="checkbox" id="colour-#0e83cd" name="colour-#0e83cd" value="#0e83cd">
 						<label for="colour-#0e83cd" style="background-color:#0e83cd;"></label>
 					</div>
-					
+
 					<div data-colour="#f06060">
 						<input type="checkbox" id="colour-#f06060" name="colour-#f06060" value="#f06060">
 						<label for="colour-#f06060" style="background-color:#f06060;"></label>
 					</div>
-					
+
 					<div data-colour="#2ecc71">
 						<input type="checkbox" id="colour-#2ecc71" name="colour-#2ecc71" value="#2ecc71">
 						<label for="colour-#2ecc71" style="background-color:#2ecc71;"></label>
 					</div>
-					
+
 					<div data-colour="#9e54bd">
 						<input type="checkbox" id="colour-#9e54bd" name="colour-#9e54bd" value="#9e54bd">
 						<label for="colour-#9e54bd" style="background-color:#9e54bd;"></label>
 					</div>
-					
+
 					<div data-colour="#fcd04b">
 						<input type="checkbox" id="colour-#fcd04b" name="colour-#fcd04b" value="#fcd04b">
 						<label for="colour-#fcd04b" style="background-color:#fcd04b;"></label>
 					</div>
-					
+
 				</div>
-				
+
 			</form>
 		</div>
-	
+
 	</div>
 </div>
 <script type="text/javascript" src="/js/bureau-personal.js" charset="utf-8"></script>

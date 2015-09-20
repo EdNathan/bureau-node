@@ -529,6 +529,17 @@
 
 	.addplayer-row-newgame {
 		display: block;
+
+		&.opted-out {
+			.name {
+				color: #666;
+				&::after {
+					content: "(opted out)";
+					margin-left: 0.5em;
+					font-size: 0.5em;
+				}
+			}
+		}
 	}
 }
 
