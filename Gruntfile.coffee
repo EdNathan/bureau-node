@@ -1,24 +1,24 @@
 module.exports = (grunt) ->
 
 	# Project configuration
-	grunt.initConfig 
+	grunt.initConfig
 		pkg: grunt.file.readJSON 'package.json'
-		
+
 		watch:
 			options:
-				livereload: true				
+				livereload: true
 			less:
 				files: ['less/**']
 				tasks: ['less:development']
 			js:
 				files: ['client-js/**', 'client-js/components/**']
 				tasks: ['concat:js']
-		
+
 		concat:
 			js:
 				src: ['client-js/**.js', 'client-js/components/**.js']
 				dest: 'static/js/bureau.js'
-				
+
 		imagemin:
 			options:
 				cache: false
@@ -28,7 +28,7 @@ module.exports = (grunt) ->
 					src: ['static/images/**.{jpg,jpeg,gif,png}']
 					dest: 'build/'
 				}]
-		
+
 		svgmin:
 			build: {
 				files: [{
@@ -37,11 +37,11 @@ module.exports = (grunt) ->
 					dest: 'build/'
 				}]
 			}
-		
-		
+
+
 		clean:
 			build: ['build/**']
-		
+
 		copy:
 			build:
 				files: [
@@ -57,22 +57,22 @@ module.exports = (grunt) ->
 						dest: 'build/'
 					}
 				]
-			
-		less: 
-			development: 
-				options: 
+
+		less:
+			development:
+				options:
 					paths: ['less']
 					cleancss: false
 				files:
 					'static/css/bureau.css': 'less/main.less'
-					
+
 			build:
 				options:
 					paths: ['less']
 					cleancss: true
 				files:
 					'build/static/css/bureau.css': 'less/main.less'
-		cssmin: 
+		cssmin:
 			build:
 				expand: true
 				cwd: 'static/css/'
@@ -89,7 +89,7 @@ module.exports = (grunt) ->
 					src: ['**.js', '*/**.js', '!**.min.js', '!bureau.js']
 					dest: 'build/static/js/'
 				}]
-			
+
 
 
 	grunt.loadNpmTasks 'grunt-contrib-less'
@@ -102,11 +102,12 @@ module.exports = (grunt) ->
 	grunt.loadNpmTasks 'grunt-contrib-cssmin'
 	grunt.loadNpmTasks 'grunt-contrib-uglify'
 	grunt.loadNpmTasks 'grunt-svgmin'
-	
+
 	# Default task(s)
 	grunt.registerTask 'default', ['watch:less', 'watch:js']
 	grunt.registerTask 'build', [
 			'clean:build',
+			'concat:js',
 			'copy:build',
 			'imagemin:build',
 			'svgmin:build',
