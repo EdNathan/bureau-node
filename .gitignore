@@ -6,7 +6,5 @@ build/
 durham.json
 *.log
 .env
-
 static/css/bureau.css
-
 static/js/bureau.js
