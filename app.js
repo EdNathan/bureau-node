@@ -12,1645 +12,1646 @@ var Bureau = require('./bureau'),
 	moment = require('moment')
 
 var pages = {
-		get: {
-			login: function(req, res) {
-				if (!!req.session.uid || !!req.cookies.BAC) {
-					res.redirect('/home')
-					return;
-				}
-				Bureau.gamegroup.getGamegroups(function(err, gamegroups) {
-					res.render('login', {
-						loginErrors: [],
-						gamegroups: gamegroups
-					})
-				})
-
-			},
-			goodbye: function(req, res) {
-				req.session.destroy()
-				res.clearCookie('connect.sid', {
-					path: '/'
-				})
-				res.clearCookie('BAC', {
-					path: '/'
-				})
-				res.redirect('/login')
-			},
-			logout: function(req, res) {
-				//alias for goodbye
-				pages.get.goodbye(req, res)
-			},
-			forgotpassword: function(req, res) {
-				res.render('forgotpassword')
-			},
-			confirmemail: function(req, res) {
-				var email = req.query.e,
-					token = req.query.t
-
-				Bureau.register.confirmEmail(email, token, function(err, assassin) {
-					if (err) {
-						res.locals.pageErrors = [err]
-					}
-					res.redirect('/login')
-				})
-			},
-			'views/mail/:page': function(req, res) {
-				res.render('mail/' + req.params.page, {
-					subject: 'Testing Email'
-				})
+	get: {
+		login: function(req, res) {
+			if (!!req.session.uid || !!req.cookies.BAC) {
+				res.redirect('/home')
+				return;
 			}
+			Bureau.gamegroup.getGamegroups(function(err, gamegroups) {
+				res.render('login', {
+					loginErrors: [],
+					gamegroups: gamegroups
+				})
+			})
+
 		},
-		post: {
-			login: function(req, res) {
-				var email = req.body.email.replace('@dur.ac.uk', '@durham.ac.uk'),
-					password = req.body.password,
-					passwordconfirm = req.body.passwordconfirm,
-					forename = req.body.forename,
-					surname = req.body.surname,
-					address = req.body.address,
-					liverin = req.body.liverin == 'yes',
-					course = req.body.course,
-					college = req.body.college,
-					gamegroup = req.body.gamegroup,
-					consent = (req.body.consent.toLowerCase() === 'i agree'),
-					rememberme = req.body.rememberme == 'yes',
-					errors = []
+		goodbye: function(req, res) {
+			req.session.destroy()
+			res.clearCookie('connect.sid', {
+				path: '/'
+			})
+			res.clearCookie('BAC', {
+				path: '/'
+			})
+			res.redirect('/login')
+		},
+		logout: function(req, res) {
+			//alias for goodbye
+			pages.get.goodbye(req, res)
+		},
+		forgotpassword: function(req, res) {
+			res.render('forgotpassword')
+		},
+		confirmemail: function(req, res) {
+			var email = req.query.e,
+				token = req.query.t
 
-				//Check if registering or logging in
-				if (!!passwordconfirm || !!forename || !!surname || !!address || !!course ||
-					!!gamegroup || !!college || !!consent) {
-					//Registering!
-					if (!consent) {
-						errors.push('You must agree to the disclaimer')
-					}
-					if (!validator.isEmail(email)) {
-						//Check to make sure they give a valid email
-						errors.push('Invalid email address')
-					}
-					if (!password || password.length < 6) {
-						//Check if they've entered a password
-						errors.push('Password must be longer than 6 characters')
-					} else if (password !== passwordconfirm) {
-						//Check if the passwords match
-						errors.push('Passwords did not match')
-					}
-					if (forename.length < 1) {
-						//Check to make sure they give a forename
-						errors.push('No forename given')
-					}
-					if (surname.length < 1) {
-						//Check to make sure they give a surname
-						errors.push('No surname given')
-					}
-					if (address.length < 1) {
-						//Check to make sure they give an address
-						errors.push('No address given')
-					}
-					if (course.length < 1) {
-						//Check to make sure they give a course
-						errors.push('No course given, use N/A if not applicable')
-					}
-					if (!gamegroup) {
-						//Check to make sure they choose a gamegroup
-						errors.push('No game group selected')
-					}
-					if (!college && gamegroup === 'DURHAM') {
-						errors.push('No college selected')
-					}
-
-					//Check to make sure email is not in use
-					Bureau.register.emailExists(email, function(err, yes) {
-						if (yes) {
-							errors.push('Email address is already in use')
-						}
-
-						if (errors.length === 0) {
-							//Register a new user
-							var newAssassin = {
-								password: password,
-								email: email,
-								forename: forename,
-								surname: surname,
-								course: course,
-								address: address,
-								liverin: liverin,
-								gamegroup: gamegroup
-							}
-							if (gamegroup === 'DURHAM') {
-								newAssassin.college = college
-							}
-							Bureau.register.registerNewAssassin(newAssassin, function(err,
-								assassin) {
-								Bureau.gamegroup.getGamegroups(function(err, gamegroups) {
-									res.render('login', {
-										success: true,
-										gamegroups: gamegroups
-									})
-								})
-							})
-						} else {
-							Bureau.gamegroup.getGamegroups(function(err, gamegroups) {
-								res.render('login', {
-									loginErrors: errors,
-									gamegroups: gamegroups
-								})
-							})
-						}
-
-					})
-				} else if (!!email || !!password) {
-					Bureau.register.loginAssassin(email, password, function(err, assassin) {
-						if (!assassin) {
-							errors.push('Incorrect email/password combination')
-							Bureau.gamegroup.getGamegroups(function(err, gamegroups) {
-								res.render('login', {
-									loginErrors: errors,
-									gamegroups: gamegroups
-								})
-							})
-
-						} else {
-							var uid = assassin._id + ''
-							if (true) {
-								res.cookie('BAC', uid + 'sheepworks' + utils.md5(uid + '~' +
-									assassin.joindate), {
-									//Set the cookie for 2 weeks
-									expires: new Date(Date.now() + 3600000 * 24 * 14),
-									httpOnly: true
-								})
-							}
-							req.session.uid = uid
-							req.session.gamegroup = assassin.gamegroup
-							req.session.assassin = assassin
-							req.session.token = utils.md5(assassin.joindate + process.env.BUREAU_TOKEN_SECRET)
-							res.redirect('/home')
-						}
-					})
+			Bureau.register.confirmEmail(email, token, function(err, assassin) {
+				if (err) {
+					res.locals.pageErrors = [err]
 				}
+				res.redirect('/login')
+			})
+		},
+		'views/mail/:page': function(req, res) {
+			res.render('mail/' + req.params.page, {
+				subject: 'Testing Email'
+			})
+		}
+	},
+	post: {
+		login: function(req, res) {
+			var email = req.body.email.replace('@dur.ac.uk', '@durham.ac.uk'),
+				password = req.body.password,
+				passwordconfirm = req.body.passwordconfirm,
+				forename = req.body.forename,
+				surname = req.body.surname,
+				address = req.body.address,
+				liverin = req.body.liverin == 'yes',
+				course = req.body.course,
+				college = req.body.college,
+				gamegroup = req.body.gamegroup,
+				consent = (req.body.consent.toLowerCase() === 'i agree'),
+				rememberme = req.body.rememberme == 'yes',
+				errors = []
+
+			//Check if registering or logging in
+			if (!!passwordconfirm || !!forename || !!surname || !!address || !!course ||
+				!!gamegroup || !!college || !!consent) {
+				//Registering!
+				if (!consent) {
+					errors.push('You must agree to the disclaimer')
+				}
+				if (!validator.isEmail(email)) {
+					//Check to make sure they give a valid email
+					errors.push('Invalid email address')
+				}
+				if (!password || password.length < 6) {
+					//Check if they've entered a password
+					errors.push('Password must be longer than 6 characters')
+				} else if (password !== passwordconfirm) {
+					//Check if the passwords match
+					errors.push('Passwords did not match')
+				}
+				if (forename.length < 1) {
+					//Check to make sure they give a forename
+					errors.push('No forename given')
+				}
+				if (surname.length < 1) {
+					//Check to make sure they give a surname
+					errors.push('No surname given')
+				}
+				if (address.length < 1) {
+					//Check to make sure they give an address
+					errors.push('No address given')
+				}
+				if (course.length < 1) {
+					//Check to make sure they give a course
+					errors.push('No course given, use N/A if not applicable')
+				}
+				if (!gamegroup) {
+					//Check to make sure they choose a gamegroup
+					errors.push('No game group selected')
+				}
+				if (!college && gamegroup === 'DURHAM') {
+					errors.push('No college selected')
+				}
+
+				//Check to make sure email is not in use
+				Bureau.register.emailExists(email, function(err, yes) {
+					if (yes) {
+						errors.push('Email address is already in use')
+					}
+
+					if (errors.length === 0) {
+						//Register a new user
+						var newAssassin = {
+							password: password,
+							email: email,
+							forename: forename,
+							surname: surname,
+							course: course,
+							address: address,
+							liverin: liverin,
+							gamegroup: gamegroup
+						}
+						if (gamegroup === 'DURHAM') {
+							newAssassin.college = college
+						}
+						Bureau.register.registerNewAssassin(newAssassin, function(err,
+							assassin) {
+							Bureau.gamegroup.getGamegroups(function(err, gamegroups) {
+								res.render('login', {
+									success: true,
+									gamegroups: gamegroups
+								})
+							})
+						})
+					} else {
+						Bureau.gamegroup.getGamegroups(function(err, gamegroups) {
+							res.render('login', {
+								loginErrors: errors,
+								gamegroups: gamegroups
+							})
+						})
+					}
+
+				})
+			} else if (!!email || !!password) {
+				Bureau.register.loginAssassin(email, password, function(err, assassin) {
+					if (!assassin) {
+						errors.push('Incorrect email/password combination')
+						Bureau.gamegroup.getGamegroups(function(err, gamegroups) {
+							res.render('login', {
+								loginErrors: errors,
+								gamegroups: gamegroups
+							})
+						})
+
+					} else {
+						var uid = assassin._id + ''
+						if (true) {
+							res.cookie('BAC', uid + 'sheepworks' + utils.md5(uid + '~' +
+								assassin.joindate), {
+								//Set the cookie for 2 weeks
+								expires: new Date(Date.now() + 3600000 * 24 * 14),
+								httpOnly: true
+							})
+						}
+						req.session.uid = uid
+						req.session.gamegroup = assassin.gamegroup
+						req.session.assassin = assassin
+						req.session.token = utils.md5(assassin.joindate + process.env.BUREAU_TOKEN_SECRET)
+						res.redirect('/home')
+					}
+				})
 			}
 		}
+	}
 
-	},
+}
 
-	authPages = {
-		get: {
-			home: function(req, res) {
-				var uid = res.locals.uid,
-					ggid = res.locals.gamegroup.ggid
-					//Display the current games with the player in
-				Bureau.game.getCurrentGamesWithPlayer(uid, function(err, games) {
-					var games = Bureau.game.toArray(games),
-						numGames = games.length,
-						gamesComplete = 0
+var authPages = {
+	get: {
+		home: function(req, res) {
+			var uid = res.locals.uid,
+				ggid = res.locals.gamegroup.ggid
+				//Display the current games with the player in
+			Bureau.game.getCurrentGamesWithPlayer(uid, function(err, games) {
+				var games = Bureau.game.toArray(games),
+					numGames = games.length,
+					gamesComplete = 0
 
-					if (numGames < 1) {
-						res.render('home')
-						return
-					}
-
-					var gameLoaded = function() {
-
-						gamesComplete++
-
-						if (gamesComplete === numGames) {
-							res.render('home', {
-								games: games
-							})
-						}
-					}
-
-					games.forEach(function(g) {
-						var gameid = g.gameid
-						Bureau.game.render(gameid, g, uid, res.locals.gamegroup, function(
-							err, gameRendered) {
-							g = gameRendered
-							gameLoaded()
-						})
-
-					})
-
-
-				})
-
-			},
-
-			personal: function(req, res) {
-				var uid = req.session.uid,
-					assassin = res.locals.assassin
-				Bureau.assassin.stats(uid, function(err, stats) {
-					Bureau.assassin.getLethality(uid, function(err, lethality) {
-						Bureau.assassin.hasDetailsChangeRequest(uid, function(err,
-							hasRequest) {
-							if (hasRequest) {
-								for (var key in assassin.detailsChangeRequest) {
-									assassin[key] = assassin.detailsChangeRequest[key]
-								}
-							}
-							res.render('personal', {
-								lethality: lethality,
-								detailspending: hasRequest,
-								stats: stats
-							})
-						})
-					})
-				})
-			},
-
-			updatedetails: function(req, res) {
-				res.render('updatedetails')
-			},
-
-			changepassword: function(req, res) {
-				res.render('changepassword')
-			},
-
-			admin: {
-				'/': function(req, res) {
-					if (!res.locals.isAdmin) {
-						res.redirect('/home')
-						return
-					}
-					Bureau.gamegroup.getGamegroups(function(err, ggs) {
-						res.render('admin', {
-							ggs: ggs
-						})
-					})
-				},
-
-				':gamegroup': function(req, res) {
-					if (!res.locals.isAdmin) {
-						res.redirect('/home')
-						return
-					}
-					var ggid = req.params.gamegroup.toUpperCase()
-					Bureau.gamegroup.getGamegroup(ggid, function(err, gg) {
-
-						if (err) {
-							res.write('No such gamegroup!')
-							return;
-						}
-						Bureau.gamegroup.getAssassins(ggid, function(err, assassins) {
-							res.render('gamegroup', {
-								gg: gg,
-								assassins: assassins
-							})
-						})
-					})
-
+				if (numGames < 1) {
+					res.render('home')
+					return
 				}
 
+				var gameLoaded = function() {
+
+					gamesComplete++
+
+					if (gamesComplete === numGames) {
+						res.render('home', {
+							games: games
+						})
+					}
+				}
+
+				games.forEach(function(g) {
+					var gameid = g.gameid
+					Bureau.game.render(gameid, g, uid, res.locals.gamegroup, function(
+						err, gameRendered) {
+						g = gameRendered
+						gameLoaded()
+					})
+
+				})
+
+
+			})
+
+		},
+
+		personal: function(req, res) {
+			var uid = req.session.uid,
+				assassin = res.locals.assassin
+			Bureau.assassin.stats(uid, function(err, stats) {
+				Bureau.assassin.getLethality(uid, function(err, lethality) {
+					Bureau.assassin.hasDetailsChangeRequest(uid, function(err,
+						hasRequest) {
+						if (hasRequest) {
+							for (var key in assassin.detailsChangeRequest) {
+								assassin[key] = assassin.detailsChangeRequest[key]
+							}
+						}
+						res.render('personal', {
+							lethality: lethality,
+							detailspending: hasRequest,
+							stats: stats
+						})
+					})
+				})
+			})
+		},
+
+		updatedetails: function(req, res) {
+			res.render('updatedetails')
+		},
+
+		changepassword: function(req, res) {
+			res.render('changepassword')
+		},
+
+		admin: {
+			'/': function(req, res) {
+				if (!res.locals.isAdmin) {
+					res.redirect('/home')
+					return
+				}
+				Bureau.gamegroup.getGamegroups(function(err, ggs) {
+					res.render('admin', {
+						ggs: ggs
+					})
+				})
 			},
 
-			report: function(req, res) {
-				var uid = res.locals.uid,
-					victimid = res.fromPost ? req.body.victimid : req.query.victimid,
-					gameid = res.fromPost ? req.body.gameid : req.query.gameid,
-					ggid = res.locals.gamegroup.ggid
+			':gamegroup': function(req, res) {
+				if (!res.locals.isAdmin) {
+					res.redirect('/home')
+					return
+				}
+				var ggid = req.params.gamegroup.toUpperCase()
+				Bureau.gamegroup.getGamegroup(ggid, function(err, gg) {
 
-				Bureau.game.isPlayerInGame(victimid, gameid, function(err, isInGame) {
+					if (err) {
+						res.write('No such gamegroup!')
+						return;
+					}
+					Bureau.gamegroup.getAssassins(ggid, function(err, assassins) {
+						res.render('gamegroup', {
+							gg: gg,
+							assassins: assassins
+						})
+					})
+				})
+
+			}
+
+		},
+
+		report: function(req, res) {
+			var uid = res.locals.uid,
+				victimid = res.fromPost ? req.body.victimid : req.query.victimid,
+				gameid = res.fromPost ? req.body.gameid : req.query.gameid,
+				ggid = res.locals.gamegroup.ggid
+
+			Bureau.game.isPlayerInGame(victimid, gameid, function(err, isInGame) {
+				if (err || !isInGame) {
+					req.session.pageErrors = ['That player isn\'t in the game!']
+					res.redirect('home')
+					return
+				}
+
+				Bureau.game.isPlayerInGame(uid, gameid, function(err, isInGame) {
 					if (err || !isInGame) {
-						req.session.pageErrors = ['That player isn\'t in the game!']
+						req.session.pageErrors = ['You\'re not in that game!']
 						res.redirect('home')
 						return
 					}
 
+					Bureau.assassin.getAssassin(victimid, function(err, victim) {
+						if (victim.gamegroup !== res.locals.assassin.gamegroup) {
+							req.session.pageErrors = [
+								'You can\'t kill someone from another gamegroup!'
+							]
+							res.redirect('home')
+							return
+						}
+
+						Bureau.gamegroup.getKillMethods(ggid, function(err, killmethods) {
+
+							var unavailableKillMethods = {};
+							var renderReportPage = function() {
+								res.render('report', {
+									killmethods: killmethods,
+									unavailablekillmethods: unavailableKillMethods,
+									victim: victim,
+									gameid: gameid
+								})
+							}
+
+							Bureau.game.getGame(gameid, function(err, game) {
+								if (Bureau.games[game.type].getUnavailableKillMethods) {
+
+									Bureau.games[game.type].getUnavailableKillMethods(game,
+										uid,
+										function(err, killmethods) {
+											killmethods.map(function(killmethod) {
+												unavailableKillMethods[killmethod] = true
+											})
+											renderReportPage()
+										})
+
+								} else {
+									renderReportPage()
+								}
+							})
+						})
+					})
+				})
+			})
+		},
+
+		guild: {
+			'/': function(req, res) {
+				if (!res.locals.isGuild) {
+					res.redirect('/home')
+					return
+				}
+
+				var ggid = res.locals.gamegroup.ggid,
+					resumeLoading = function(reports) {
+						Bureau.assassin.getAssassins({
+							'detailsChangeRequest.state': 'waiting',
+							gamegroup: ggid
+						}, function(err, addressChangeRequests) {
+							Bureau.gamegroup.getAssassins(ggid, function(err, members) {
+								res.render('guild', {
+									addressChangeRequests: addressChangeRequests,
+									members: members,
+									reports: reports,
+								})
+							})
+						})
+					}
+
+				Bureau.report.getPendingReports(ggid, function(err, reports) {
+					var numReportsDone = 0,
+						reports = reports,
+						reportDone = function() {
+							if (++numReportsDone === reports.length) {
+								resumeLoading(reports)
+							}
+						}
+
+					if (!reports || err || reports.length < 1) {
+						resumeLoading([])
+					}
+
+					reports.forEach(function(report) {
+						Bureau.report.fullReport(report, function(err, fullReport) {
+							report = fullReport
+							reportDone()
+						})
+					})
+
+				})
+			},
+
+			killmethods: function(req, res) {
+				if (!res.locals.isGuild) {
+					res.redirect('/home')
+					return
+				}
+				res.render('killmethods', {
+
+				})
+			},
+
+			newgame: function(req, res) {
+				if (!res.locals.isGuild) {
+					res.redirect('/home')
+					return
+				}
+				Bureau.game.getPlayersForNewGame(res.locals.gamegroup.ggid, function(err,
+					possiblePlayers) {
+					if (err) {
+						res.locals.pageErrors.push(err)
+					}
+					res.render('newgame', {
+						gameTypes: Bureau.games,
+						possiblePlayers: possiblePlayers,
+						startdate: utils.prettyTimestamp(moment(6, 'H').add(1, 'days')),
+						enddate: utils.prettyTimestamp(moment(6, 'H').add(15, 'days'))
+					})
+				})
+
+			},
+
+			gamestate: function(req, res) {
+				if (!res.locals.isGuild) {
+					res.redirect('/home')
+					return
+				}
+
+				var ggid = res.locals.gamegroup.ggid,
+					displayPage = function(games) {
+						res.render('gamestate', {
+							games: games.sort(function(a, b) {
+								return b.end - a.end
+							})
+						})
+					}
+
+				Bureau.game.getGamesInGamegroupAsArray(ggid, function(err, games) {
+					if (err) {
+						res.locals.pageErrors.push(err)
+					}
+
+					//Remove archived games
+					games = games.filter(function(g) {
+						return !g.archived
+					})
+
+					var i = 0,
+						l = games.length,
+						loaded = 0,
+						g = null
+
+					//If we don't have any games...
+					if (l === 0) {
+						displayPage([])
+					}
+
+
+					for (i; i < l; i++) {
+						g = games[i]
+						Bureau.game.getAssassins(g.gameid, (function(j) {
+							return function(err, assassins) {
+								loaded++
+								games[j].assassins = assassins.sort(function(a, b) {
+									return games[j].players[b._id + ''].score - games[j].players[
+										a._id + ''].score
+								})
+								if (loaded === l * 3) {
+									displayPage(games)
+								}
+							}
+						})(i))
+						Bureau.game.getPossibleAssassins(g.gameid, ggid, (function(j) {
+							return function(err, assassins) {
+								loaded++
+								games[j].possibleAssassins = assassins
+								if (loaded === l * 3) {
+									displayPage(games)
+								}
+							}
+						})(i))
+						if (Bureau.games[g.type].getParamChangeFragment) {
+							Bureau.games[g.type].getParamChangeFragment(g, (function(j) {
+								return function(err, frag) {
+									loaded++
+									games[j].paramChangeFragment = frag
+									if (loaded === l * 3) {
+										displayPage(games)
+									}
+								}
+							})(i))
+						} else {
+							loaded++
+							if (loaded === l * 3) {
+								displayPage(games)
+							}
+						}
+					}
+
+				})
+			},
+
+			allreports: function(req, res) {
+				var ggid = res.locals.gamegroup.ggid,
+					start = new Date()
+				Bureau.report.getProcessedReportsByGame(ggid, function(err, games) {
+					res.render('allreports', {
+						reportsByGame: games
+					})
+				})
+			}
+		},
+
+		data: {
+			players: {
+				':gameid.csv': function(req, res) {
+					Bureau.game.getAssassins(req.params.gameid, function(err, assassins) {
+						assassins.unshift({
+							forename: 'Forename',
+							surname: 'Surname',
+							college: 'College',
+							course: 'Course',
+							address: 'Address',
+							liverin: 'Living In'
+						})
+						var out = assassins.map(function(a) {
+							return '"' + [a.forename, a.surname, a.college, a.course, a.address,
+								a.liverin
+							].join('","') + '"'
+						})
+						res.set('Content-Type', 'text/csv')
+						res.end(out.join('\n'))
+					})
+				}
+			}
+		}
+	},
+	post: {
+		admin: {
+			'/': function(req, res) {
+				if (!res.locals.isAdmin) {
+					res.redirect('/home')
+					return
+				}
+				switch (req.body.action) {
+					case 'newgamegroup':
+						var ggname = req.body.name
+						if (!!ggname) {
+							Bureau.gamegroup.addGamegroup({
+								name: ggname,
+								ggid: ggname.replace(/[^\w\s]|_/g, "").replace(/\s+/g, "").toUpperCase()
+							}, function(err, gg) {
+								authPages.get.admin['/'](req, res)
+							})
+						} else {
+							authPages.get.admin['/'](req, res)
+						}
+						break;
+				}
+			},
+
+			':gamegroup': function(req, res) {
+				switch (req.body.action) {
+					case 'changeguild':
+						var uid = req.body.assassinuid,
+							shouldBeGuild = req.body.shouldBeGuild === 'yes'
+						Bureau.assassin.setGuild(uid, shouldBeGuild, function(err, doc) {
+							authPages.get.admin[':gamegroup'](req, res)
+						})
+						break;
+					case 'changeemail':
+						var email = req.body.email,
+							ggid = req.params.gamegroup.toUpperCase()
+
+						Bureau.gamegroup.setEmail(ggid, email, function(err, gg) {
+							authPages.get.admin[':gamegroup'](req, res)
+						})
+
+						break;
+					default:
+						authPages.get.admin[':gamegroup'](req, res)
+						break;
+				}
+			}
+		},
+
+		report: function(req, res) {
+			var uid = res.locals.uid,
+				victimid = req.body.victimid,
+				gameid = req.body.gameid,
+				killmethod = req.body.killmethod,
+				methoddetail = req.body['killmethod-detail']
+			place = req.body.place,
+				coords = req.body.coords,
+				text = req.body['report-text'],
+				time = !!req.body.time ? utils.dateFromPrettyTimestamp(req.body.time) :
+				false,
+				ggid = res.locals.gamegroup.ggid,
+				now = new Date(),
+				errs = [],
+				report = {
+					victimid: victimid,
+					gameid: gameid,
+					time: req.body.time,
+					place: place,
+					killmethod: killmethod,
+					methoddetail: methoddetail,
+					text: text,
+					coords: coords,
+					state: 'waiting'
+				}
+			console.log('Loading report page')
+			console.log(req.body, report)
+
+			res.locals = utils.merge(res.locals, report)
+
+			res.fromPost = true
+				//Let's validate some shiii
+			if (!text || text.length < 11) {
+				errs.push('Please specify a longer kill report!')
+			}
+			if (!place || place.length < 6) {
+				errs.push('Please specify a longer place name!')
+			}
+			if (!killmethod) {
+				errs.push('Please specify a kill method!')
+			}
+			if (!victimid) {
+				errs.push('Your kill has no victim')
+			}
+			if (!(!!time && !isNaN(time.getMonth()) && time < now && req.body.time.length ===
+					19 && utils.dateRegex.test(req.body.time))) {
+				errs.push('Invalid time of kill!')
+			}
+
+			if (errs.length > 0) {
+				res.locals.pageErrors = errs
+				authPages.get.report(req, res)
+				return
+			}
+			console.log('Getting game')
+			Bureau.game.getGame(gameid, function(err, game) {
+				console.log('Got game')
+				if (err) {
+					req.session.pageErrors = [err]
+					res.redirect('home')
+					return
+				}
+				console.log('Checking if victim is in game')
+				Bureau.game.isPlayerInGame(victimid, gameid, function(err, isInGame) {
+					if (err || !isInGame) {
+						console.log('Error getting if victim is in game: ', err)
+						req.session.pageErrors = ['That player isn\'t in the game!']
+						res.redirect('home')
+						return
+					}
+					console.log('Got victim in game')
+					console.log('Checking if player is in game')
 					Bureau.game.isPlayerInGame(uid, gameid, function(err, isInGame) {
 						if (err || !isInGame) {
 							req.session.pageErrors = ['You\'re not in that game!']
 							res.redirect('home')
 							return
 						}
-
+						console.log('Got player in game')
+						console.log('Getting victim')
 						Bureau.assassin.getAssassin(victimid, function(err, victim) {
 							if (victim.gamegroup !== res.locals.assassin.gamegroup) {
+								console.log('Assassin is not in same gamegroup')
 								req.session.pageErrors = [
 									'You can\'t kill someone from another gamegroup!'
 								]
 								res.redirect('home')
 								return
 							}
-
-							Bureau.gamegroup.getKillMethods(ggid, function(err, killmethods) {
-
-								var unavailableKillMethods = {};
-								var renderReportPage = function() {
-									res.render('report', {
-										killmethods: killmethods,
-										unavailablekillmethods: unavailableKillMethods,
-										victim: victim,
-										gameid: gameid
-									})
-								}
-
-								Bureau.game.getGame(gameid, function(err, game) {
-									if (Bureau.games[game.type].getUnavailableKillMethods) {
-
-										Bureau.games[game.type].getUnavailableKillMethods(game,
-											uid,
-											function(err, killmethods) {
-												killmethods.map(function(killmethod) {
-													unavailableKillMethods[killmethod] = true
-												})
-												renderReportPage()
-											})
-
-									} else {
-										renderReportPage()
-									}
-								})
-							})
-						})
-					})
-				})
-			},
-
-			guild: {
-				'/': function(req, res) {
-					if (!res.locals.isGuild) {
-						res.redirect('/home')
-						return
-					}
-
-					var ggid = res.locals.gamegroup.ggid,
-						resumeLoading = function(reports) {
-							Bureau.assassin.getAssassins({
-								'detailsChangeRequest.state': 'waiting',
-								gamegroup: ggid
-							}, function(err, addressChangeRequests) {
-								Bureau.gamegroup.getAssassins(ggid, function(err, members) {
-									res.render('guild', {
-										addressChangeRequests: addressChangeRequests,
-										members: members,
-										reports: reports,
-									})
-								})
-							})
-						}
-
-					Bureau.report.getPendingReports(ggid, function(err, reports) {
-						var numReportsDone = 0,
-							reports = reports,
-							reportDone = function() {
-								if (++numReportsDone === reports.length) {
-									resumeLoading(reports)
-								}
-							}
-
-						if (!reports || err || reports.length < 1) {
-							resumeLoading([])
-						}
-
-						reports.forEach(function(report) {
-							Bureau.report.fullReport(report, function(err, fullReport) {
-								report = fullReport
-								reportDone()
-							})
-						})
-
-					})
-				},
-
-				killmethods: function(req, res) {
-					if (!res.locals.isGuild) {
-						res.redirect('/home')
-						return
-					}
-					res.render('killmethods', {
-
-					})
-				},
-
-				newgame: function(req, res) {
-					if (!res.locals.isGuild) {
-						res.redirect('/home')
-						return
-					}
-					Bureau.game.getPlayersForNewGame(res.locals.gamegroup.ggid, function(err,
-						possiblePlayers) {
-						if (err) {
-							res.locals.pageErrors.push(err)
-						}
-						res.render('newgame', {
-							gameTypes: Bureau.games,
-							possiblePlayers: possiblePlayers,
-							startdate: utils.prettyTimestamp(moment(6, 'H').add(1, 'days')),
-							enddate: utils.prettyTimestamp(moment(6, 'H').add(15, 'days'))
-						})
-					})
-
-				},
-
-				gamestate: function(req, res) {
-					if (!res.locals.isGuild) {
-						res.redirect('/home')
-						return
-					}
-
-					var ggid = res.locals.gamegroup.ggid,
-						displayPage = function(games) {
-							res.render('gamestate', {
-								games: games.sort(function(a, b) {
-									return b.end - a.end
-								})
-							})
-						}
-
-					Bureau.game.getGamesInGamegroupAsArray(ggid, function(err, games) {
-						if (err) {
-							res.locals.pageErrors.push(err)
-						}
-
-						//Remove archived games
-						games = games.filter(function(g) {
-							return !g.archived
-						})
-
-						var i = 0,
-							l = games.length,
-							loaded = 0,
-							g = null
-
-						//If we don't have any games...
-						if (l === 0) {
-							displayPage([])
-						}
-
-
-						for (i; i < l; i++) {
-							g = games[i]
-							Bureau.game.getAssassins(g.gameid, (function(j) {
-								return function(err, assassins) {
-									loaded++
-									games[j].assassins = assassins.sort(function(a, b) {
-										return games[j].players[b._id + ''].score - games[j].players[
-											a._id + ''].score
-									})
-									if (loaded === l * 3) {
-										displayPage(games)
-									}
-								}
-							})(i))
-							Bureau.game.getPossibleAssassins(g.gameid, ggid, (function(j) {
-								return function(err, assassins) {
-									loaded++
-									games[j].possibleAssassins = assassins
-									if (loaded === l * 3) {
-										displayPage(games)
-									}
-								}
-							})(i))
-							if (Bureau.games[g.type].getParamChangeFragment) {
-								Bureau.games[g.type].getParamChangeFragment(g, (function(j) {
-									return function(err, frag) {
-										loaded++
-										games[j].paramChangeFragment = frag
-										if (loaded === l * 3) {
-											displayPage(games)
-										}
-									}
-								})(i))
-							} else {
-								loaded++
-								if (loaded === l * 3) {
-									displayPage(games)
-								}
-							}
-						}
-
-					})
-				},
-
-				allreports: function(req, res) {
-					var ggid = res.locals.gamegroup.ggid,
-						start = new Date()
-					Bureau.report.getProcessedReportsByGame(ggid, function(err, games) {
-						res.render('allreports', {
-							reportsByGame: games
-						})
-					})
-				}
-			},
-
-			data: {
-				players: {
-					':gameid.csv': function(req, res) {
-						Bureau.game.getAssassins(req.params.gameid, function(err, assassins) {
-							assassins.unshift({
-								forename: 'Forename',
-								surname: 'Surname',
-								college: 'College',
-								course: 'Course',
-								address: 'Address',
-								liverin: 'Living In'
-							})
-							var out = assassins.map(function(a) {
-								return '"' + [a.forename, a.surname, a.college, a.course, a.address,
-									a.liverin
-								].join('","') + '"'
-							})
-							res.set('Content-Type', 'text/csv')
-							res.end(out.join('\n'))
-						})
-					}
-				}
-			}
-		},
-		post: {
-			admin: {
-				'/': function(req, res) {
-					if (!res.locals.isAdmin) {
-						res.redirect('/home')
-						return
-					}
-					switch (req.body.action) {
-						case 'newgamegroup':
-							var ggname = req.body.name
-							if (!!ggname) {
-								Bureau.gamegroup.addGamegroup({
-									name: ggname,
-									ggid: ggname.replace(/[^\w\s]|_/g, "").replace(/\s+/g, "").toUpperCase()
-								}, function(err, gg) {
-									authPages.get.admin['/'](req, res)
-								})
-							} else {
-								authPages.get.admin['/'](req, res)
-							}
-							break;
-					}
-				},
-
-				':gamegroup': function(req, res) {
-					switch (req.body.action) {
-						case 'changeguild':
-							var uid = req.body.assassinuid,
-								shouldBeGuild = req.body.shouldBeGuild === 'yes'
-							Bureau.assassin.setGuild(uid, shouldBeGuild, function(err, doc) {
-								authPages.get.admin[':gamegroup'](req, res)
-							})
-							break;
-						case 'changeemail':
-							var email = req.body.email,
-								ggid = req.params.gamegroup.toUpperCase()
-
-							Bureau.gamegroup.setEmail(ggid, email, function(err, gg) {
-								authPages.get.admin[':gamegroup'](req, res)
-							})
-
-							break;
-						default:
-							authPages.get.admin[':gamegroup'](req, res)
-							break;
-					}
-				}
-			},
-
-			report: function(req, res) {
-				var uid = res.locals.uid,
-					victimid = req.body.victimid,
-					gameid = req.body.gameid,
-					killmethod = req.body.killmethod,
-					methoddetail = req.body['killmethod-detail']
-				place = req.body.place,
-					coords = req.body.coords,
-					text = req.body['report-text'],
-					time = !!req.body.time ? utils.dateFromPrettyTimestamp(req.body.time) :
-					false,
-					ggid = res.locals.gamegroup.ggid,
-					now = new Date(),
-					errs = [],
-					report = {
-						victimid: victimid,
-						gameid: gameid,
-						time: req.body.time,
-						place: place,
-						killmethod: killmethod,
-						methoddetail: methoddetail,
-						text: text,
-						coords: coords,
-						state: 'waiting'
-					}
-				console.log('Loading report page')
-				console.log(req.body, report)
-
-				res.locals = utils.merge(res.locals, report)
-
-				res.fromPost = true
-					//Let's validate some shiii
-				if (!text || text.length < 11) {
-					errs.push('Please specify a longer kill report!')
-				}
-				if (!place || place.length < 6) {
-					errs.push('Please specify a longer place name!')
-				}
-				if (!killmethod) {
-					errs.push('Please specify a kill method!')
-				}
-				if (!victimid) {
-					errs.push('Your kill has no victim')
-				}
-				if (!(!!time && !isNaN(time.getMonth()) && time < now && req.body.time.length ===
-						19 && utils.dateRegex.test(req.body.time))) {
-					errs.push('Invalid time of kill!')
-				}
-
-				if (errs.length > 0) {
-					res.locals.pageErrors = errs
-					authPages.get.report(req, res)
-					return
-				}
-				console.log('Getting game')
-				Bureau.game.getGame(gameid, function(err, game) {
-					console.log('Got game')
-					if (err) {
-						req.session.pageErrors = [err]
-						res.redirect('home')
-						return
-					}
-					console.log('Checking if victim is in game')
-					Bureau.game.isPlayerInGame(victimid, gameid, function(err, isInGame) {
-						if (err || !isInGame) {
-							console.log('Error getting if victim is in game: ', err)
-							req.session.pageErrors = ['That player isn\'t in the game!']
-							res.redirect('home')
-							return
-						}
-						console.log('Got victim in game')
-						console.log('Checking if player is in game')
-						Bureau.game.isPlayerInGame(uid, gameid, function(err, isInGame) {
-							if (err || !isInGame) {
-								req.session.pageErrors = ['You\'re not in that game!']
+							if (err || !victim._id) {
+								console.log('Victim has invalid id')
+								req.session.pageErrors = ['That isn\'t a valid assassin id!']
 								res.redirect('home')
 								return
 							}
-							console.log('Got player in game')
-							console.log('Getting victim')
-							Bureau.assassin.getAssassin(victimid, function(err, victim) {
-								if (victim.gamegroup !== res.locals.assassin.gamegroup) {
-									console.log('Assassin is not in same gamegroup')
-									req.session.pageErrors = [
-										'You can\'t kill someone from another gamegroup!'
-									]
-									res.redirect('home')
-									return
-								}
-								if (err || !victim._id) {
-									console.log('Victim has invalid id')
-									req.session.pageErrors = ['That isn\'t a valid assassin id!']
-									res.redirect('home')
-									return
-								}
-								console.log('Got victim')
-								console.log('Checking kill valid')
-								report.time = time
-								Bureau.games[game.type].checkKillValid(game, uid, victimid,
-									killmethod, time, report,
-									function(err, valid) {
-										if (err || !valid) {
-											console.log(err ? ('Error checking if kill valid: ' + err) :
-												'Kill invalid')
-											req.session.pageErrors = [!!err ?
-												'There was an error submitting the report' :
-												'The kill was invalid!'
-											]
-											res.redirect('home')
-											return
-										}
-										console.log('Kill id valid')
-										console.log('Submitting report')
-										Bureau.assassin.submitReport(uid, report, function(err, a) {
-											console.log('Report submitted')
-											console.log(err)
-											res.redirect('home')
-										})
+							console.log('Got victim')
+							console.log('Checking kill valid')
+							report.time = time
+							Bureau.games[game.type].checkKillValid(game, uid, victimid,
+								killmethod, time, report,
+								function(err, valid) {
+									if (err || !valid) {
+										console.log(err ? ('Error checking if kill valid: ' + err) :
+											'Kill invalid')
+										req.session.pageErrors = [!!err ?
+											'There was an error submitting the report' :
+											'The kill was invalid!'
+										]
+										res.redirect('home')
+										return
+									}
+									console.log('Kill id valid')
+									console.log('Submitting report')
+									Bureau.assassin.submitReport(uid, report, function(err, a) {
+										console.log('Report submitted')
+										console.log(err)
+										res.redirect('home')
 									})
-							})
+								})
 						})
 					})
 				})
-			},
+			})
+		},
 
-			personal: function(req, res) {
+		personal: function(req, res) {
 
-				switch (req.body.action) {
-					case 'picturechange':
-						var imgPath = req.files.picture.path,
-							uid = req.session.uid
-						gm(imgPath).size(function(err, size) {
-							if (!err && !!size) {
-								var w = size.width > size.height ? Math.floor(size.width * 128 /
-										size.height) : 128,
-									tempName = __dirname + '/temp/' + utils.md5(new Date().toString() +
-										Math.random().toString()) + '.jpg'
-								this
-									.resize(w)
-									.gravity('Center')
-									.extent(128, 128)
-									.quality(70)
-									.write(tempName, function(err) {
-										if (err) throw err;
-										fs.readFile(tempName, function(err, data) {
-											if (err) {
-												res.locals.pageErrors.push(
-													'There was an error uploading the picture')
-												authPages.get.personal(req, res)
-											} else {
-												var s3 = new AWS.S3(),
-													bucket = 'bureau-engine',
-													imgKey = 'pictures/' + uid + '.jpg'
-												s3.putObject({
-													ACL: 'public-read', // by default private access
-													Bucket: bucket,
-													Key: imgKey,
-													Body: data
-												}, function(err, data) {
-													if (err) {
-														console.log(err)
-														res.locals.pageErrors.push('Image uploading failed :(')
-														authPages.get.personal(req, res)
-													} else {
-														Bureau.assassin.setPicture(uid, process.env.AWS_PATH +
-															imgKey,
-															function(err, doc) {
-																if (err) console.log(err);
-																Bureau.assassin.getAssassin(uid, function(err,
-																	assassin) {
-																	//Force update of page to prevent having to reload
-																	res.locals.assassin = assassin
-																	authPages.get.personal(req, res)
-																})
+			switch (req.body.action) {
+				case 'picturechange':
+					var imgPath = req.files.picture.path,
+						uid = req.session.uid
+					gm(imgPath).size(function(err, size) {
+						if (!err && !!size) {
+							var w = size.width > size.height ? Math.floor(size.width * 128 /
+									size.height) : 128,
+								tempName = __dirname + '/temp/' + utils.md5(new Date().toString() +
+									Math.random().toString()) + '.jpg'
+							this
+								.resize(w)
+								.gravity('Center')
+								.extent(128, 128)
+								.quality(70)
+								.write(tempName, function(err) {
+									if (err) throw err;
+									fs.readFile(tempName, function(err, data) {
+										if (err) {
+											res.locals.pageErrors.push(
+												'There was an error uploading the picture')
+											authPages.get.personal(req, res)
+										} else {
+											var s3 = new AWS.S3(),
+												bucket = 'bureau-engine',
+												imgKey = 'pictures/' + uid + '.jpg'
+											s3.putObject({
+												ACL: 'public-read', // by default private access
+												Bucket: bucket,
+												Key: imgKey,
+												Body: data
+											}, function(err, data) {
+												if (err) {
+													console.log(err)
+													res.locals.pageErrors.push('Image uploading failed :(')
+													authPages.get.personal(req, res)
+												} else {
+													Bureau.assassin.setPicture(uid, process.env.AWS_PATH +
+														imgKey,
+														function(err, doc) {
+															if (err) console.log(err);
+															Bureau.assassin.getAssassin(uid, function(err,
+																assassin) {
+																//Force update of page to prevent having to reload
+																res.locals.assassin = assassin
+																authPages.get.personal(req, res)
 															})
+														})
 
-													}
-												})
-											}
-										})
+												}
+											})
+										}
 									})
-							} else {
-								authPages.get.personal(req, res)
-							}
+								})
+						} else {
+							authPages.get.personal(req, res)
+						}
+					})
+					break;
+				case 'detailschange':
+					Bureau.assassin.hasDetailsChangeRequest(req.session.uid, function(err,
+						hasRequest) {
+						if (!hasRequest) {
+							Bureau.assassin.submitDetailsChangeRequest(req.session.uid, req.body,
+								function(err, doc) {
+									authPages.get.personal(req, res)
+								})
+						} else {
+							res.send('Error! You already have a pending address request')
+						}
+					})
+					break;
+				default:
+					authPages.get.personal(req, res)
+					break;
+			}
+
+		},
+
+		updatedetails: function(req, res) {
+			var loadPage = function() {
+				Bureau.assassin.markDetailsUpdated(req.session.uid, function(err,
+					assassin) {
+					res.redirect('/home')
+				})
+			}
+			switch (req.body.action) {
+				case 'detailschange':
+					Bureau.assassin.submitDetailsChangeRequest(req.session.uid, req.body,
+						function(err, doc) {
+							loadPage()
 						})
-						break;
-					case 'detailschange':
-						Bureau.assassin.hasDetailsChangeRequest(req.session.uid, function(err,
-							hasRequest) {
-							if (!hasRequest) {
-								Bureau.assassin.submitDetailsChangeRequest(req.session.uid, req.body,
-									function(err, doc) {
-										authPages.get.personal(req, res)
-									})
-							} else {
-								res.send('Error! You already have a pending address request')
-							}
-						})
-						break;
-					default:
-						authPages.get.personal(req, res)
-						break;
+					break;
+				default:
+					loadPage()
+					break;
+			}
+
+		},
+
+		changepassword: function(req, res) {
+			var oldpassword = req.body.oldpassword,
+				newpassword = req.body.newpassword,
+				verifypassword = req.body.verifypassword,
+				uid = req.session.uid,
+				errs = []
+
+			if (!oldpassword) {
+				errs.push('You must enter your old password')
+			}
+			Bureau.assassin.checkPassword(uid, oldpassword, function(err, correct) {
+				if (!correct) {
+					errs.push('The old password was incorrect')
 				}
 
-			},
+				if (!newpassword || newpassword.length < 6) {
+					errs.push('Your new password must be at least 6 characters long')
+				} else if (newpassword !== verifypassword) {
+					errs.push(
+						'Your new password didn\'t match! You might have typed it incorrectly'
+					)
+				}
 
-			updatedetails: function(req, res) {
-				var loadPage = function() {
-					Bureau.assassin.markDetailsUpdated(req.session.uid, function(err,
-						assassin) {
-						res.redirect('/home')
+				if (errs.length < 1) {
+					Bureau.assassin.setPassword(uid, newpassword, function(err, success) {
+						if (err) {
+							req.session.pageErrors.push(err)
+
+						} else {
+							Bureau.assassin.addNotification(uid,
+								'Your password was successfully changed')
+						}
+						res.redirect('/personal')
 					})
+				} else {
+
+					if (!res.locals.assassin.temppassword) {
+						req.session.pageErrors = errs
+						res.redirect('/personal')
+					} else {
+						res.locals.pageErrors = errs
+						authPages.get.changepassword(req, res)
+					}
+				}
+
+			})
+		},
+
+		guild: {
+			'/': function(req, res) {
+				if (!res.locals.isGuild) {
+					res.redirect('/home')
+					return
 				}
 				switch (req.body.action) {
-					case 'detailschange':
-						Bureau.assassin.submitDetailsChangeRequest(req.session.uid, req.body,
-							function(err, doc) {
-								loadPage()
-							})
-						break;
-					default:
-						loadPage()
-						break;
-				}
 
-			},
-
-			changepassword: function(req, res) {
-				var oldpassword = req.body.oldpassword,
-					newpassword = req.body.newpassword,
-					verifypassword = req.body.verifypassword,
-					uid = req.session.uid,
-					errs = []
-
-				if (!oldpassword) {
-					errs.push('You must enter your old password')
-				}
-				Bureau.assassin.checkPassword(uid, oldpassword, function(err, correct) {
-					if (!correct) {
-						errs.push('The old password was incorrect')
-					}
-
-					if (!newpassword || newpassword.length < 6) {
-						errs.push('Your new password must be at least 6 characters long')
-					} else if (newpassword !== verifypassword) {
-						errs.push(
-							'Your new password didn\'t match! You might have typed it incorrectly'
-						)
-					}
-
-					if (errs.length < 1) {
-						Bureau.assassin.setPassword(uid, newpassword, function(err, success) {
+					case 'forcedetailsupdate':
+						var ggid = res.locals.gamegroup.ggid
+						Bureau.gamegroup.forceDetailsUpdate(ggid, function(err, misery) {
 							if (err) {
-								req.session.pageErrors.push(err)
-
+								res.locals.pageErrors.push(err)
+								authPages.get.guild['/'](req, res)
 							} else {
-								Bureau.assassin.addNotification(uid,
-									'Your password was successfully changed')
+								Bureau.gamegroup.notifyGuild(res.locals.gamegroup.ggid, utils.fullname(
+										res.locals.assassin) +
+									' forced a details update on the whole gamegroup and everyone is sad :(',
+									'', false,
+									function(err, assassins) {
+										authPages.get.guild['/'](req, res)
+									})
 							}
-							res.redirect('/personal')
 						})
-					} else {
+						break;
 
-						if (!res.locals.assassin.temppassword) {
-							req.session.pageErrors = errs
-							res.redirect('/personal')
+					case 'killreportprocess':
+						var approved = req.body.state == '✓',
+							state = approved ? 'approved' : 'rejected',
+							reportid = req.body.reportid,
+							comment = req.body.guildcomment,
+							killerid = req.body.killerid,
+							gameid = req.body.gameid,
+							loadPage = function() {
+								authPages.get.guild['/'](req, res)
+							}
+
+						if (approved) {
+							Bureau.report.acceptReport(reportid, function(err, report) {
+								Bureau.game.getGame(gameid, function(err, game) {
+									var gametype = game.type
+									Bureau.games[gametype].handleKill(game, report.killerid, report.victimid,
+										report, loadPage)
+								})
+							})
 						} else {
-							res.locals.pageErrors = errs
-							authPages.get.changepassword(req, res)
+							Bureau.report.rejectReport(reportid, comment, function(err, report) {
+								Bureau.assassin.getAssassin(report.victimid, function(err, victim) {
+									var notif = 'Your kill on ' + utils.fullname(victim) +
+										' was rejected by ' + utils.fullname(res.locals.assassin) +
+										' with reason "' + comment + '"'
+									Bureau.assassin.addNotification(killerid, notif)
+									loadPage()
+								})
+							})
 						}
-					}
 
-				})
-			},
+						break;
 
-			guild: {
-				'/': function(req, res) {
-					if (!res.locals.isGuild) {
-						res.redirect('/home')
-						return
-					}
-					switch (req.body.action) {
-
-						case 'forcedetailsupdate':
-							var ggid = res.locals.gamegroup.ggid
-							Bureau.gamegroup.forceDetailsUpdate(ggid, function(err, misery) {
-								if (err) {
-									res.locals.pageErrors.push(err)
-									authPages.get.guild['/'](req, res)
-								} else {
-									Bureau.gamegroup.notifyGuild(res.locals.gamegroup.ggid, utils.fullname(
-											res.locals.assassin) +
-										' forced a details update on the whole gamegroup and everyone is sad :(',
-										'', false,
+					case 'setmotd':
+						var motd = req.body.motd
+						Bureau.gamegroup.setMotd(res.locals.gamegroup.ggid, motd, function(err,
+							doc) {
+							if (!err) {
+								var notif = res.locals.assassin.forename + ' ' + res.locals.assassin
+									.surname + ' has set the MotD to :"' + motd.trim() + '"'
+								Bureau.gamegroup.notifyGuild(res.locals.gamegroup.ggid, notif,
+										false,
 										function(err, assassins) {
 											authPages.get.guild['/'](req, res)
 										})
-								}
-							})
-							break;
+									//Manually update the locals, otherwise they'll have the previous value
+								res.locals.gamegroup = doc
+							}
+							authPages.get.guild['/'](req, res)
+						})
+						break;
+					case 'addresschange':
+						var uid = req.body.requester,
+							state = req.body.state,
+							message = req.body.message
 
-						case 'killreportprocess':
-							var approved = req.body.state == '✓',
-								state = approved ? 'approved' : 'rejected',
-								reportid = req.body.reportid,
-								comment = req.body.guildcomment,
-								killerid = req.body.killerid,
-								gameid = req.body.gameid,
-								loadPage = function() {
-									authPages.get.guild['/'](req, res)
-								}
+						if (!state) {
+							authPages.get.guild['/'](req, res)
+							return
+						}
+						Bureau.assassin.getAssassin(uid, function(err, assassin) {
+							if (state == 'Approved') {
+								//Change the details around
+								Bureau.assassin.getAssassin(uid, function(err, assassin) {
+									var d = assassin.detailsChangeRequest
+									delete d.state
+									delete d.submitted
+									d.detailsChangeRequest = {}
+									d.detailsUpdated = true
+									d.detailsLastUpdated = new Date()
 
-							if (approved) {
-								Bureau.report.acceptReport(reportid, function(err, report) {
-									Bureau.game.getGame(gameid, function(err, game) {
-										var gametype = game.type
-										Bureau.games[gametype].handleKill(game, report.killerid, report.victimid,
-											report, loadPage)
+									Bureau.assassin.updateAssassin(uid, d, function(err, assassin) {
+										Bureau.assassin.addNotification(uid,
+											'Your details change request was approved.')
+										authPages.get.guild['/'](req, res)
 									})
 								})
 							} else {
-								Bureau.report.rejectReport(reportid, comment, function(err, report) {
-									Bureau.assassin.getAssassin(report.victimid, function(err, victim) {
-										var notif = 'Your kill on ' + utils.fullname(victim) +
-											' was rejected by ' + utils.fullname(res.locals.assassin) +
-											' with reason "' + comment + '"'
-										Bureau.assassin.addNotification(killerid, notif)
-										loadPage()
-									})
-								})
-							}
-
-							break;
-
-						case 'setmotd':
-							var motd = req.body.motd
-							Bureau.gamegroup.setMotd(res.locals.gamegroup.ggid, motd, function(err,
-								doc) {
-								if (!err) {
-									var notif = res.locals.assassin.forename + ' ' + res.locals.assassin
-										.surname + ' has set the MotD to :"' + motd.trim() + '"'
-									Bureau.gamegroup.notifyGuild(res.locals.gamegroup.ggid, notif,
-											false,
-											function(err, assassins) {
-												authPages.get.guild['/'](req, res)
-											})
-										//Manually update the locals, otherwise they'll have the previous value
-									res.locals.gamegroup = doc
-								}
-								authPages.get.guild['/'](req, res)
-							})
-							break;
-						case 'addresschange':
-							var uid = req.body.requester,
-								state = req.body.state,
-								message = req.body.message
-
-							if (!state) {
-								authPages.get.guild['/'](req, res)
-								return
-							}
-							Bureau.assassin.getAssassin(uid, function(err, assassin) {
-								if (state == 'Approved') {
-									//Change the details around
-									Bureau.assassin.getAssassin(uid, function(err, assassin) {
-										var d = assassin.detailsChangeRequest
-										delete d.state
-										delete d.submitted
-										d.detailsChangeRequest = {}
-										d.detailsUpdated = true
-										d.detailsLastUpdated = new Date()
-
-										Bureau.assassin.updateAssassin(uid, d, function(err, assassin) {
-											Bureau.assassin.addNotification(uid,
-												'Your details change request was approved.')
-											authPages.get.guild['/'](req, res)
-										})
-									})
-								} else {
-									//Delete the request
-									Bureau.assassin.updateAssassin(uid, {
-										detailsChangeRequest: {}
-									}, function(err, doc) {
-										var notificationString =
-											'Your details change request was rejected'
-										if (!!message) {
-											notificationString += ' with reason: ' + message
-										}
-										Bureau.assassin.addNotification(uid, notificationString)
-										authPages.get.guild['/'](req, res)
-									})
-								}
-							})
-
-							break;
-						case 'notifymembers':
-							var msg = req.body.notifytext
-							if (!msg || msg.trim().length < 10) {
-								res.locals.pageErrors.push(
-									'Your message was too short! (less than 10 chars)')
-								authPages.get.guild['/'](req, res)
-								return
-							}
-							Bureau.gamegroup.notifyGamegroup(res.locals.gamegroup.ggid, msg.trim(),
-								'from ' + res.locals.gamegroup.name + ' Guild', false,
-								function(err, assassins) {
+								//Delete the request
+								Bureau.assassin.updateAssassin(uid, {
+									detailsChangeRequest: {}
+								}, function(err, doc) {
+									var notificationString =
+										'Your details change request was rejected'
+									if (!!message) {
+										notificationString += ' with reason: ' + message
+									}
+									Bureau.assassin.addNotification(uid, notificationString)
 									authPages.get.guild['/'](req, res)
 								})
+							}
+						})
 
-
-							break;
-						default:
+						break;
+					case 'notifymembers':
+						var msg = req.body.notifytext
+						if (!msg || msg.trim().length < 10) {
+							res.locals.pageErrors.push(
+								'Your message was too short! (less than 10 chars)')
 							authPages.get.guild['/'](req, res)
-							break;
+							return
+						}
+						Bureau.gamegroup.notifyGamegroup(res.locals.gamegroup.ggid, msg.trim(),
+							'from ' + res.locals.gamegroup.name + ' Guild', false,
+							function(err, assassins) {
+								authPages.get.guild['/'](req, res)
+							})
 
-					}
-				},
 
-				killmethods: function(req, res) {
-					if (!res.locals.isGuild) {
-						res.redirect('/home')
-						return
-					}
-					switch (req.body.action) {
-						case 'newkillmethod':
-							var name = req.body.methodname,
-								zone = req.body.methodzone,
-								hasDetail = req.body.methoddetailneeded,
-								detail = req.body.methoddetailquestion,
-								verb = req.body.methodverb,
-								rules = req.body.methodrules,
-								errs = []
+						break;
+					default:
+						authPages.get.guild['/'](req, res)
+						break;
 
-							if (!name || name.trim().length < 3) {
-								errs.push('Invalid name specified')
-							}
-							if (!zone) {
-								errs.push('No zone specified')
-							}
-							if (hasDetail && (!detail || detail.trim().length < 6)) {
-								errs.push('No detail question specified!')
-							}
-							if (!verb || verb.trim().length < 6) {
-								errs.push('Invalid kill sentence!')
-							} else if (verb.indexOf('#k') < 0) {
-								errs.push('Add #k to your kill sentence so the killer shows up!')
-							} else if (verb.indexOf('#v') < 0) {
-								errs.push('Add #v to your kill sentence so the victim shows up!')
-							} else if (hasDetail && verb.indexOf('#d') < 0) {
-								errs.push('Add #d to your kill sentence so the detail shows up!')
-							}
-							if (!rules || rules.trim().length < 11) {
-								errs.push('Please specify rules')
-							}
+				}
+			},
 
-							res.locals.pageErrors = errs
+			killmethods: function(req, res) {
+				if (!res.locals.isGuild) {
+					res.redirect('/home')
+					return
+				}
+				switch (req.body.action) {
+					case 'newkillmethod':
+						var name = req.body.methodname,
+							zone = req.body.methodzone,
+							hasDetail = req.body.methoddetailneeded,
+							detail = req.body.methoddetailquestion,
+							verb = req.body.methodverb,
+							rules = req.body.methodrules,
+							errs = []
 
-							if (errs.length > 0) {
+						if (!name || name.trim().length < 3) {
+							errs.push('Invalid name specified')
+						}
+						if (!zone) {
+							errs.push('No zone specified')
+						}
+						if (hasDetail && (!detail || detail.trim().length < 6)) {
+							errs.push('No detail question specified!')
+						}
+						if (!verb || verb.trim().length < 6) {
+							errs.push('Invalid kill sentence!')
+						} else if (verb.indexOf('#k') < 0) {
+							errs.push('Add #k to your kill sentence so the killer shows up!')
+						} else if (verb.indexOf('#v') < 0) {
+							errs.push('Add #v to your kill sentence so the victim shows up!')
+						} else if (hasDetail && verb.indexOf('#d') < 0) {
+							errs.push('Add #d to your kill sentence so the detail shows up!')
+						}
+						if (!rules || rules.trim().length < 11) {
+							errs.push('Please specify rules')
+						}
+
+						res.locals.pageErrors = errs
+
+						if (errs.length > 0) {
+							authPages.get.guild.killmethods(req, res)
+							return
+						}
+
+						var method = {
+							id: name.toLowerCase().replace(/\s+/, ''),
+							name: name.trim(),
+							zone: zone.trim(),
+							verb: verb.trim(),
+							rules: rules.trim()
+						}
+						if (hasDetail) {
+							method.detailquestion = detail.trim()
+						}
+
+						Bureau.gamegroup.addKillMethod(res.locals.gamegroup.ggid, method,
+							function(err, methods) {
+								if (err) {
+									res.locals.pageErrors.push('Error adding the new killmethod "' +
+										name + '": ' + err)
+								} else {
+									res.locals.gamegroup.killmethods = methods
+								}
+								authPages.get.guild.killmethods(req, res)
+							})
+
+						break;
+					case 'editkillmethod':
+						var id = req.body.methodid,
+							detail = req.body.methoddetailquestion,
+							verb = req.body.methodverb,
+							rules = req.body.methodrules,
+							retired = !req.body.enabled,
+							errs = []
+
+						Bureau.gamegroup.getKillMethod(res.locals.gamegroup.ggid, id, function(
+							err, method) {
+							if (err) {
+								res.locals.pageErrors.push('Invalid kill method id')
 								authPages.get.guild.killmethods(req, res)
 								return
-							}
+							} else {
+								var hasDetail = !!method.detailquestion
 
-							var method = {
-								id: name.toLowerCase().replace(/\s+/, ''),
-								name: name.trim(),
-								zone: zone.trim(),
-								verb: verb.trim(),
-								rules: rules.trim()
-							}
-							if (hasDetail) {
-								method.detailquestion = detail.trim()
-							}
+								if (hasDetail && (!detail || detail.trim().length < 6)) {
+									errs.push('No detail question specified!')
+								}
+								if (!verb || verb.trim().length < 6) {
+									errs.push('Invalid kill sentence!')
+								} else if (verb.indexOf('#k') < 0) {
+									errs.push('Add #k to your kill sentence so the killer shows up!')
+								} else if (verb.indexOf('#v') < 0) {
+									errs.push('Add #v to your kill sentence so the victim shows up!')
+								} else if (hasDetail && verb.indexOf('#d') < 0) {
+									errs.push('Add #d to your kill sentence so the detail shows up!')
+								}
+								if (!rules || rules.trim().length < 11) {
+									errs.push('Please specify rules')
+								}
+								res.locals.pageErrors = errs
 
-							Bureau.gamegroup.addKillMethod(res.locals.gamegroup.ggid, method,
-								function(err, methods) {
-									if (err) {
-										res.locals.pageErrors.push('Error adding the new killmethod "' +
-											name + '": ' + err)
-									} else {
-										res.locals.gamegroup.killmethods = methods
-									}
-									authPages.get.guild.killmethods(req, res)
-								})
-
-							break;
-						case 'editkillmethod':
-							var id = req.body.methodid,
-								detail = req.body.methoddetailquestion,
-								verb = req.body.methodverb,
-								rules = req.body.methodrules,
-								retired = !req.body.enabled,
-								errs = []
-
-							Bureau.gamegroup.getKillMethod(res.locals.gamegroup.ggid, id, function(
-								err, method) {
-								if (err) {
-									res.locals.pageErrors.push('Invalid kill method id')
+								if (errs.length > 0) {
 									authPages.get.guild.killmethods(req, res)
 									return
-								} else {
-									var hasDetail = !!method.detailquestion
-
-									if (hasDetail && (!detail || detail.trim().length < 6)) {
-										errs.push('No detail question specified!')
-									}
-									if (!verb || verb.trim().length < 6) {
-										errs.push('Invalid kill sentence!')
-									} else if (verb.indexOf('#k') < 0) {
-										errs.push('Add #k to your kill sentence so the killer shows up!')
-									} else if (verb.indexOf('#v') < 0) {
-										errs.push('Add #v to your kill sentence so the victim shows up!')
-									} else if (hasDetail && verb.indexOf('#d') < 0) {
-										errs.push('Add #d to your kill sentence so the detail shows up!')
-									}
-									if (!rules || rules.trim().length < 11) {
-										errs.push('Please specify rules')
-									}
-									res.locals.pageErrors = errs
-
-									if (errs.length > 0) {
-										authPages.get.guild.killmethods(req, res)
-										return
-									}
-
-
-									var m = {
-										verb: verb,
-										retired: retired,
-										rules: rules
-									}
-
-									if (hasDetail) {
-										m.detailquestion = detail
-									}
-
-									Bureau.gamegroup.updateKillMethod(res.locals.gamegroup.ggid, id, m,
-										function(err, methods) {
-											if (err) {
-												res.locals.pageErrors.push('Error editing the killmethod "' +
-													method.name + '": ' + err)
-											} else {
-												res.locals.gamegroup.killmethods = methods
-											}
-											authPages.get.guild.killmethods(req, res)
-										})
 								}
 
-							})
 
-							break;
+								var m = {
+									verb: verb,
+									retired: retired,
+									rules: rules
+								}
 
-						default:
-							authPages.get.guild.killmethods(req, res)
-							break;
-					}
-				},
+								if (hasDetail) {
+									m.detailquestion = detail
+								}
 
-				newgame: function(req, res) {
-					if (!res.locals.isGuild) {
-						res.redirect('/home')
-						return
-					}
-					switch (req.body.action) {
-						case 'newgame':
-							var title = req.body.title,
-								playerIds = req.body.uids,
-								gametype = req.body.gametype,
-								start = utils.dateFromPrettyTimestamp(req.body.start),
-								end = utils.dateFromPrettyTimestamp(req.body.end),
-								now = new Date(),
-								ggid = res.locals.gamegroup.ggid,
-								errs = []
-
-							if (!Bureau.game.isGameType(gametype)) {
-								errs.push('"' + gametype + '" is not a valid game type')
-							}
-							if (!title || title.length < 4) {
-								errs.push('Please specify a longer game title!')
-							}
-							if (!playerIds || !Array.isArray(playerIds) || playerIds.length < 2) {
-								errs.push('Please add some players to your game')
-							}
-							if (!(!!start && !isNaN(start.getMonth()) && start > now && req.body.start
-									.length === 19 && utils.dateRegex.test(req.body.start))) {
-								errs.push('Invalid game start date')
-							}
-							if (!(!!end && !isNaN(end.getMonth()) && end > now && req.body.end.length ===
-									19 && utils.dateRegex.test(req.body.end))) {
-								errs.push('Invalid game end date')
+								Bureau.gamegroup.updateKillMethod(res.locals.gamegroup.ggid, id, m,
+									function(err, methods) {
+										if (err) {
+											res.locals.pageErrors.push('Error editing the killmethod "' +
+												method.name + '": ' + err)
+										} else {
+											res.locals.gamegroup.killmethods = methods
+										}
+										authPages.get.guild.killmethods(req, res)
+									})
 							}
 
+						})
 
-							res.locals.pageErrors = errs
+						break;
 
-							if (errs.length > 0) {
+					default:
+						authPages.get.guild.killmethods(req, res)
+						break;
+				}
+			},
+
+			newgame: function(req, res) {
+				if (!res.locals.isGuild) {
+					res.redirect('/home')
+					return
+				}
+				switch (req.body.action) {
+					case 'newgame':
+						var title = req.body.title,
+							playerIds = req.body.uids,
+							gametype = req.body.gametype,
+							start = utils.dateFromPrettyTimestamp(req.body.start),
+							end = utils.dateFromPrettyTimestamp(req.body.end),
+							now = new Date(),
+							ggid = res.locals.gamegroup.ggid,
+							errs = []
+
+						if (!Bureau.game.isGameType(gametype)) {
+							errs.push('"' + gametype + '" is not a valid game type')
+						}
+						if (!title || title.length < 4) {
+							errs.push('Please specify a longer game title!')
+						}
+						if (!playerIds || !Array.isArray(playerIds) || playerIds.length < 2) {
+							errs.push('Please add some players to your game')
+						}
+						if (!(!!start && !isNaN(start.getMonth()) && start > now && req.body.start
+								.length === 19 && utils.dateRegex.test(req.body.start))) {
+							errs.push('Invalid game start date')
+						}
+						if (!(!!end && !isNaN(end.getMonth()) && end > now && req.body.end.length ===
+								19 && utils.dateRegex.test(req.body.end))) {
+							errs.push('Invalid game end date')
+						}
+
+
+						res.locals.pageErrors = errs
+
+						if (errs.length > 0) {
+							authPages.get.guild.newgame(req, res)
+							return
+						}
+
+						var gameData = {
+								name: title,
+								players: playerIds,
+								type: gametype,
+								start: start,
+								end: end,
+								custom: {}
+							},
+							game = Bureau.games[gametype],
+							notificationString = res.locals.assassin.forename + ' ' + res.locals.assassin
+							.surname + ' created a new ' + game.label + ' game starting on ' +
+							moment(start).format('MMMM Do YYYY, h:mm:ss a')
+
+						//Attach all the extraneous form data that might be related to the new game. This is filthy dirty bad bad and possibly a vulnerability.
+						var exclude = ['title', 'uids', 'gametype', 'start', 'end', 'action',
+							'token', ''
+						]
+						for (var key in req.body) {
+							if (req.body.hasOwnProperty(key) && exclude.indexOf(key) < 0) {
+								gameData.custom[key] = req.body[key]
+							}
+						}
+
+						Bureau.game.newGame(ggid, gameData, function(err, game) {
+							if (!err) {
+								Bureau.gamegroup.notifyGuild(ggid, notificationString, '', false,
+									function(err) {
+										if (err) {
+											//Don't fail completely if we only fail to send a notification
+											res.locals.pageErrors.push(
+												'Failed to send notification to guild about the new game')
+										}
+
+										authPages.get.home(req, res)
+
+									})
+							} else {
+								res.locals.pageErrors.push(err)
 								authPages.get.guild.newgame(req, res)
+							}
+						})
+
+						break;
+
+					default:
+						authPages.get.guild.newgame(req, res)
+						break;
+
+				}
+			},
+
+			gamestate: function(req, res) {
+				if (!res.locals.isGuild) {
+					res.redirect('/home')
+					return
+				}
+				switch (req.body.action) {
+					case 'removeplayer':
+						var gameid = req.body.gameid,
+							uid = req.body.uid,
+							errs = []
+
+						Bureau.game.getGame(gameid, function(err, game) {
+							if (err) {
+								res.locals.pageErrors.push(err)
+								authPages.get.guild.gamestate(req, res)
 								return
 							}
 
-							var gameData = {
-									name: title,
-									players: playerIds,
-									type: gametype,
-									start: start,
-									end: end,
-									custom: {}
-								},
-								game = Bureau.games[gametype],
-								notificationString = res.locals.assassin.forename + ' ' + res.locals.assassin
-								.surname + ' created a new ' + game.label + ' game starting on ' +
-								moment(start).format('MMMM Do YYYY, h:mm:ss a')
+							var gametype = game.type
 
-							//Attach all the extraneous form data that might be related to the new game. This is filthy dirty bad bad and possibly a vulnerability.
-							var exclude = ['title', 'uids', 'gametype', 'start', 'end', 'action',
-								'token', ''
-							]
-							for (var key in req.body) {
-								if (req.body.hasOwnProperty(key) && exclude.indexOf(key) < 0) {
-									gameData.custom[key] = req.body[key]
-								}
-							}
-
-							Bureau.game.newGame(ggid, gameData, function(err, game) {
-								if (!err) {
-									Bureau.gamegroup.notifyGuild(ggid, notificationString, '', false,
-										function(err) {
-											if (err) {
-												//Don't fail completely if we only fail to send a notification
-												res.locals.pageErrors.push(
-													'Failed to send notification to guild about the new game')
-											}
-
-											authPages.get.home(req, res)
-
-										})
-								} else {
-									res.locals.pageErrors.push(err)
-									authPages.get.guild.newgame(req, res)
-								}
-							})
-
-							break;
-
-						default:
-							authPages.get.guild.newgame(req, res)
-							break;
-
-					}
-				},
-
-				gamestate: function(req, res) {
-					if (!res.locals.isGuild) {
-						res.redirect('/home')
-						return
-					}
-					switch (req.body.action) {
-						case 'removeplayer':
-							var gameid = req.body.gameid,
-								uid = req.body.uid,
-								errs = []
-
-							Bureau.game.getGame(gameid, function(err, game) {
+							Bureau.games[gametype].handlePlayerRemoved(game, uid, function(err) {
 								if (err) {
-									res.locals.pageErrors.push(err)
+									res.locals.pageErrors.push(
+										'There was an error removing the player from the game')
 									authPages.get.guild.gamestate(req, res)
 									return
 								}
 
-								var gametype = game.type
-
-								Bureau.games[gametype].handlePlayerRemoved(game, uid, function(err) {
+								Bureau.game.removePlayer(gameid, uid, function(err) {
 									if (err) {
 										res.locals.pageErrors.push(
 											'There was an error removing the player from the game')
-										authPages.get.guild.gamestate(req, res)
-										return
 									}
-
-									Bureau.game.removePlayer(gameid, uid, function(err) {
-										if (err) {
-											res.locals.pageErrors.push(
-												'There was an error removing the player from the game')
-										}
-										authPages.get.guild.gamestate(req, res)
-									})
+									authPages.get.guild.gamestate(req, res)
 								})
-
 							})
 
-							break;
+						})
 
-						case 'addplayer':
-							var gameid = req.body.gameid,
-								uid = req.body.uid,
-								errs = []
+						break;
 
-							Bureau.game.getGame(gameid, function(err, game) {
+					case 'addplayer':
+						var gameid = req.body.gameid,
+							uid = req.body.uid,
+							errs = []
+
+						Bureau.game.getGame(gameid, function(err, game) {
+							if (err) {
+								res.locals.pageErrors.push(err)
+								authPages.get.guild.gamestate(req, res)
+								return
+							}
+
+							var gametype = game.type
+
+
+
+							Bureau.game.addPlayer(gameid, uid, function(err) {
 								if (err) {
-									res.locals.pageErrors.push(err)
+									res.locals.pageErrors.push(
+										'There was an error adding the player to the game')
 									authPages.get.guild.gamestate(req, res)
 									return
 								}
 
-								var gametype = game.type
-
-
-
-								Bureau.game.addPlayer(gameid, uid, function(err) {
+								Bureau.games[gametype].handlePlayerAdded(game, uid, function(err) {
 									if (err) {
 										res.locals.pageErrors.push(
 											'There was an error adding the player to the game')
 										authPages.get.guild.gamestate(req, res)
 										return
 									}
+									authPages.get.guild.gamestate(req, res)
+								})
+							})
 
-									Bureau.games[gametype].handlePlayerAdded(game, uid, function(err) {
+						})
+						break;
+
+					case 'changegametime':
+						var gameid = req.body.gameid,
+							start = utils.dateFromPrettyTimestamp(req.body.start),
+							end = utils.dateFromPrettyTimestamp(req.body.end),
+							ggid = res.locals.gamegroup.ggid,
+							errs = []
+
+						if (!(!!start && !isNaN(start.getMonth()) && req.body.start.length ===
+								19 && utils.dateRegex.test(req.body.start))) {
+							errs.push('Invalid game start date')
+						}
+						if (!(!!end && !isNaN(end.getMonth()) && req.body.end.length === 19 &&
+								utils.dateRegex.test(req.body.end))) {
+							errs.push('Invalid game end date')
+						}
+
+
+						res.locals.pageErrors = errs
+
+						if (errs.length > 0) {
+							authPages.get.guild.newgame(req, res)
+							return
+						}
+
+						Bureau.game.changeGameTimes(gameid, start, end, function(err, game) {
+							if (err) {
+								res.locals.pageErrors.push(err)
+							}
+
+							var notificationString = res.locals.assassin.forename + ' ' + res.locals
+								.assassin.surname + ' changed the start+end dates of game "' + game
+								.name + '" to run from ' + moment(start).format(
+									'MMMM Do YYYY, h:mm:ss a') + ' to ' + moment(end).format(
+									'MMMM Do YYYY, h:mm:ss a')
+
+							if (!err) {
+								Bureau.gamegroup.notifyGuild(ggid, notificationString, '', false,
+									function(err) {
 										if (err) {
 											res.locals.pageErrors.push(
-												'There was an error adding the player to the game')
-											authPages.get.guild.gamestate(req, res)
-											return
+												'Failed to send notification to guild about changing the game dates'
+											)
 										}
 										authPages.get.guild.gamestate(req, res)
+
 									})
-								})
-
-							})
-							break;
-
-						case 'changegametime':
-							var gameid = req.body.gameid,
-								start = utils.dateFromPrettyTimestamp(req.body.start),
-								end = utils.dateFromPrettyTimestamp(req.body.end),
-								ggid = res.locals.gamegroup.ggid,
-								errs = []
-
-							if (!(!!start && !isNaN(start.getMonth()) && req.body.start.length ===
-									19 && utils.dateRegex.test(req.body.start))) {
-								errs.push('Invalid game start date')
+							} else {
+								res.locals.pageErrors.push(err)
+								authPages.get.guild.gamestate(req, res)
 							}
-							if (!(!!end && !isNaN(end.getMonth()) && req.body.end.length === 19 &&
-									utils.dateRegex.test(req.body.end))) {
-								errs.push('Invalid game end date')
-							}
+						})
 
+						break;
 
-							res.locals.pageErrors = errs
+					case 'archivegame':
+						var gameid = req.body.gameid,
+							ggid = res.locals.gamegroup.ggid
 
-							if (errs.length > 0) {
-								authPages.get.guild.newgame(req, res)
+						Bureau.game.archiveGame(gameid, function(err, game) {
+							if (err) {
+								res.locals.pageErrors.push(err)
+								authPages.get.guild.gamestate(req, res)
 								return
 							}
 
-							Bureau.game.changeGameTimes(gameid, start, end, function(err, game) {
-								if (err) {
-									res.locals.pageErrors.push(err)
-								}
+							var notificationString = res.locals.assassin.forename + ' ' + res.locals
+								.assassin.surname + ' archived the game "' + game.name + '"'
 
-								var notificationString = res.locals.assassin.forename + ' ' + res.locals
-									.assassin.surname + ' changed the start+end dates of game "' + game
-									.name + '" to run from ' + moment(start).format(
-										'MMMM Do YYYY, h:mm:ss a') + ' to ' + moment(end).format(
-										'MMMM Do YYYY, h:mm:ss a')
+							if (!err) {
+								Bureau.gamegroup.notifyGuild(ggid, notificationString, '', false,
+									function(err) {
+										if (err) {
+											res.locals.pageErrors.push(
+												'Failed to send notification to guild about archiving the game'
+											)
+										}
 
-								if (!err) {
-									Bureau.gamegroup.notifyGuild(ggid, notificationString, '', false,
-										function(err) {
-											if (err) {
-												res.locals.pageErrors.push(
-													'Failed to send notification to guild about changing the game dates'
-												)
-											}
-											authPages.get.guild.gamestate(req, res)
+										authPages.get.guild.gamestate(req, res)
 
-										})
-								} else {
-									res.locals.pageErrors.push(err)
-									authPages.get.guild.gamestate(req, res)
-								}
-							})
+									})
+							} else {
+								res.locals.pageErrors.push(err)
+								authPages.get.guild.gamestate(req, res)
+							}
 
-							break;
+						})
+						break;
 
-						case 'archivegame':
-							var gameid = req.body.gameid,
-								ggid = res.locals.gamegroup.ggid
+					case 'changegamestate':
+						var gameid = req.body.gameid,
+							playerid = req.body.playerid,
+							data = req.body
 
-							Bureau.game.archiveGame(gameid, function(err, game) {
-								if (err) {
-									res.locals.pageErrors.push(err)
-									authPages.get.guild.gamestate(req, res)
-									return
-								}
+						delete req.body.token
 
-								var notificationString = res.locals.assassin.forename + ' ' + res.locals
-									.assassin.surname + ' archived the game "' + game.name + '"'
+						console.log(req.body)
+						Bureau.game.changeGameState(gameid, playerid, data, function(err, game) {
+							if (err) {
+								res.locals.pageErrors.push(err)
+							}
+							authPages.get.guild.gamestate(req, res)
+						})
+						break;
 
-								if (!err) {
-									Bureau.gamegroup.notifyGuild(ggid, notificationString, '', false,
-										function(err) {
-											if (err) {
-												res.locals.pageErrors.push(
-													'Failed to send notification to guild about archiving the game'
-												)
-											}
+					case 'changegameparams':
+						var gameid = req.body.gameid,
+							data = req.body
 
-											authPages.get.guild.gamestate(req, res)
+						delete data.token
+						delete data.action
+						delete data.submit
+						delete data.gameid
 
-										})
-								} else {
-									res.locals.pageErrors.push(err)
-									authPages.get.guild.gamestate(req, res)
-								}
-
-							})
-							break;
-
-						case 'changegamestate':
-							var gameid = req.body.gameid,
-								playerid = req.body.playerid,
-								data = req.body
-
-							delete req.body.token
-
-							console.log(req.body)
-							Bureau.game.changeGameState(gameid, playerid, data, function(err, game) {
+						Bureau.game.getGame(gameid, function(err, g) {
+							Bureau.games[g.type].changeGameParams(g, data, function(err, game) {
 								if (err) {
 									res.locals.pageErrors.push(err)
 								}
 								authPages.get.guild.gamestate(req, res)
 							})
-							break;
+						})
+						break;
 
-						case 'changegameparams':
-							var gameid = req.body.gameid,
-								data = req.body
+					default:
+						authPages.get.guild.gamestate(res, res)
+						break;
+				}
+			},
 
-							delete data.token
-							delete data.action
-							delete data.submit
-							delete data.gameid
-
-							Bureau.game.getGame(gameid, function(err, g) {
-								Bureau.games[g.type].changeGameParams(g, data, function(err, game) {
-									if (err) {
-										res.locals.pageErrors.push(err)
-									}
-									authPages.get.guild.gamestate(req, res)
-								})
-							})
-							break;
-
-						default:
-							authPages.get.guild.gamestate(res, res)
-							break;
-					}
-				},
-
-				allreports: function(req, res) {
-					if (!res.locals.isGuild) {
-						res.redirect('/home')
-						return
-					}
-					switch (req.body.action) {
-						case 'killreportchange':
-							var gameid = req.body.gameid,
-								reportid = req.body.reportid,
-								state = req.body.state,
-								approved = (state === 'approved'),
-								comment = req.body.guildcomment,
-								loadPage = function(err, report) {
-									if (err) {
-										res.locals.pageErrors.push(err)
-									}
-									authPages.get.guild.allreports(res, res)
+			allreports: function(req, res) {
+				if (!res.locals.isGuild) {
+					res.redirect('/home')
+					return
+				}
+				switch (req.body.action) {
+					case 'killreportchange':
+						var gameid = req.body.gameid,
+							reportid = req.body.reportid,
+							state = req.body.state,
+							approved = (state === 'approved'),
+							comment = req.body.guildcomment,
+							loadPage = function(err, report) {
+								if (err) {
+									res.locals.pageErrors.push(err)
 								}
+								authPages.get.guild.allreports(res, res)
+							}
 
-							Bureau.game.getGame(gameid, function(err, game) {
+						Bureau.game.getGame(gameid, function(err, game) {
+							if (err) {
+								res.locals.pageErrors.push(err)
+								authPages.get.guild.allreports(res, res)
+								return
+							}
+							Bureau.report.getReport(reportid, function(err, report) {
 								if (err) {
 									res.locals.pageErrors.push(err)
 									authPages.get.guild.allreports(res, res)
 									return
 								}
-								Bureau.report.getReport(reportid, function(err, report) {
-									if (err) {
-										res.locals.pageErrors.push(err)
-										authPages.get.guild.allreports(res, res)
-										return
-									}
-									var ria = (report.state === 'approved')
+								var ria = (report.state === 'approved')
 
-									console.log(approved, ria, report)
+								console.log(approved, ria, report)
 
-									if (ria !== approved) {
-										//An already approved report can't be reapproved by cheaty form editing
-										res.locals.pageErrors.push('That report has already been ' + (!
-											ria ? 'rejected' : 'approved'))
-										authPages.get.guild.allreports(res, res)
-										return
-									}
+								if (ria !== approved) {
+									//An already approved report can't be reapproved by cheaty form editing
+									res.locals.pageErrors.push('That report has already been ' + (!
+										ria ? 'rejected' : 'approved'))
+									authPages.get.guild.allreports(res, res)
+									return
+								}
 
-									if (approved) {
-										//Retroactively reject the kill
-										Bureau.games[game.type].undoKill(game, report.killerid, report.victimid,
-											report,
-											function(err, game) {
-												Bureau.report.rejectReport(reportid, comment, loadPage)
-											})
-									} else {
-										//Retroactively approve the kill
-										Bureau.games[game.type].handleKill(game, report.killerid, report
-											.victimid, report,
-											function(err, game) {
-												Bureau.report.acceptReport(reportid, loadPage)
-											})
-									}
-								})
+								if (approved) {
+									//Retroactively reject the kill
+									Bureau.games[game.type].undoKill(game, report.killerid, report.victimid,
+										report,
+										function(err, game) {
+											Bureau.report.rejectReport(reportid, comment, loadPage)
+										})
+								} else {
+									//Retroactively approve the kill
+									Bureau.games[game.type].handleKill(game, report.killerid, report
+										.victimid, report,
+										function(err, game) {
+											Bureau.report.acceptReport(reportid, loadPage)
+										})
+								}
 							})
-							break;
+						})
+						break;
 
-						default:
-							authPages.get.guild.allreports(res, res)
-							break;
+					default:
+						authPages.get.guild.allreports(res, res)
+						break;
 
+				}
+			}
+		},
+
+		api: {
+			read: {
+				notifications: function(req, res) {
+					var uid = req.body.uid,
+						limit = req.body.data.limit
+					Bureau.assassin.getNotifications(uid, limit, function(err, notifications) {
+						res.json({
+							notifications: notifications
+						})
+					})
+				},
+
+				gamesetupfragment: function(req, res) {
+					var uid = req.body.uid,
+						gametype = req.body.data.gametype
+					if (!Bureau.game.isGameType(gametype)) {
+						res.send(400, '"' + gametype + '" is not a valid game type')
+						return
 					}
+					Bureau.games[gametype].getGameSetupFragment(function(err, fragment) {
+						if (err) {
+							res.send(500, err)
+							return
+						}
+						res.json({
+							gamesetupfragment: fragment
+						})
+					})
+				},
+
+				gamestatefragment: function(req, res) {
+					var uid = req.body.data.uid,
+						gameid = req.body.data.gameid
+
+					Bureau.game.getGame(gameid, function(err, game) {
+						if (err) {
+							res.send(400, err)
+							return
+						}
+						Bureau.games[game.type].getGameStateForUid(game, uid, function(err,
+							gamestate) {
+							if (err) {
+								res.send(500, err)
+								return
+							}
+							res.json({
+								gameid: gameid,
+								uid: uid,
+								gametype: game.type,
+								gamestatefragment: gamestate
+							})
+						})
+					})
 				}
 			},
+			write: {
+				readNotification: function(req, res) {
+					var uid = req.body.uid,
+						id = req.body.data.id
 
-			api: {
-				read: {
-					notifications: function(req, res) {
-						var uid = req.body.uid,
-							limit = req.body.data.limit
-						Bureau.assassin.getNotifications(uid, limit, function(err, notifications) {
+					Bureau.assassin.markNotificationRead(uid, id, function(err) {
+						Bureau.assassin.getNotifications(uid, 20, function(err, notifications) {
 							res.json({
 								notifications: notifications
 							})
 						})
-					},
-
-					gamesetupfragment: function(req, res) {
-						var uid = req.body.uid,
-							gametype = req.body.data.gametype
-						if (!Bureau.game.isGameType(gametype)) {
-							res.send(400, '"' + gametype + '" is not a valid game type')
-							return
-						}
-						Bureau.games[gametype].getGameSetupFragment(function(err, fragment) {
-							if (err) {
-								res.send(500, err)
-								return
-							}
-							res.json({
-								gamesetupfragment: fragment
-							})
-						})
-					},
-
-					gamestatefragment: function(req, res) {
-						var uid = req.body.data.uid,
-							gameid = req.body.data.gameid
-
-						Bureau.game.getGame(gameid, function(err, game) {
-							if (err) {
-								res.send(400, err)
-								return
-							}
-							Bureau.games[game.type].getGameStateForUid(game, uid, function(err,
-								gamestate) {
-								if (err) {
-									res.send(500, err)
-									return
-								}
-								res.json({
-									gameid: gameid,
-									uid: uid,
-									gametype: game.type,
-									gamestatefragment: gamestate
-								})
-							})
-						})
-					}
+					})
 				},
-				write: {
-					readNotification: function(req, res) {
-						var uid = req.body.uid,
-							id = req.body.data.id
 
-						Bureau.assassin.markNotificationRead(uid, id, function(err) {
-							Bureau.assassin.getNotifications(uid, 20, function(err, notifications) {
-								res.json({
-									notifications: notifications
-								})
-							})
-						})
-					},
+				resetPassword: function(req, res) {
+					if (!res.locals.isGuild) {
+						res.send(500,
+							'You do not have sufficient privileges to perform this action')
+						return
+					}
+					var uid = req.body.uid,
+						resetuid = req.body.data.resetuid
 
-					resetPassword: function(req, res) {
-						if (!res.locals.isGuild) {
-							res.send(500,
-								'You do not have sufficient privileges to perform this action')
+					Bureau.assassin.createTempPassword(resetuid, function(err, pwd) {
+						if (err) {
+							res.send(500, err)
 							return
 						}
-						var uid = req.body.uid,
-							resetuid = req.body.data.resetuid
-
-						Bureau.assassin.createTempPassword(resetuid, function(err, pwd) {
-							if (err) {
-								res.send(500, err)
-								return
-							}
-							res.json({
-								temppassword: pwd
-							})
-							Bureau.assassin.addNotification(resetuid,
-								'Your password was reset by ' + utils.fullname(res.locals.assassin) +
-								' at ' + moment().format('MMMM Do YYYY, h:mm:ss a'))
+						res.json({
+							temppassword: pwd
 						})
-					},
+						Bureau.assassin.addNotification(resetuid,
+							'Your password was reset by ' + utils.fullname(res.locals.assassin) +
+							' at ' + moment().format('MMMM Do YYYY, h:mm:ss a'))
+					})
+				},
 
-					setOptout: function(req, res) {
-						var uid = req.body.uid,
-							optout = req.body.data.optout
+				setOptout: function(req, res) {
+					var uid = req.body.uid,
+						optout = req.body.data.optout
 
-						Bureau.assassin.setOptout(uid, optout, function(err) {
+					Bureau.assassin.setOptout(uid, optout, function(err) {
 
-							if (err) {
-								res.send(500, err)
-								return
-							}
+						if (err) {
+							res.send(500, err)
+							return
+						}
 
-							res.json({
-								optout: optout
-							})
+						res.json({
+							optout: optout
+						})
 
-							Bureau.assassin.addNotification(uid, 'You will now ' + (optout ?
-									'no longer ' : '') +
-								'be automatically added to a new game if you played in the previous one.'
-							)
+						Bureau.assassin.addNotification(uid, 'You will now ' + (optout ?
+								'no longer ' : '') +
+							'be automatically added to a new game if you played in the previous one.'
+						)
 
-						});
-					}
+					});
 				}
 			}
 		}
-	},
-	authURLS = []
+	}
+}
+
+var authURLS = []
 
 
 
