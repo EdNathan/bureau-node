@@ -6,10 +6,12 @@ var Bureau = require('./bureau'),
 	gm = require('gm'),
 	AWS = require('aws-sdk'),
 	fs = require('fs'),
-	app = express(),
 	validator = require('validator'),
 	MongoStore = require('connect-mongo')(express),
 	moment = require('moment')
+
+
+var app = express()
 
 var pages = {
 	get: {
