@@ -47,6 +47,7 @@
     },
     "domains": [
         "www.assassinsbureau.org",
+        "api.assassinsbureau.org",
         "assassinsbureau.org"
     ],
     "subdomain": "bureau"
