@@ -1,11 +1,19 @@
 <script src="/js/libs/modernizr-2.6.2.min.js"></script>
-	  
+
 <form action="" id="data-form">
 	<input type="hidden" name="bureau-uid" id="bureau-uid" value="{{ uid }}">
 	<input type="hidden" name="bureau-gamegroup" id="bureau-gamegroup" value="{{ gamegroup.ggid }}">
 	<input type="hidden" name="bureau-token" id="bureau-token" value="{{ token }}">
 </form>
-	  
+<script>
+	var APP_TOKEN = "{{ APP_TOKEN }}"
+	var BUREAU_USER = {
+		uid: "{{ uid }}",
+		gamegroup: "{{ gamegroup.ggid }}",
+		token: "{{ token }}"
+	}
+</script>
+
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="/js/libs/jquery-1.9.1.min.js"><\/script>')</script>
 <script type="text/javascript" src="/js/libs/plugins.js" charset="utf-8"></script>

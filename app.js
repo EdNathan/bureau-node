@@ -13,6 +13,12 @@ var Bureau = require( './bureau' ),
 
 var app = express()
 
+module.exports = {
+	Bureau: Bureau,
+	app: app,
+	swig: swig
+}
+
 var pages = {
 	get: {
 		login: function( req, res ) {
@@ -57,7 +63,7 @@ var pages = {
 			} )
 		},
 		'views/mail/:page': function( req, res ) {
-			res.render( 'mail/' + req.params.page, {
+			res.render( '../mail/' + req.params.page, {
 				subject: 'Testing Email'
 			} )
 		}
@@ -1547,99 +1553,8 @@ var authPages = {
 		},
 
 		api: {
-			read: {
-				notifications: function( req, res ) {
-					var uid = req.body.uid,
-						limit = req.body.data.limit
-					Bureau.assassin.getNotifications( uid, limit, function( err,
-						notifications ) {
-						res.json( {
-							notifications: notifications
-						} )
-					} )
-				},
 
-				gamesetupfragment: function( req, res ) {
-					var uid = req.body.uid,
-						gametype = req.body.data.gametype
-					if ( !Bureau.game.isGameType( gametype ) ) {
-						res.send( 400, '"' + gametype + '" is not a valid game type' )
-						return
-					}
-					Bureau.games[ gametype ].getGameSetupFragment( function( err, fragment ) {
-						if ( err ) {
-							res.send( 500, err )
-							return
-						}
-						res.json( {
-							gamesetupfragment: fragment
-						} )
-					} )
-				},
-
-				gamestatefragment: function( req, res ) {
-					var uid = req.body.data.uid,
-						gameid = req.body.data.gameid
-
-					Bureau.game.getGame( gameid, function( err, game ) {
-						if ( err ) {
-							res.send( 400, err )
-							return
-						}
-						Bureau.games[ game.type ].getGameStateForUid( game, uid, function(
-							err,
-							gamestate ) {
-							if ( err ) {
-								res.send( 500, err )
-								return
-							}
-							res.json( {
-								gameid: gameid,
-								uid: uid,
-								gametype: game.type,
-								gamestatefragment: gamestate
-							} )
-						} )
-					} )
-				}
-			},
 			write: {
-				readNotification: function( req, res ) {
-					var uid = req.body.uid,
-						id = req.body.data.id
-
-					Bureau.assassin.markNotificationRead( uid, id, function( err ) {
-						Bureau.assassin.getNotifications( uid, 20, function( err,
-							notifications ) {
-							res.json( {
-								notifications: notifications
-							} )
-						} )
-					} )
-				},
-
-				resetPassword: function( req, res ) {
-					if ( !res.locals.isGuild ) {
-						res.send( 500,
-							'You do not have sufficient privileges to perform this action' )
-						return
-					}
-					var uid = req.body.uid,
-						resetuid = req.body.data.resetuid
-
-					Bureau.assassin.createTempPassword( resetuid, function( err, pwd ) {
-						if ( err ) {
-							res.send( 500, err )
-							return
-						}
-						res.json( {
-							temppassword: pwd
-						} )
-						Bureau.assassin.addNotification( resetuid,
-							'Your password was reset by ' + utils.fullname( res.locals.assassin ) +
-							' at ' + moment().format( 'MMMM Do YYYY, h:mm:ss a' ) )
-					} )
-				},
 
 				setOptout: function( req, res ) {
 					var uid = req.body.uid,
@@ -1656,8 +1571,7 @@ var authPages = {
 							optout: optout
 						} )
 
-						Bureau.assassin.addNotification( uid, 'You will now ' + ( optout ?
-								'no longer ' : '' ) +
+						Bureau.assassin.addNotification( uid, 'You will now ' + ( optout ? 'no longer ' : '' ) +
 							'be automatically added to a new game if you played in the previous one.'
 						)
 
@@ -1669,7 +1583,6 @@ var authPages = {
 }
 
 var authURLS = []
-
 
 
 //Setup middleware
@@ -1696,6 +1609,19 @@ if ( process.env.NODE_ENV !== 'production' ) {
 		cache: false
 	} )
 }
+
+app.use( function( req, res, next ) {
+
+	if ( req.subdomains[ 0 ] === 'api' ) {
+
+		req.url = '/api' + req.url
+
+	}
+
+	next()
+} )
+
+var apiHandler = require( './api/api' )
 
 //For authed pages
 var checkAuth = function( req, res, next ) {
@@ -1766,6 +1692,7 @@ var addLocals = function( req, res, next ) {
 			res.locals.gamegroup = gamegroup
 			res.locals.token = req.session.token
 			res.locals.assassin = assassin
+			res.locals.APP_TOKEN = process.env.BUREAU_APP_TOKEN
 			res.locals.pageErrors = !!req.session.pageErrors ? req.session.pageErrors : []
 			req.session.pageErrors = null
 			next()
@@ -1840,6 +1767,7 @@ for ( var method in authPages ) {
 //Handle 404
 app.use( function( req, res, next ) {
 	res.send( 404, 'Hello yes this is dog.<br><br>Dog cannot find your page :(' )
+	console.log( 404, req.url )
 } )
 
 Bureau.init( function( err, db ) {
