@@ -1,4 +1,5 @@
 module.exports = [
+	'assassin',
 	'bounty',
 	'notifications',
 	'gamesetupfragment',
