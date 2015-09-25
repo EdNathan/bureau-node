@@ -1698,8 +1698,9 @@ if ( process.env.NODE_ENV !== 'production' ) {
 }
 
 //For authed pages
-function checkAuth( req, res, next ) {
-	if ( !!req.cookies.BAC && ( !req.session.uid || !req.session.gamegroup || !req
+var checkAuth = function( req, res, next ) {
+	if ( !!req.cookies.BAC && ( !req.session.uid || !req.session.gamegroup || !
+			req
 			.session
 			.token ) ) {
 		var parts = req.cookies.BAC.split( 'sheepworks' ),
@@ -1732,7 +1733,7 @@ function checkAuth( req, res, next ) {
 }
 
 //For checking if details updated/password needs resetting etc
-function checkForceRedirect( req, res, next ) {
+var checkForceRedirect = function( req, res, next ) {
 	if ( !res.locals.assassin.detailsUpdated ) {
 		if ( req.route.path === '/updatedetails' ) {
 			next()
@@ -1750,7 +1751,7 @@ function checkForceRedirect( req, res, next ) {
 	}
 }
 
-function addLocals( req, res, next ) {
+var addLocals = function( req, res, next ) {
 	Bureau.assassin.getAssassin( req.session.uid, function( err, assassin ) {
 		Bureau.gamegroup.getGamegroup( req.session.gamegroup, function( err,
 			gamegroup ) {
@@ -1773,7 +1774,7 @@ function addLocals( req, res, next ) {
 }
 
 //For post requests
-function checkToken( req, res, next ) {
+var checkToken = function( req, res, next ) {
 	var seshtoken = req.session.token,
 		formtoken = req.body.token
 
