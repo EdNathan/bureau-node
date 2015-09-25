@@ -1975,13 +1975,34 @@ var Bureau = {
 				}
 
 				if ( !docs || _.isEmpty( docs ) || _.isEmpty( docs[ 0 ] ) ) {
-					callback( 'Error, bounty not created', {} )
+					callback( 'Bounty not created', {} )
 					return;
 				}
 
 				callback( err, docs[ 0 ] )
 
 			} );
+		},
+
+		getBounty: function( bountyId, callback ) {
+
+			var objID = id( bountyId )
+
+			Bureau.db.collection( 'bounties' ).findOne( {
+				_id: objID
+			}, function( err, doc ) {
+				if ( err ) {
+					callback( err, {} )
+					return;
+				}
+
+				if ( !doc || _.isEmpty( doc ) ) {
+					callback( 'Bounty with id ' + bountyId + ' does not exist', {} )
+					return;
+				}
+
+				callback( err, doc )
+			} )
 		},
 
 		updateBounty: function( bountyId, stuff, callback ) {
@@ -2004,7 +2025,7 @@ var Bureau = {
 				}
 
 				if ( !docs || _.isEmpty( docs ) || _.isEmpty( docs[ 0 ] ) ) {
-					callback( 'Error, bounty not updated', {} )
+					callback( 'Bounty not updated', {} )
 					return;
 				}
 
