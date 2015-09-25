@@ -65,6 +65,7 @@ function line( indent ) {
 
 var Bureau = {
 	db: null,
+	_initted: false,
 	init: function( callback ) {
 		var start = new Date(),
 			pkg = require( './package.json' ),
@@ -114,6 +115,7 @@ var Bureau = {
 						log( 'Started up in ' + ( end - start ) / 1000 + 's' )
 						log( 'Ready to go!' )
 						log( strcopy( '-', 50 ), 0 )
+						Bureau._initted = true
 						callback( undefined, db )
 					} )
 				} )
