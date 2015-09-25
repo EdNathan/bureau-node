@@ -53,7 +53,7 @@ module.exports = (grunt) ->
 					}
 					{
 						expand: true
-						src: ['.{npm,git}ignore', '*.{js,json,txt}', 'views/**', 'games/**', 'temp/', '!temp/**.jpg', 'mail/**', 'temp/placeholder.txt', 'api/']
+						src: ['.{npm,git}ignore', '*.{js,json,txt}', 'views/**', 'games/**', 'temp/', '!temp/**.jpg', 'mail/**', 'temp/placeholder.txt', 'api/**']
 						dest: 'build/'
 					}
 				]
