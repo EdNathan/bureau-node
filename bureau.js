@@ -554,8 +554,14 @@ var Bureau = {
 		},
 
 		getSalt: function( uid, callback ) {
-			Bureau.assassin.getAssassin( uid, function( err, doc ) {
-				callback( err, utils.md5( uid + '~' + doc.joindate ) )
+			Bureau.assassin.getAssassin( uid, function( err, assassin ) {
+				callback( err, utils.md5( uid + '~' + assassin.joindate ) )
+			} )
+		},
+
+		getToken: function( uid, callback ) {
+			Bureau.assassin.getAssassin( uid, function( err, assassin ) {
+				callback( err, utils.md5( assassin.joindate + process.env.BUREAU_TOKEN_SECRET ) )
 			} )
 		},
 
