@@ -56,7 +56,7 @@ var sendHeadersForOptions = function( req, res, next ) {
 	}
 }
 
-var authPipeline = [ logApiRequest, sendHeadersForOptions, checkAppToken, checkUserToken ]
+var authPipeline = [ sendHeadersForOptions, checkAppToken, checkUserToken ]
 
 authPipeline.map( app.use.bind( app, '/api' ) )
 
@@ -104,6 +104,5 @@ var createApiEndpoint = function( endpoint ) {
 var endpoints = require( './endpoints.js' )
 
 endpoints.map( createApiEndpoint )
-console.log( app.routes )
 
 module.exports = true
