@@ -8,7 +8,11 @@ var MongoClient = require( 'mongodb' ).MongoClient,
 	_ = require( 'lodash' )
 
 function id( uid ) {
-	return new mongo.ObjectID( uid )
+	try {
+		return new mongo.ObjectID( uid )
+	} catch ( e ) {
+		return false
+	}
 }
 
 
