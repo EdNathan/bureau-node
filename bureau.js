@@ -1962,6 +1962,7 @@ var Bureau = {
 			if ( !data.title || !_.isString( data.title ) || data.title.trim().length <
 				10 ) {
 				callback( 'A bounty must have a title at minimum 10 chars long' )
+				return;
 			}
 			if ( !data.anyPlayer && ( !data.players ||
 					!_.isArray( data.players ) ||
@@ -1970,10 +1971,10 @@ var Bureau = {
 				return;
 			}
 
-			data = _.pick( data, 'title', 'comment', 'andPlayer', 'players', 'gamegroup' )
+			data = _.pick( data, 'title', 'comment', 'anyPlayer', 'players', 'gamegroup' )
 
 			data.created = new Date()
-			data.state = Bureau.bounty.STATES.active
+			data.state = Bureau.bounty.STATES.ACTIVE
 
 			Bureau.db.collection( 'bounties' ).insert( data, {
 				safe: true

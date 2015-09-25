@@ -69,13 +69,28 @@ var handleApiRequest = function( handler, req, res ) {
 
 }
 
+var _filter_id = function( obj ) {
+
+	if ( obj._id ) {
+		obj = _.clone( obj )
+		obj.id = obj._id
+		delete obj._id
+	} else {
+		obj = _.map( obj, _filter_id )
+	}
+
+	return obj
+}
+
 var sendResponse = function( req, res, err, data ) {
+
 	if ( err ) {
 		sendError( err, req, res )
-	} else {
-		sendHeaders( req, res )
-		res.json( data )
+		return
 	}
+
+	sendHeaders( req, res )
+	res.json( _filter_id( data ) )
 }
 
 var mapApiRoutes = function( routeHandler, route ) {
