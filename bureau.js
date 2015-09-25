@@ -1970,10 +1970,10 @@ var Bureau = {
 				return;
 			}
 
-			data = _.defaults( data, {
-				state: Bureau.bounty.STATES.ACTIVE,
-				created: new Date()
-			} )
+			data = _.pick( data, 'title', 'comment', 'andPlayer', 'players', 'gamegroup' )
+
+			data.created = new Date()
+			data.state = Bureau.bounty.STATES.active
 
 			Bureau.db.collection( 'bounties' ).insert( data, {
 				safe: true
@@ -2042,6 +2042,24 @@ var Bureau = {
 				callback( err, docs[ 0 ] )
 
 			} );
+		},
+
+		getActiveBounties: function( ggid, callback ) {
+
+			Bureau.db.collection( 'bounties' ).find( {
+				gamegroup: ggid,
+				state: Bureau.bounty.STATES.ACTIVE
+			} ).toArray( function( err, bounties ) {
+
+				if ( err ) {
+					callback( err, [] )
+					return
+				}
+				console.log( bounties )
+				callback( null, bounties )
+
+			} )
+
 		}
 	}
 
