@@ -21,16 +21,24 @@ module.exports = function( Bureau ) {
 
 	return {
 		'getAssassin/:uid': function( data, params, callback ) {
+
 			var uid = params.uid
 
-			Bureau.assassin.getAssassin( uid, function( err, assassin ) {
+			Bureau.assassin.getGamegroup( data.USER_ID, function( err, ggid ) {
+				Bureau.assassin.getAssassin( uid, function( err, assassin ) {
 
-				if ( err ) {
-					callback( err )
-					return
-				}
+					if ( err ) {
+						callback( err )
+						return
+					}
 
-				callback( null, projectAssassin( assassin ) )
+					if ( ggid !== assassin.gamegroup ) {
+						callback( 'Assassin is in a different gamegroup to you' )
+						return
+					}
+
+					callback( null, projectAssassin( assassin ) )
+				} )
 			} )
 		}
 	}
