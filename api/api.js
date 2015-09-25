@@ -71,11 +71,11 @@ var handleApiRequest = function( handler, req, res ) {
 
 var _filter_id = function( obj ) {
 
-	if ( obj._id ) {
+	if ( _.isPlainObject( obj ) && obj._id ) {
 		obj = _.clone( obj )
 		obj.id = obj._id
 		delete obj._id
-	} else {
+	} else if ( _.isArray( obj ) ) {
 		obj = _.map( obj, _filter_id )
 	}
 
