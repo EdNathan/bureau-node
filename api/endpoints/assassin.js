@@ -40,6 +40,32 @@ module.exports = function( Bureau ) {
 					callback( null, projectAssassin( assassin ) )
 				} )
 			} )
+		},
+
+		getAssassins: function( data, params, callback ) {
+
+			var uid = params.uid
+
+			Bureau.assassin.getGamegroup( data.USER_ID, function( err, ggid ) {
+
+				var filter = _.omit( data, [ 'USER_ID', 'APP_TOKEN' ] )
+				filter.gamegroup = ggid
+
+				Bureau.assassin.getAssassins( filter, function( err, assassins ) {
+
+					console.log( assassins )
+
+					if ( err ) {
+						callback( err )
+						return
+					}
+
+					callback( null, assassins.map( projectAssassin ) )
+
+				} )
+
+			} )
+
 		}
 	}
 
