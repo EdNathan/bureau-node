@@ -1584,10 +1584,11 @@ var authPages = {
 
 var authURLS = []
 
+var isProduction = process.env.NODE_ENV === 'production'
 
 //Setup middleware
 app.use( express.compress() )
-app.use( express.static( process.env.NODE_ENV !== 'production' ? 'static' : 'build/static' ) )
+app.use( express.static( isProduction ? 'build/static' : 'static' ) )
 app.use( express.bodyParser() )
 app.use( express.cookieParser( process.env.BUREAU_COOKIE_SECRET ) )
 app.use( express.session( {
@@ -1603,24 +1604,14 @@ app.use( express.session( {
 app.engine( 'html', swig.renderFile );
 app.set( 'view engine', 'html' );
 app.set( 'views', __dirname + '/views' );
-//app.set('view cache', false);
-var isProduction = process.env.NODE_ENV === 'production'
-var defaultSwigOptions = {
-	locals: {
-		PRODUCTION_ENV: isProduction
-	}
-}
-
+// app.set('view cache', false);
 if ( !isProduction ) {
-
-	defaultSwigOptions.cache = false
+	swig.setDefaults( {
+		cache: false
+	} )
 
 	var clientDevFiles = require( './devStatic' )
-	defaultSwigOptions.locals.CLIENT_DEV_FILES = clientDevFiles
 }
-
-swig.setDefaults( defaultSwigOptions )
-
 
 
 app.use( function( req, res, next ) {
@@ -1698,6 +1689,7 @@ var addLocals = function( req, res, next ) {
 			Bureau.assassin.updateLastHere( req.session.uid )
 
 			res.locals.now = new Date()
+			res.locals.PRODUCTION_ENV = isProduction
 			res.locals.isGuild = assassin.guild
 			res.locals.isAdmin = process.env.BUREAU_ADMIN_EMAILS.split( ',' ).indexOf(
 				assassin.email ) > -1
@@ -1708,6 +1700,10 @@ var addLocals = function( req, res, next ) {
 			res.locals.APP_TOKEN = process.env.BUREAU_APP_TOKEN
 			res.locals.pageErrors = !!req.session.pageErrors ? req.session.pageErrors : []
 			req.session.pageErrors = null
+
+			if( !isProduction ) {
+				res.locals.CLIENT_DEV_FILES = clientDevFiles
+			}
 			next()
 		} )
 	} )
