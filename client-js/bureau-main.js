@@ -692,7 +692,6 @@ var bureau = {
 				}
 
 				for ( key in validate.results ) {
-					console.log( key, key.indexOf( 'submit' ) )
 					if ( key.indexOf( 'submit' ) === -1 ) { //Not the submit button
 						el = $( '#section-' + key );
 						if ( !validate.results[ key ] ) {
@@ -702,7 +701,6 @@ var bureau = {
 						}
 					} else {
 						el = $I( key );
-						console.log( key );
 						if ( !validate.results[ key ] ) {
 							el.classname = 'disabled';
 							el.disabled = true;
