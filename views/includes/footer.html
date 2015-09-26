@@ -18,14 +18,14 @@
 <script>window.jQuery || document.write('<script src="/js/libs/jquery-1.9.1.min.js"><\/script>')</script>
 <script type="text/javascript" src="/js/libs/plugins.js" charset="utf-8"></script>
 <script type="text/javascript" src="/js/libs/swig.min.js" charset="utf-8"></script>
-<script type="text/javascript" src="/js/libs/react.min.js" charset="utf-8"></script>
 
 {% if PRODUCTION_ENV %}
+	<script type="text/javascript" src="/js/libs/react.min.js" charset="utf-8"></script>
 	<script type="text/javascript" src="/js/bureau.js" charset="utf-8"></script>
 {% else %}
-
+	<script type="text/javascript" src="/devstatic/react.js" charset="utf-8"></script>
 	{% for file in CLIENT_DEV_FILES %}
 		<script type="text/javascript" src="/devstatic/js/{{file}}" charset="utf-8"></script>
 	{% endfor %}
-
+	<div id="dev-test"></div>
 {% endif %}
