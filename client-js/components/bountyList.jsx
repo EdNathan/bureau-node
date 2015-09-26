@@ -1,7 +1,8 @@
 class BountyList extends React.Component {
 
-	getInitialState() {
-		return { bounties: [] }
+	constructor() {
+		super();
+		this.state = { bounties: [] };
 	}
 
 	componentDidMount() {
@@ -10,18 +11,23 @@ class BountyList extends React.Component {
 
 			this.setState({
 				bounties
-			})
+			});
 
-		})
+		});
 	}
 
 	render() {
 
 		return (
-			<div className="BountyList">
-				HELLO
+			<div className="BountyList" style="{this.state.bounties.length ? '' : 'display:none'}">
+				{this.state.bounties.length} Bounties
+				{this.props.items.map(function(item, i) {
+		          return (
+		            <div onClick={this.handleClick.bind(this, i)} key={i}>{item}</div>
+		          );
+		        }, this)}
 			</div>
 		)
-		
+
 	}
 }

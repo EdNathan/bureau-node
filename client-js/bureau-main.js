@@ -244,6 +244,8 @@ var bureau = {
 			}
 			colourItems( a );
 
+			React.render(React.createElement(BountyList), $I('bounties-container'))
+
 		},
 
 		guild: function() {
