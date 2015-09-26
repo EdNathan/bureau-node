@@ -2056,7 +2056,7 @@ var Bureau = {
 					callback( err, [] )
 					return
 				}
-				console.log( bounties )
+
 				callback( null, bounties )
 
 			} )
