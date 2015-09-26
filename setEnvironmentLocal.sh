@@ -10,4 +10,5 @@ if [ -f .env ]; then
 			eval $VAR_STR
 	done <.env
 
+	export NODE_ENV=development
 fi

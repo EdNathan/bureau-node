@@ -97,6 +97,7 @@ module.exports = (grunt) ->
 	grunt.loadNpmTasks 'grunt-contrib-cssmin'
 	grunt.loadNpmTasks 'grunt-contrib-uglify'
 	grunt.loadNpmTasks 'grunt-svgmin'
+	grunt.loadNpmTasks 'grunt-babel'
 
 	# Default task(s)
 	grunt.registerTask 'default', ['watch:less', 'watch:js']

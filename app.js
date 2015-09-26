@@ -1604,11 +1604,23 @@ app.engine( 'html', swig.renderFile );
 app.set( 'view engine', 'html' );
 app.set( 'views', __dirname + '/views' );
 //app.set('view cache', false);
-if ( process.env.NODE_ENV !== 'production' ) {
-	swig.setDefaults( {
-		cache: false
-	} )
+var isProduction = process.env.NODE_ENV === 'production'
+var defaultSwigOptions = {
+	locals: {
+		PRODUCTION_ENV: isProduction
+	}
 }
+
+if ( !isProduction ) {
+
+	defaultSwigOptions.cache = false
+
+	var devStatic = require( './devStatic' )
+}
+
+swig.setDefaults( defaultSwigOptions )
+
+
 
 app.use( function( req, res, next ) {
 
