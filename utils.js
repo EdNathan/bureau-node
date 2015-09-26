@@ -156,16 +156,18 @@ var utils = {
 
 		prefix = prefix ? prefix : ''
 
-		return _.flattenDeep( files.map( function( file ) {
+		return _.filter( _.flattenDeep( files.map( function( file ) {
 
 			var stats = fs.statSync( dir + '/' + file )
 
 			if ( stats.isFile() ) {
-				return prefix + file
+				if ( file[ 0 ] !== '.' ) {
+					return prefix + file
+				}
 			} else {
 				return utils.walkdir( dir + '/' + file, file + '/' )
 			}
-		} ) )
+		} ) ) )
 	}
 
 }
