@@ -29,7 +29,6 @@ var checkUserToken = function( req, res, next ) {
 		suppliedToken = req.body.USER_TOKEN
 
 	Bureau.assassin.getToken( uid, function( err, actualToken ) {
-		console.log( err, uid, actualToken, suppliedToken )
 		if ( !err && suppliedToken === actualToken ) {
 			next()
 		} else {
