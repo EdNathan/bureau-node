@@ -7,11 +7,11 @@ class BountyList extends React.Component {
 
 	componentDidMount() {
 
-		bureau.api('bounty/getActiveBounties', (err, bounties) => {
+		bureau.api( 'bounty/getActiveBounties', ( err, bounties ) => {
 
-			this.setState({
+			this.setState( {
 				bounties
-			});
+			} );
 
 		});
 	}
@@ -19,13 +19,9 @@ class BountyList extends React.Component {
 	render() {
 
 		return (
-			<div className="BountyList" style="{this.state.bounties.length ? '' : 'display:none'}">
-				{this.state.bounties.length} Bounties
-				{this.props.items.map(function(item, i) {
-		          return (
-		            <div onClick={this.handleClick.bind(this, i)} key={i}>{item}</div>
-		          );
-		        }, this)}
+			<div className='BountyList' style={ { display:this.state.bounties.length ? 'block' : 'none' } }>
+				<div className='bounty-list-header'>{ this.state.bounties.length } Bount{ this.state.bounties.length > 1 ? 'ies' : 'y' } Unclaimed</div>
+				{ this.state.bounties.map( ( bounty, i ) => <BountyListItem {...bounty} key={i}></BountyListItem> ) }
 			</div>
 		)
 
