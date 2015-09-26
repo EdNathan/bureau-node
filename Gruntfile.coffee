@@ -51,11 +51,6 @@ module.exports = (grunt) ->
 						src: ['**', '!images/**', '!css/**', '!js/**', 'js/**.min.js']
 						dest: 'build/static'
 					}
-					{
-						expand: true
-						src: ['.{npm,git}ignore', '*.{js,json,txt}', 'views/**', 'games/**', 'temp/', '!temp/**.jpg', 'mail/**', 'temp/placeholder.txt', 'api/**']
-						dest: 'build/'
-					}
 				]
 
 		less:

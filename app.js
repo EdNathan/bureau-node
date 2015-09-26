@@ -1587,7 +1587,7 @@ var authURLS = []
 
 //Setup middleware
 app.use( express.compress() )
-app.use( express.static( 'static' ) )
+app.use( express.static( process.env.NODE_ENV !== 'production' ? 'static' : 'build/static' ) )
 app.use( express.bodyParser() )
 app.use( express.cookieParser( process.env.BUREAU_COOKIE_SECRET ) )
 app.use( express.session( {
