@@ -25,6 +25,7 @@ module.exports = function( Bureau ) {
 			var uid = params.uid
 
 			Bureau.assassin.getGamegroup( data.USER_ID, function( err, ggid ) {
+
 				Bureau.assassin.getAssassin( uid, function( err, assassin ) {
 
 					if ( err ) {
@@ -53,8 +54,6 @@ module.exports = function( Bureau ) {
 
 				Bureau.assassin.getAssassins( filter, function( err, assassins ) {
 
-					console.log( assassins )
-
 					if ( err ) {
 						callback( err )
 						return
@@ -66,6 +65,34 @@ module.exports = function( Bureau ) {
 
 			} )
 
+		},
+
+		getAssassinsFromAssassinIds: function( data, params, callback ) {
+
+			var assassinIds = data.assassinIds
+
+			if ( !_.isArray( assassinIds ) ) {
+				callback( 'Assassin ids must be supplied as an array' )
+				return
+			}
+
+			Bureau.assassin.getGamegroup( data.USER_ID, function( err, ggid ) {
+
+				Bureau.assassin.getAssassinsFromIds( assassinIds, function( err, assassins ) {
+
+					if ( err ) {
+						callback( err )
+						return
+					}
+
+					assassins = assassins.filter( function( assassin ) {
+						return assassin.gamegroup === ggid
+					} )
+
+					callback( null, assassins.map( projectAssassin ) )
+
+				} )
+			} )
 		}
 	}
 
