@@ -1,5 +1,4 @@
 var app = module.parent.exports.app
-var swig = module.parent.exports.swig
 var babel = require( 'babel-core' )
 var path = require( 'path' )
 var fs = require( 'fs' )
