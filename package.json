@@ -1,56 +1,57 @@
 {
-    "name": "bureau",
-    "version": "1.0.2-13",
-    "description": "A nodeJS + MongoDB rewrite of Bureau",
-    "main": "app.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "node_modules/.bin/grunt build;node app.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/jamtat/bureau-node.git"
-    },
-    "dependencies": {
-        "autolinker": "^0.12.3",
-        "aws-sdk": "~2.0.0-rc10",
-        "bcrypt": "^0.8.0",
-        "connect-mongo": "^0.4.1",
-        "consolidate": "0.10.x",
-        "express": "3.4.x",
-        "gm": "~1.14.2",
-        "lodash": "^3.10.1",
-        "moment": "^2.8.2",
-        "mongodb": "^1.4.8",
-        "nodemailer": "^1.3.0",
-        "react": "^0.13.3",
-        "swig": "^1.4.2",
-        "validator": "^3.17.0"
-    },
-    "author": "Ben Tattersley <ubershinysheep@gmail.com>",
-    "license": "Copyright Ben Tattersley 2014",
-    "devDependencies": {
-        "grunt": "^0.4.5",
-        "grunt-babel": "^5.0.3",
-        "grunt-cli": "^0.1.13",
-        "grunt-contrib-clean": "~0.5.0",
-        "grunt-contrib-coffee": "~0.8.0",
-        "grunt-contrib-concat": "~0.3.0",
-        "grunt-contrib-copy": "~0.5.0",
-        "grunt-contrib-cssmin": "~0.9.0",
-        "grunt-contrib-imagemin": "~0.5.0",
-        "grunt-contrib-less": "~0.9.0",
-        "grunt-contrib-uglify": "~0.4.0",
-        "grunt-contrib-watch": "~0.5.3",
-        "grunt-svgmin": "~0.4.0"
-    },
-    "engines": {
-        "node": "0.12.x"
-    },
-    "domains": [
-        "www.assassinsbureau.org",
-        "api.assassinsbureau.org",
-        "assassinsbureau.org"
-    ],
-    "subdomain": "bureau"
+  "name": "bureau",
+  "version": "1.0.2-13",
+  "description": "A nodeJS + MongoDB rewrite of Bureau",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node_modules/.bin/grunt build;node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jamtat/bureau-node.git"
+  },
+  "dependencies": {
+    "autolinker": "^0.12.3",
+    "aws-sdk": "~2.0.0-rc10",
+    "bcrypt": "^0.8.0",
+    "connect-mongo": "^0.4.1",
+    "consolidate": "0.10.x",
+    "express": "3.4.x",
+    "gm": "~1.14.2",
+    "lodash": "^3.10.1",
+    "moment": "^2.8.2",
+    "mongodb": "^1.4.8",
+    "nodemailer": "^1.3.0",
+    "react": "^0.13.3",
+    "swig": "^1.4.2",
+    "validator": "^3.17.0"
+  },
+  "author": "Ben Tattersley <ubershinysheep@gmail.com>",
+  "license": "Copyright Ben Tattersley 2014",
+  "devDependencies": {
+    "babel-core": "^5.8.25",
+    "grunt": "^0.4.5",
+    "grunt-babel": "^5.0.3",
+    "grunt-cli": "^0.1.13",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-coffee": "~0.8.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-copy": "~0.5.0",
+    "grunt-contrib-cssmin": "~0.9.0",
+    "grunt-contrib-imagemin": "~0.5.0",
+    "grunt-contrib-less": "~0.9.0",
+    "grunt-contrib-uglify": "~0.4.0",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-svgmin": "~0.4.0"
+  },
+  "engines": {
+    "node": "0.12.x"
+  },
+  "domains": [
+    "www.assassinsbureau.org",
+    "api.assassinsbureau.org",
+    "assassinsbureau.org"
+  ],
+  "subdomain": "bureau"
 }

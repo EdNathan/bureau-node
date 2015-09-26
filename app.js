@@ -1615,7 +1615,8 @@ if ( !isProduction ) {
 
 	defaultSwigOptions.cache = false
 
-	var devStatic = require( './devStatic' )
+	var clientDevFiles = require( './devStatic' )
+	defaultSwigOptions.locals.CLIENT_DEV_FILES = clientDevFiles
 }
 
 swig.setDefaults( defaultSwigOptions )

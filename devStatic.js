@@ -1,34 +1,13 @@
 var app = module.parent.exports.app
+var swig = module.parent.exports.swig
 var _ = require( 'lodash' )
+var utils = require( './utils' )
 
-var libFiles = {
-	react: 'node_modules/react/dist/react.min.js'
-}
+var clientDevFiles = utils.walkdir( 'client-js' )
 
-var filehandlers = {
-	'library/:lib': function( req, res ) {
-		res.sendfile( libFiles[ req.params.lib ] )
-	}
-}
+app.use( '/devstatic/js', function( req, res, next ) {
+	console.log( req.url )
+	res.sendfile( 'client-js' + req.url )
+} )
 
-var mapStaticRoutes = function( routeHandler, route ) {
-	route = route ? route : ''
-
-	if ( _.isFunction( routeHandler ) ) {
-
-		app.get( '/devstatic' + route, routeHandler )
-
-	} else if ( _.isPlainObject( routeHandler ) ) {
-
-		_.each( routeHandler, function( subRouteHandler, subRoute ) {
-
-			var glue = subRoute === '/' ? '' : '/';
-
-			mapStaticRoutes( subRouteHandler, route + glue + subRoute );
-
-		} );
-	}
-}
-
-mapStaticRoutes( filehandlers )
-console.log( app.routes )
+module.exports = clientDevFiles
