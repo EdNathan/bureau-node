@@ -41,6 +41,7 @@ module.exports = (grunt) ->
 
 		clean:
 			build: ['build/**']
+			babel: ['build/babel-temp/']
 
 		copy:
 			build:
@@ -67,22 +68,38 @@ module.exports = (grunt) ->
 					cleancss: true
 				files:
 					'build/static/css/bureau.css': 'less/main.less'
+
 		cssmin:
 			build:
 				expand: true
 				cwd: 'static/css/'
 				src: ['*.css', '!bureau.css']
 				dest: 'build/static/css/'
+
 		uglify:
 			build:
 				files:
-					'build/static/js/bureau.js' : ['client-js/**.js', 'client-js/components/**.js']
+					'build/static/js/bureau.js' : [
+						'client-js/**.js',
+						'client-js/components/**.js',
+						'build/babel-temp/**/*.jsx',
+						'build/babel-temp/**/*.es6'
+					]
 			buildcopymin:
 				files: [{
 					expand: true
 					cwd: 'static/js/'
 					src: ['**.js', '*/**.js', '!**.min.js', '!bureau.js']
 					dest: 'build/static/js/'
+				}]
+
+		babel:
+			build:
+				files: [{
+						expand: true
+						cwd: 'client-js/'
+						src: ['**/**.jsx', '**/**.es6']
+						dest: 'build/babel-temp/'
 				}]
 
 
@@ -110,5 +127,7 @@ module.exports = (grunt) ->
 			'cssmin:build',
 			'less:build',
 			'uglify:buildcopymin',
-			'uglify:build'
+			'babel:build',
+			'uglify:build',
+			'clean:babel'
 		]
