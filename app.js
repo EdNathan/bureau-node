@@ -1688,11 +1688,27 @@ var addLocals = function( req, res, next ) {
 			//Update when we last saw them
 			Bureau.assassin.updateLastHere( req.session.uid )
 
+			var isAdmin = process.env.BUREAU_ADMIN_EMAILS.split( ',' ).indexOf( assassin.email ) > -1
+
+			res.locals.projectedAssassin = {
+				id: assassin._id,
+				forename: assassin.forename,
+				surname: assassin.surname,
+				nickname: assassin.nickname,
+				imgname: assassin.imgname,
+				course: assassin.course,
+				address: assassin.address,
+				liverin: assassin.liverin,
+				gamegroup: assassin.gamegroup,
+				college: assassin.college,
+				guild: assassin.guild,
+				admin: isAdmin
+			}
+
 			res.locals.now = new Date()
 			res.locals.PRODUCTION_ENV = isProduction
 			res.locals.isGuild = assassin.guild
-			res.locals.isAdmin = process.env.BUREAU_ADMIN_EMAILS.split( ',' ).indexOf(
-				assassin.email ) > -1
+			res.locals.isAdmin = isAdmin
 			res.locals.uid = req.session.uid
 			res.locals.gamegroup = gamegroup
 			res.locals.token = req.session.token
@@ -1701,7 +1717,7 @@ var addLocals = function( req, res, next ) {
 			res.locals.pageErrors = !!req.session.pageErrors ? req.session.pageErrors : []
 			req.session.pageErrors = null
 
-			if( !isProduction ) {
+			if ( !isProduction ) {
 				res.locals.CLIENT_DEV_FILES = clientDevFiles
 			}
 			next()
