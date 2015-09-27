@@ -19,18 +19,18 @@ class NotificationsPanel extends React.Component {
 				notifications
 			} )
 
+			var unreadCount = notifications.reduce( ( previousValue, currentValue ) => {
+				return previousValue + ( currentValue.read ? 0 : 1 );
+			}, 0 )
+
+			bureau.toolbar.setUnreadCount( unreadCount > 0 ? unreadCount : '' )
+
 		} )
 	}
 
 	render() {
 
 		let notifications = this.state.notifications
-
-		var unreadCount = notifications.reduce( ( previousValue, currentValue ) => {
-			return previousValue + ( currentValue.read ? 0 : 1 );
-		}, 0 )
-
-// 		bureau.toolbar.setUnreadCount( unreadCount > 0 ? unreadCount : '' )
 
 		return (
 			<div className="toolbar-panel-wrapper">
