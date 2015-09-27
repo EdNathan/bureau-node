@@ -7,7 +7,7 @@ class BountyList extends React.Component {
 
 	componentDidMount() {
 
-		bureau.api( 'bounty/getActiveBounties', ( err, bounties ) => {
+		BureauApi( 'bounty/getActiveBounties', ( err, bounties ) => {
 
 			this.setState( {
 				bounties

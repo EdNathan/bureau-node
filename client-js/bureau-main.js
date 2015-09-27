@@ -91,7 +91,7 @@ var bureau = {
 			bureau.displayNotifications()
 		}
 		//Now go off and get the latest ones
-		bureau.api( 'notifications/getNotifications', {
+		BureauApi( 'notifications/getNotifications', {
 			limit: Math.floor( window.innerHeight / 60 + 5 )
 		}, function( err, notifications ) {
 			storeObj( 'notifications', notifications )
@@ -162,7 +162,7 @@ var bureau = {
 	},
 
 	markNotificationRead: function( notificationId, callback ) {
-		bureau.api( 'notifications/markRead/' + notificationId, callback )
+		BureauApi( 'notifications/markRead/' + notificationId, callback )
 	},
 
 	api: BureauApi,
@@ -326,7 +326,7 @@ var bureau = {
 			$( 'input[type=submit][name=resetpassword]' ).on( 'click', function( e ) {
 				var resetuid = this.getAttribute( 'data-uid' )
 				if ( confirm( 'Are you sure you want to reset their password?' ) ) {
-					bureau.api( 'resetPassword/' + resetuid, function( err, j ) {
+					BureauApi( 'resetPassword/' + resetuid, function( err, j ) {
 						prompt(
 							'Copy the password below and securely send it to the player. If either of you lose this code you will need to generate it again.',
 							j.temppassword )
@@ -481,7 +481,7 @@ var bureau = {
 					el.children[ 0 ].innerHTML = 'Loading ' + gametype + ' setup...';
 					el.className = 'fragment-loading';
 
-					bureau.api( 'gamesetupfragment/' + gametype, function( err, fragment ) {
+					BureauApi( 'gamesetupfragment/' + gametype, function( err, fragment ) {
 						if ( !err ) {
 							el.className = ''
 							el.children[ 0 ].innerHTML = fragment
@@ -690,7 +690,7 @@ var bureau = {
 						//Need to load in gamestate data
 						clicked.push( k )
 						console.log( k )
-						bureau.api( 'gamestatefragment/' + gameid + '/' + uid, function( err, j ) {
+						BureauApi( 'gamestatefragment/' + gameid + '/' + uid, function( err, j ) {
 							$( el ).parent().find( '.gamestate-block' ).html( j.gamestatefragment )
 						} )
 					}
@@ -1054,7 +1054,7 @@ var bureau = {
 			$I( 'opt-in-input' ).addEventListener( 'click', function( e ) {
 				var optout = !this.checked;
 
-				bureau.api( 'setoptout', {
+				BureauApi( 'setoptout', {
 					optout: optout
 				}, function( err, response ) {
 					bureau.refreshNotifications()
