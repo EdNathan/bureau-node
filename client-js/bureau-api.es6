@@ -1,4 +1,4 @@
-const BureauApi = function( endpoint, data, callback=function(){} ) {
+const BureauApi = function( endpoint, data, callback = function() {} ) {
 
 	var j = {
 		APP_TOKEN: APP_TOKEN,
@@ -29,7 +29,7 @@ const BureauApi = function( endpoint, data, callback=function(){} ) {
 		}
 	}
 
-	let apiUrl = `//api.${window.location.host}/${endpoint}`
+	let apiUrl = `//api.${window.location.host.replace('www.','')}/${endpoint}`
 
 	req.open( 'POST', apiUrl )
 	req.setRequestHeader( 'Content-type', 'application/json' )
