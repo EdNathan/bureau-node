@@ -22,10 +22,10 @@
 <script type="text/javascript" src="/js/libs/browser-polyfill.min.js" charset="utf-8"></script>
 
 {% if PRODUCTION_ENV %}
-	<script type="text/javascript" src="/js/libs/react.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="/js/libs/react-with-addons.min.js" charset="utf-8"></script>
 	<script type="text/javascript" src="/js/bureau.js" charset="utf-8"></script>
 {% else %}
-	<script type="text/javascript" src="/devstatic/react.js" charset="utf-8"></script>
+	<script type="text/javascript" src="/devstatic/react-with-addons.js" charset="utf-8"></script>
 	{% for file in CLIENT_DEV_FILES %}
 		<script type="text/javascript" src="/devstatic/js/{{file}}" charset="utf-8"></script>
 	{% endfor %}

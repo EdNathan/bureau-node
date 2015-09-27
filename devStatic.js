@@ -22,8 +22,8 @@ clientDevFiles = clientDevFiles.map( function( filename ) {
 } )
 
 
-app.use( '/devstatic/react.js', function( req, res, next ) {
-	res.sendfile( 'node_modules/react/dist/react.js' )
+app.use( '/devstatic/react-with-addons.js', function( req, res, next ) {
+	res.sendfile( 'node_modules/react/dist/react-with-addons.js' )
 } )
 
 app.use( '/devstatic/js', function( req, res, next ) {
@@ -43,9 +43,6 @@ app.use( '/devstatic/js', function( req, res, next ) {
 			sourceFileName: clientDevMap[ filename ].split( '/' ).pop()
 		} )
 
-		console.log( transformedContents )
-
-		// res.header( 'X-SourceMap', '/devstatic/js/' + clientDevMap[ filename ] )
 		res.header( 'Content-Type', 'text/javascript' )
 		res.send( transformedContents.code )
 
@@ -58,7 +55,6 @@ app.use( '/devstatic/js', function( req, res, next ) {
 		} )
 
 		res.header( 'Content-Type', 'text/javascript' )
-
 		res.send( fileContents )
 
 	}
