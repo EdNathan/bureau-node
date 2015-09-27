@@ -1,4 +1,3 @@
-
 //Grab saved colours
 var colours = retrieveObj( 'bureau-colours' )
 
@@ -28,7 +27,7 @@ function makeColourItem( el, p, alpha ) {
 
 function colourItems( items ) {
 	if ( $I( 'toolbar' ) ) {
-		items.unshift( makeColourItem( $I( 'toolbar' ), 'borderColor' ) );
+		items.unshift( makeColourItem( $I( 'toolbar-buttons' ), 'borderColor' ) );
 
 		//Style grabber
 		var r = $I( 'grabber' ).querySelectorAll( 'rect' );
@@ -40,7 +39,7 @@ function colourItems( items ) {
 
 	}
 
-	var links = document.querySelectorAll( '#toolbar > li > a' );
+	var links = document.querySelectorAll( '#toolbar li > a' );
 	for ( var i = 0; i < links.length; i++ ) {
 		items.unshift( makeColourItem( links[ i ], 'color' ) );
 	}

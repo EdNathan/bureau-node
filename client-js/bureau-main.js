@@ -1,9 +1,7 @@
 var bureau = {
 	init: function() {
 		if ( !!$I( 'bureau-uid' ).value ) {
-			this.user = BUREAU_USER
 			this.setupToolbar()
-			this.refreshNotifications()
 		}
 		setup();
 
@@ -44,128 +42,9 @@ var bureau = {
 		}
 	},
 
-	user: {
-		uid: 0,
-		gamegroup: '',
-		token: ''
-	},
-
-	notifications: [],
-
 	setupToolbar: function() {
-		if ( $I( 'toolbar' ) ) {
-			var d = $I( 'grabber' );
-			d.innerHTML =
-				'<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="30px" height="23px" viewBox="0 0 30 23" enable-background="new 0 0 30 23" xml:space="preserve"> <rect fill-rule="evenodd" clip-rule="evenodd" fill="#888888" width="30" height="3"/> <rect y="10" fill-rule="evenodd" clip-rule="evenodd" fill="#888888" width="30" height="3"/><rect y="20" fill-rule="evenodd" clip-rule="evenodd" fill="#888888" width="30" height="3"/></svg>';
-
-			//setup notification drawer
-			var drawer = $I( 'toolbar-notifications' )
-			$( '#notifications-btn, #grabber' ).on( 'click', function( e ) {
-				stopEvent( e )
-				drawer.classList.toggle( 'open' )
-			} )
-		}
-
-		var m = document.createElement( 'meta' );
-		m.setAttribute( 'name', 'msapplication-tap-highlight' );
-		m.setAttribute( 'content', 'no' );
-
-		var m2 = document.createElement( 'meta' );
-		m2.setAttribute( 'http-equiv', 'X-UA-Compatible' );
-		m2.setAttribute( 'content', 'IE=edge' );
-
-		document.head.appendChild( m );
-		document.head.appendChild( m2 );
+		React.render( React.createElement( Toolbar ), $I( 'navbar-container' ) )
 	},
-
-	refreshNotifications: function() {
-		var cachedNotifications = retrieveObj( 'notifications' )
-		if ( !!cachedNotifications ) {
-			bureau.notifications = cachedNotifications.map( function( n ) {
-				n.added = new Date( n.added )
-				if ( n.seen ) {
-					n.seen = new Date( n.seen )
-				}
-				return n
-			} )
-			bureau.displayNotifications()
-		}
-		//Now go off and get the latest ones
-		BureauApi( 'notifications/getNotifications', {
-			limit: Math.floor( window.innerHeight / 60 + 5 )
-		}, function( err, notifications ) {
-			storeObj( 'notifications', notifications )
-			bureau.notifications = notifications.map( function( n ) {
-				n.added = new Date( n.added )
-				if ( n.seen ) {
-					n.seen = new Date( n.seen )
-				}
-				return n
-			} )
-			bureau.displayNotifications()
-		} )
-	},
-
-	cacheNotifications: function() {
-		storeObj( 'notifications', bureau.notifications )
-	},
-
-	displayNotifications: function() {
-		try {
-			var list = $I( 'notifications' ),
-				tpl = $I( 'notification-template' ).innerHTML,
-				n = bureau.notifications.map( function( x ) {
-					x.ago = timeSince( x.added )
-					return x
-				} ),
-				out = swig.render( tpl, {
-					locals: {
-						notifications: n
-					}
-				} )
-		} catch ( e ) {
-			return
-		}
-
-		list.innerHTML = out
-
-		var unreadCount = bureau.notifications.reduce( function( previousValue,
-			currentValue, index, array ) {
-			return previousValue + ( currentValue.read ? 0 : 1 );
-		}, 0 )
-
-		$I( 'unread-count' ).innerHTML = unreadCount > 0 ? unreadCount : ''
-
-		$( list ).children().on( 'click', function( e ) {
-			stopEvent( e )
-			var link = this.getAttribute( 'data-link' ),
-				notificationId = this.id.replace( 'notification-', '' )
-			if ( this.className.indexOf( 'unread' ) > -1 ) {
-				//Use api to mark unread
-				bureau.markNotificationRead( notificationId, function( err, response ) {
-					var i = 0,
-						l = bureau.notifications.length
-					for ( i; i < l; i++ ) {
-						if ( bureau.notifications[ i ].id == notificationId ) {
-							bureau.notifications[ i ].read = true
-							break
-						}
-					}
-					bureau.cacheNotifications()
-					bureau.displayNotifications()
-					if ( !!link ) {
-						window.location = link
-					}
-				} )
-			}
-		} )
-	},
-
-	markNotificationRead: function( notificationId, callback ) {
-		BureauApi( 'notifications/markRead/' + notificationId, callback )
-	},
-
-	api: BureauApi,
 
 	setup: {
 		search: function( important ) {
@@ -244,7 +123,7 @@ var bureau = {
 			}
 			colourItems( a );
 
-			React.render(React.createElement(BountyList), $I('bounties-container'))
+			React.render( React.createElement( BountyList ), $I( 'bounties-container' ) )
 
 		},
 
@@ -980,14 +859,12 @@ var bureau = {
 			$( '.colours [data-colour]' ).each( function( i, el ) {
 				var colour = $( this ).attr( 'data-colour' )
 				if ( colours.indexOf( colour ) > -1 ) {
-					console.log( $( this ).find( 'input[type=checkbox]' ) )
 					$( this ).find( 'input[type=checkbox]' )[ 0 ].checked = true
 				}
 			} )
 			$( '.colours label' ).on( 'click', function( e ) {
 				var checked = !( $( this ).siblings( 'input' )[ 0 ].checked ),
 					colour = $( this ).siblings( 'input' )[ 0 ].value
-				console.log( checked, colour )
 				if ( checked ) {
 					if ( colours.indexOf( colour ) < 0 ) {
 						colours.push( colour )
@@ -1057,7 +934,7 @@ var bureau = {
 				BureauApi( 'setoptout', {
 					optout: optout
 				}, function( err, response ) {
-					bureau.refreshNotifications()
+					bureau.notificationsPanel.refresh()
 				} )
 			} )
 		},
