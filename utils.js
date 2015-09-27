@@ -162,7 +162,7 @@ var utils = {
 
 			if ( stats.isFile() ) {
 				if ( file[ 0 ] !== '.' ) {
-					return prefix + file
+					return dir + '/' + file
 				}
 			} else {
 				return utils.walkdir( dir + '/' + file, file + '/' )

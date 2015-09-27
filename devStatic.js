@@ -12,6 +12,7 @@ var clientDevMap = {}
 var transformRegex = /.*\.(jsx|es6)$/
 
 clientDevFiles = clientDevFiles.map( function( filename ) {
+	filename = filename.replace( 'client-js/', '' )
 	if ( transformRegex.test( filename ) ) {
 		var transformedFile = filename.slice( 0, filename.lastIndexOf( '.' ) ) + '.js'
 		clientDevMap[ transformedFile ] = filename
@@ -20,7 +21,6 @@ clientDevFiles = clientDevFiles.map( function( filename ) {
 		return filename
 	}
 } )
-
 
 app.use( '/devstatic/react-with-addons.js', function( req, res, next ) {
 	res.sendfile( 'node_modules/react/dist/react-with-addons.js' )
