@@ -18,11 +18,12 @@ class NotificationListItem extends React.Component {
 		if ( this.props.notification.read ) return;
 
 		BureauApi( `notifications/markRead/${this.props.notification.id}`, ( err, notifications ) => {
-			this.setState( {
-				notification: {
-					read: true
-				}
-			} )
+			
+			let newState = _.clone(this.state)
+
+			newState.notification.read = true
+
+			this.setState( newState )
 		} )
 	}
 
