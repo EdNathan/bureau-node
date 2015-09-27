@@ -2,7 +2,7 @@ class BountyList extends React.Component {
 
 	constructor() {
 		super();
-		this.state = { bounties: [] };
+		this.state = { bounties: [], closed: true };
 	}
 
 	componentDidMount() {
@@ -18,10 +18,14 @@ class BountyList extends React.Component {
 
 	render() {
 
+		if ( !this.state.bounties.length ) {
+			return false
+		}
+
 		return (
-			<div className='BountyList' style={ { display:this.state.bounties.length ? 'block' : 'none' } }>
+			<div className={'bounty-list'+(this.state.closed ? ' bounty-list-closed' : '')}>
 				<div className='bounty-list-header'>{ this.state.bounties.length } Bount{ this.state.bounties.length > 1 ? 'ies' : 'y' } Unclaimed</div>
-				{ this.state.bounties.map( ( bounty, i ) => <BountyListItem {...bounty} key={i}></BountyListItem> ) }
+				{ this.state.bounties.map( ( bounty, i ) => <BountyListItem bounty={bounty} key={i}></BountyListItem> ) }
 			</div>
 		)
 
