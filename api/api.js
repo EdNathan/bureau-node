@@ -111,12 +111,16 @@ var mapApiRoutes = function( routeHandler, route ) {
 	}
 }
 
+var mappedEndpoints = {}
+
 var createApiEndpoint = function( endpoint ) {
-	mapApiRoutes( require( './endpoints/' + endpoint )( Bureau ), endpoint )
+	var endpointHandler = require( './endpoints/' + endpoint )( Bureau )
+	mapApiRoutes( endpointHandler, endpoint )
+	mappedEndpoints[ endpoint ] = endpoint
 }
 
 var endpoints = require( './endpoints.js' )
 
 endpoints.map( createApiEndpoint )
 
-module.exports = true
+module.exports = mappedEndpoints
