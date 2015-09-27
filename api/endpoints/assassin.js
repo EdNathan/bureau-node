@@ -12,7 +12,8 @@ module.exports = function( Bureau ) {
 		'liverin',
 		'gamegroup',
 		'college',
-		'guild'
+		'guild',
+		'imgname'
 	]
 
 	var projectAssassin = function( assassin ) {
