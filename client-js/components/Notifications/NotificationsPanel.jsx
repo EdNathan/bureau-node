@@ -34,7 +34,7 @@ class NotificationsPanel extends React.Component {
 
 		return (
 			<div className="toolbar-panel-wrapper">
-				<div className="toolbar-header" style={{color:CHOSEN_COLOUR}}>Notifactions</div>
+				<div className="toolbar-header" style={{color:CHOSEN_COLOUR}}>Notifcations</div>
 				<ul className="toolbar-content">
 					{this.state.notifications.map( ( notification, i ) => <NotificationListItem notification={notification} key={i} /> )}
 				</ul>
