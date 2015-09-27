@@ -14,7 +14,7 @@ class NotificationsPanel extends React.Component {
 
 	refresh() {
 		BureauApi( 'notifications/getNotifications', ( err, notifications ) => {
-			console.log(notifications)
+
 			this.setState( {
 				notifications
 			} )
