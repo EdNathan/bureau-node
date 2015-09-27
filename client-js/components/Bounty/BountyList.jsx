@@ -14,6 +14,8 @@ class BountyList extends React.Component {
 			} );
 
 		});
+
+		makeColourItem(React.findDOMNode(this))
 	}
 
 	render() {
@@ -23,9 +25,11 @@ class BountyList extends React.Component {
 		}
 
 		return (
-			<div className={'bounty-list'+(this.state.closed ? ' bounty-list-closed' : '')}>
+			<div>
 				<div className='bounty-list-header'>{ this.state.bounties.length } Bount{ this.state.bounties.length > 1 ? 'ies' : 'y' } Unclaimed</div>
-				{ this.state.bounties.map( ( bounty, i ) => <BountyListItem bounty={bounty} key={i}></BountyListItem> ) }
+				<ul className={'bounty-list'+(this.state.closed ? ' bounty-list-closed' : '')} style={{color:CHOSEN_COLOUR}}>
+					{ this.state.bounties.map( ( bounty, i ) => <BountyListItem bounty={bounty} key={i}></BountyListItem> ) }
+				</ul>
 			</div>
 		)
 
