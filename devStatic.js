@@ -7,17 +7,49 @@ var utils = require( './utils' )
 
 var clientDevFiles = utils.walkdir( 'client-js' )
 
+var clientDevMap = {}
+
 var transformRegex = /.*\.(jsx|es6)$/
 
-app.use('/devstatic/react.js', function(req, res, next) {
-	res.sendfile('node_modules/react/dist/react.js')
-})
+clientDevFiles = clientDevFiles.map( function( filename ) {
+	if ( transformRegex.test( filename ) ) {
+		var transformedFile = filename.slice( 0, filename.lastIndexOf( '.' ) ) + '.js'
+		clientDevMap[ transformedFile ] = filename
+		return transformedFile
+	} else {
+		return filename
+	}
+} )
+
+
+app.use( '/devstatic/react.js', function( req, res, next ) {
+	res.sendfile( 'node_modules/react/dist/react.js' )
+} )
 
 app.use( '/devstatic/js', function( req, res, next ) {
 
-	var filename = req.url
+	var filename = req.url.replace( /^\//, '' )
 
-	if ( transformRegex.test( filename ) ) {
+	if ( clientDevMap[ filename ] ) {
+
+		var filePath = path.resolve( 'client-js/' + clientDevMap[ filename ] )
+
+		var fileContents = fs.readFileSync( filePath, {
+			encoding: 'utf8'
+		} )
+
+		var transformedContents = babel.transform( fileContents, {
+			sourceMaps: 'inline',
+			sourceFileName: clientDevMap[ filename ].split( '/' ).pop()
+		} )
+
+		console.log( transformedContents )
+
+		// res.header( 'X-SourceMap', '/devstatic/js/' + clientDevMap[ filename ] )
+		res.header( 'Content-Type', 'text/javascript' )
+		res.send( transformedContents.code )
+
+	} else {
 
 		var filePath = path.resolve( 'client-js/' + filename )
 
@@ -26,11 +58,8 @@ app.use( '/devstatic/js', function( req, res, next ) {
 		} )
 
 		res.header( 'Content-Type', 'text/javascript' )
-		res.send( babel.transform( fileContents ).code )
 
-	} else {
-
-		res.sendfile( 'client-js' + req.url )
+		res.send( fileContents )
 
 	}
 } )
