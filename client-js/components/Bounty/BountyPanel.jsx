@@ -24,7 +24,9 @@ class BountyPanel extends React.Component {
 					{ BUREAU_ASSASSIN.guild ? <div className="toolbar-header-button" onClick={this.toggleCreateBounty.bind(this)}>+</div> : null }
 				</div>
 				<div className="toolbar-content">
-					{ this.state.createBountyOpen ? <ReactCSSTransitionGroup transitionName="toolbar-content-slideup" className="toolbar-content-overlay" component='div' transitionAppear={true}><BountyCreate/></ReactCSSTransitionGroup> : null }
+					<ReactCSSTransitionGroup transitionName="toolbar-content-slideup" className="toolbar-content-overlay" component='div'>
+						{ this.state.createBountyOpen ? <BountyCreate/> : null }
+					</ReactCSSTransitionGroup>
 					<BountyList/>
 				</div>
 			</div>

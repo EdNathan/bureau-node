@@ -40,12 +40,14 @@ class NotificationsPanel extends React.Component {
 
 		let notifications = this.state.notifications
 
+		var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup
+
 		return (
 			<div className="toolbar-panel-wrapper">
 				<div className="toolbar-header" style={{color:CHOSEN_COLOUR}}>Notifcations</div>
-				<ul className="toolbar-content notification-list">
-					{this.state.notifications.map( ( notification, i ) => <NotificationListItem onClick={this.markRead(notification)} notification={notification} key={i} /> )}
-				</ul>
+				<ReactCSSTransitionGroup transitionName="toolbar-content-slideleft" className="toolbar-content notification-list" component='ul'>
+					{this.state.notifications.map( ( notification, i ) => <NotificationListItem onClick={this.markRead(notification)} notification={notification} key={this.state.notifications.length - i} /> )}
+				</ReactCSSTransitionGroup>
 			</div>
 		)
 	}

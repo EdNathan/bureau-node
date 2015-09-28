@@ -213,7 +213,7 @@
 
 .toolbar-content-slideup {
 
-	&-appear {
+	&-appear, &-enter {
 
 		.transform( translateY( 100% ) );
 		.transition( 0.6s );
@@ -237,6 +237,33 @@
 		}
 	}
 
+}
+
+.toolbar-content-slideleft {
+
+	&-appear, &-enter {
+
+		.transform( translateX( 100% ) );
+		.transition( 0.6s );
+
+		&-active {
+
+			.transform( translateX( 0% ) );
+
+		}
+	}
+
+	&-leave {
+
+		.transform( translateX( 0% ) );
+
+		&-active {
+
+			.transform( translateX( 100% ) );
+			.transition( 0.6s );
+
+		}
+	}
 
 }
 
