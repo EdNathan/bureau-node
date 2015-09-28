@@ -3,7 +3,7 @@ module.exports = function( Bureau ) {
 	return {
 		getNotifications: function( data, params, callback ) {
 			var uid = data.USER_ID,
-				limit = data.limit
+				limit = data.limit ? data.limit : 30
 
 			Bureau.assassin.getNotifications( uid, limit, callback )
 		},
