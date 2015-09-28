@@ -984,10 +984,10 @@ var Bureau = {
 
 		getKillMethods: function( ggid, callback ) {
 			Bureau.gamegroup.getGamegroup( ggid, function( err, gg ) {
-				if ( !gg.killmethods ) {
+				if ( err || !gg.killmethods ) {
 					callback( err, [] )
 				} else {
-					callback( err, gg.killmethods )
+					callback( null, gg.killmethods )
 				}
 			} )
 		},
