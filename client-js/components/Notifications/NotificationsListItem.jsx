@@ -7,7 +7,7 @@ class NotificationListItem extends React.Component {
 		return (
 			<li id={`notification-${notification.id}`} className={`${notification.read ? '' : 'notification-unread'}`} onClick={this.props.onClick}>
 				<span className="notification-message">{notification.text}</span>
-				<span className="notification-ago">{notification.ago} ago {notification.source && notification.source.length > 0 ? '- '+notification.source : ''}</span>
+				<span className="notification-ago">{timeSince(notification.added)} ago {notification.source && notification.source.length > 0 ? '- '+notification.source : ''}</span>
 			</li>
 		)
 	}

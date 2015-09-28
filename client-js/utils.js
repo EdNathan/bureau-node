@@ -116,6 +116,11 @@ function colourItems( items ) {
 
 // XXX time ago
 function timeSince( date ) {
+	
+	if ( typeof date === 'string' ) {
+		date = new Date(date)
+	}
+
 	var seconds = Math.floor( ( new Date() - date ) / 1000 );
 
 	var interval = Math.floor( seconds / 31536000 );
