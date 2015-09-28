@@ -32,9 +32,9 @@ class Toolbar extends React.Component {
 	}
 
 	setBountyCount( bountyCount ) {
-		
+
 		this.setState( {
-			bountyCount	
+			bountyCount
 		} )
 
 	}
@@ -108,7 +108,7 @@ class Toolbar extends React.Component {
 					<li id="grabber" onClick={this.toggleOpen.bind(this)}>{Toolbar.grabber()}</li>
 					<li><a href="/home" title="Home">&#xe006;</a></li>
 					<li><a id="notifications-btn" href="#" onClick={this.setOpen('notifications')}>&#xe004;<span className="unread-count">{this.state.unreadCount > 0 ? this.state.unreadCount : null}</span></a></li>
-					<li><a id="bounties-btn" href="#" onClick={this.setOpen('bounty')}>$<span className="unread-count">{this.state.bountyCount > 0 ? this.state.bountyCount : null}</span></a></li>
+					<li><a id="bounties-btn" href="#" title="Bounties" onClick={this.setOpen('bounty')}>$<span className="unread-count">{this.state.bountyCount > 0 ? this.state.bountyCount : null}</span></a></li>
 					{personal}
 					{assassin.guild ? <li><a href="/guild" title="Guild">&#xe005;</a></li> : null}
 					{assassin.admin ? <li><a href="/admin" title="Admin">&#10083;</a></li> : null}
