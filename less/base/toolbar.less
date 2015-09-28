@@ -193,6 +193,10 @@
 						left: 0%;
 					}
 				}
+
+				span {
+					cursor: pointer;
+				}
 			}
 
 			&#personal-toolbar-pic {
@@ -244,6 +248,7 @@
 			color: #d0d0d0;
 			.multi-transition(~"color 0.25s ease 0.5s, border 0.3s ease 0.5s, opacity 0.4s ease 0.5s");
 			opacity: 1;
+			pointer-events: none;
 
 			&:empty {
 				opacity: 0;
