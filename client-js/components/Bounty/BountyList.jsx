@@ -1,8 +1,8 @@
 class BountyList extends React.Component {
 
 	constructor() {
-		super();
-		this.state = { bounties: [], closed: true };
+		super()
+		this.state = { bounties: [] }
 	}
 
 	componentDidMount() {
@@ -11,11 +11,11 @@ class BountyList extends React.Component {
 
 			this.setState( {
 				bounties
-			} );
+			} )
 
 			bureau.toolbar.setBountyCount( bounties.length )
 
-		});
+		})
 
 		makeColourItem(React.findDOMNode(this))
 	}
@@ -26,21 +26,28 @@ class BountyList extends React.Component {
 
 			callback( err, bounties.length )
 
-		});
+		})
 
 	}
 
 	render() {
 
-		if ( !this.state.bounties.length ) {
-			return false
+		let empty = !this.state.bounties.length
+
+		var emptyMessage = null
+
+		if ( empty ) {
+			emptyMessage = <div>
+					<div className='bounty-list-empty-header'>No bounties</div>
+					<div className='bounty-list-empty-message'>Why not ask your guild to set one?</div>
+				</div>
 		}
 
 		return (
 			<div>
-				<ul className={'bounty-list'+(this.state.closed ? ' bounty-list-closed' : '')}>
+				<ul className='bounty-list'>
 					{ this.state.bounties.map( ( bounty, i ) => <BountyListItem bounty={bounty} key={i}></BountyListItem> ) }
-					{ !this.state.bounties.length ? 'No bounties, why not ask your guild to set one?' : null }
+					{ emptyMessage }
 				</ul>
 			</div>
 		)

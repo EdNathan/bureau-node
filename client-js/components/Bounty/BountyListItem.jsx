@@ -47,7 +47,7 @@ class BountyListItem extends React.Component {
 		}
 
 		return (
-			<li>
+			<li className="bounty-list-item">
 				<div className="bounty-title">{ bounty.title }</div>
 				{comment}
 				{targets}

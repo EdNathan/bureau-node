@@ -71,13 +71,13 @@ p, h1, h2, h3, h4, h5, h6 {
 	width: 100%;
 	height: 40px;
 	margin-top: 50px;
-	
+
 	#notification + & {
 		@m: 20px;
 		margin-top: @m;
 		margin-bottom: @m+5px;
 	}
-	
+
 }
 
 /* Inputs */
@@ -86,14 +86,15 @@ p, h1, h2, h3, h4, h5, h6 {
 @import 'base/h1-6.less';
 /* Containers */
 @import 'base/container.less';
-/* Grabber */
-//@import 'base/grabber.less';
 /* Toolbar */
-@import 'base/toolbar.less';
+
 /* Cards */
 @import 'base/player-cards.less';
 /* Player Lists */
 @import 'base/player-list.less';
+
+//Components
+@import 'components.less';
 
 
 /* Home Page */
@@ -159,7 +160,7 @@ p, h1, h2, h3, h4, h5, h6 {
 
 //Page errors box
 #page-errors {
-	
+
 	color: white;
 	list-style: none;
 	margin: 0px -30px 20px -20px;
@@ -172,7 +173,7 @@ p, h1, h2, h3, h4, h5, h6 {
 		color: @red;
 		margin-bottom: 5px;
 	}
-	
+
 	.page-error {
 		display: block;
 		margin: 0 0 5px;
@@ -193,7 +194,7 @@ p, h1, h2, h3, h4, h5, h6 {
 		padding-top: 55px !important;
 		padding-left: 0;
 	}
-	
+
 	h1 {
 		position: fixed;
 		z-index: 100000;
@@ -201,20 +202,20 @@ p, h1, h2, h3, h4, h5, h6 {
 		left: 0;
 		right: 0;
 	}
-	
+
 	#page-errors {
 		margin: 60px 0 0s;
 		#page-guild & {
 			margin: 60px 0 -30px;
 		}
 	}
-	
+
 	.settings-page .container {
 		border-width: 0px 0px 0px 0px;
 		box-shadow: none;
 		margin-bottom: 0px !important;
 	}
-	
+
 	.settings-page .container:first-child {
 		border-top-width: 2px;
 		margin-top: 10px;
@@ -224,7 +225,7 @@ p, h1, h2, h3, h4, h5, h6 {
 		margin-bottom: 10px;
 		box-shadow: 0 3px 2px rgba(0,0,0,0.1);
 	}
-	
+
 /*
 	#toolbar {
 		width: 95px;
@@ -233,19 +234,19 @@ p, h1, h2, h3, h4, h5, h6 {
 		border-right: 5px solid #d0d0d0;
 		left: -100px;
 	}
-	
+
 	#toolbar > li {
 		display: inline-block;
 		width: 100%;
 		list-style-type: none;
 		float: left;
 	}
-	
+
 	#toolbar >li > a {
 		text-align: left;
 		padding-left: 10px;
 	}
-	
+
 	#toolbar > li > a::after {
 		position: absolute;
 		left: 40px;
@@ -253,11 +254,11 @@ p, h1, h2, h3, h4, h5, h6 {
 		top: 0;
 		line-height: 50px;
 	}
-	
+
 	#toolbar > li > a:hover::after {
 		left: 40px;
 	}
-	
+
 	#grabber {
 		display: block;
 	}
@@ -272,21 +273,21 @@ p, h1, h2, h3, h4, h5, h6 {
 		height: 100%;
 		display: block;
 		border-left-width: 0px;
-		border-right: 5px solid #d0d0d0;	
+		border-right: 5px solid #d0d0d0;
 	}
-	
+
 	#toolbar > li {
 		display: inline-block;
 		width: 47px;
 		list-style-type: none;
 		float: left;
 	}
-	
+
 	#toolbar > li > a::after {
 		display: none;
 	}
 */
-	
+
 	body {
 		padding-right: 0px;
 		padding-left: 0px;
