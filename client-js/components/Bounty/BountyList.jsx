@@ -40,6 +40,7 @@ class BountyList extends React.Component {
 			<div>
 				<ul className={'bounty-list'+(this.state.closed ? ' bounty-list-closed' : '')} style={{color:CHOSEN_COLOUR}}>
 					{ this.state.bounties.map( ( bounty, i ) => <BountyListItem bounty={bounty} key={i}></BountyListItem> ) }
+					{ !this.state.bounties.length ? 'No bounties, why not ask your guild to set one?' : null }
 				</ul>
 			</div>
 		)
