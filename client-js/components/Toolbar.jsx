@@ -8,7 +8,7 @@ class Toolbar extends React.Component {
 		this.state = {
 			unreadCount: 0,
 			open: false,
-			panel: 'notifications'
+			panel: 'bounty'
 		}
 
 		var m = document.createElement( 'meta' );
@@ -23,10 +23,18 @@ class Toolbar extends React.Component {
 		document.head.appendChild( m2 );
 	}
 
-	setUnreadCount( unread ) {
+	setUnreadCount( unreadCount ) {
 
 		this.setState( {
-			unreadCount: unread
+			unreadCount
+		} )
+
+	}
+
+	setBountyCount( bountyCount ) {
+		
+		this.setState( {
+			bountyCount	
 		} )
 
 	}
@@ -42,12 +50,36 @@ class Toolbar extends React.Component {
 		)
 	}
 
-	toggleOpen(e) {
+	toggleOpen() {
 
-		this.setState({
+		this.setState( {
 			open: !this.state.open
-		})
+		} )
 
+	}
+
+	setOpen(panel) {
+
+		let self = this
+
+		return (e) => {
+
+			if ( self.state.panel === panel ) {
+
+				self.setState( {
+					open: !self.state.open
+				} )
+
+			} else {
+
+				self.setState( {
+					open: true,
+					panel: panel
+				} )
+
+			}
+
+		}
 	}
 
 	render() {
@@ -62,15 +94,21 @@ class Toolbar extends React.Component {
 			personal = <li><a href="/personal" title="Me">&#xe001;</a></li>
 		}
 
+		let contentPanel = {
+			notifications: <NotificationsPanel/>,
+			bounty: <BountyPanel/>
+		}
+
 		return (
 			<div id="toolbar" className={ this.state.open ? 'open' : '' }>
 				<div id="toolbar-panel">
-					<NotificationsPanel/>
+					{contentPanel[this.state.panel]}
 				</div>
 				<ul id="toolbar-buttons">
 					<li id="grabber" onClick={this.toggleOpen.bind(this)}>{Toolbar.grabber()}</li>
 					<li><a href="/home" title="Home">&#xe006;</a></li>
-					<li><a id="notifications-btn" href="#" onClick={this.toggleOpen.bind(this)}>&#xe004;<span id="unread-count">{this.state.unreadCount > 0 ? this.state.unreadCount : null}</span></a></li>
+					<li><a id="notifications-btn" href="#" onClick={this.setOpen('notifications')}>&#xe004;<span className="unread-count">{this.state.unreadCount > 0 ? this.state.unreadCount : null}</span></a></li>
+					<li><a id="bounties-btn" href="#" onClick={this.setOpen('bounty')}>$<span className="unread-count">{this.state.bountyCount > 0 ? this.state.bountyCount : null}</span></a></li>
 					{personal}
 					{assassin.guild ? <li><a href="/guild" title="Guild">&#xe005;</a></li> : null}
 					{assassin.admin ? <li><a href="/admin" title="Admin">&#10083;</a></li> : null}

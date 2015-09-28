@@ -91,11 +91,12 @@ function colourItems( items ) {
 
 	items.unshift( makeColourItem( document.querySelector( 'h1' ), 'color' ) );
 	items.unshift( makeColourItem( document.querySelector( 'h1' ), 'borderColor' ) );
-	items.unshift( makeColourItem( document.querySelector( '#notifications-title' ),
-		'color' ) );
-	items.unshift( makeColourItem( document.querySelector( '#unread-count' ), 'color' ) );
-	items.unshift( makeColourItem( document.querySelector( '#unread-count' ),
-		'borderColor' ) );
+	items.unshift( makeColourItem( document.querySelector( '#notifications-title' ), 'color' ) );
+
+	addRule( '#toolbar #toolbar-buttons li .unread-count', {
+		color: CHOSEN_COLOUR,
+		'border-color': CHOSEN_COLOUR
+	} );
 
 	var i = 0,
 		l = items.length,

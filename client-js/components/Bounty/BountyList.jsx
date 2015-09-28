@@ -13,9 +13,21 @@ class BountyList extends React.Component {
 				bounties
 			} );
 
+			bureau.toolbar.setBountyCount( bounties.length )
+
 		});
 
 		makeColourItem(React.findDOMNode(this))
+	}
+
+	static getUnclaimedBountyCount(callback) {
+
+		BureauApi( 'bounty/getActiveBounties', ( err, bounties ) => {
+
+			callback( err, bounties.length )
+
+		});
+
 	}
 
 	render() {
@@ -26,7 +38,6 @@ class BountyList extends React.Component {
 
 		return (
 			<div>
-				<div className='bounty-list-header'>{ this.state.bounties.length } Bount{ this.state.bounties.length > 1 ? 'ies' : 'y' } Unclaimed</div>
 				<ul className={'bounty-list'+(this.state.closed ? ' bounty-list-closed' : '')} style={{color:CHOSEN_COLOUR}}>
 					{ this.state.bounties.map( ( bounty, i ) => <BountyListItem bounty={bounty} key={i}></BountyListItem> ) }
 				</ul>
