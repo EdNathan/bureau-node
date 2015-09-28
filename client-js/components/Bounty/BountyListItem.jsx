@@ -48,7 +48,7 @@ class BountyListItem extends React.Component {
 
 		return (
 			<li className="bounty-list-item">
-				<div className="bounty-title">{ bounty.title }</div>
+				<div className="bounty-title" style={{color:CHOSEN_COLOUR}}>{ bounty.title }</div>
 				{comment}
 				{targets}
 			</li>

@@ -44,12 +44,10 @@ class BountyList extends React.Component {
 		}
 
 		return (
-			<div>
-				<ul className='bounty-list'>
-					{ this.state.bounties.map( ( bounty, i ) => <BountyListItem bounty={bounty} key={i}></BountyListItem> ) }
-					{ emptyMessage }
-				</ul>
-			</div>
+			<ul className='bounty-list'>
+				{ this.state.bounties.map( ( bounty, i ) => <BountyListItem bounty={bounty} key={i}></BountyListItem> ) }
+				{ emptyMessage }
+			</ul>
 		)
 
 	}

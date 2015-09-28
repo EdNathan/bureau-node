@@ -21,3 +21,51 @@
 	}
 
 }
+
+.bounty-list-item {
+
+	display: block;
+	min-height: 60px;
+	padding: 10px;
+	margin-bottom: 1em;
+	border-bottom: 1px solid @dust;
+	font-size: 14px;
+	cursor: pointer;
+	position: relative;
+	background: white;
+	color: #666;
+	.transition(0.2s);
+
+	.bounty-title {
+		font-size: 1.8em;
+		line-height: 1.1em;
+		font-weight: 300;
+		text-align: left;
+		margin: 0.3em 0;
+	}
+
+	.bounty-comment {
+
+	}
+
+	.bounty-anyplayers {
+		font-style: italic;
+		color: #888;
+		font-size: 12px;
+		text-align: center;
+		margin: 0.5em 0;
+	}
+
+	.bounty-targets {
+		&::before {
+			content: "This bounty can be claimed on:";
+			display: block;
+			font-style: italic;
+			color: #888;
+			font-size: 12px;
+			text-align: center;
+			margin: 0.5em 0;
+		}
+	}
+
+}
