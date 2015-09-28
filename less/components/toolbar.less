@@ -42,6 +42,15 @@
 		overflow: hidden;
 	}
 
+	.toolbar-header-button {
+		position: absolute;
+		top:0;
+		right:0.5em;
+		height: 100%;
+		font-size: 1.3em;
+		cursor: pointer;
+	}
+
 	.toolbar-content {
 		position: absolute;
 		top:@titleheight;
@@ -190,6 +199,44 @@
 		}
 
 	}
+
+}
+
+.toolbar-content-overlay {
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top:0;
+	left:0;
+	z-index: 10;
+}
+
+.toolbar-content-slideup {
+
+	&-appear {
+
+		.transform( translateY( 100% ) );
+		.transition( 0.6s );
+
+		&-active {
+
+			.transform( translateY( 0% ) );
+
+		}
+	}
+
+	&-leave {
+
+		.transform( translateY( 0% ) );
+
+		&-active {
+
+			.transform( translateY( 100% ) );
+			.transition( 0.6s );
+
+		}
+	}
+
 
 }
 

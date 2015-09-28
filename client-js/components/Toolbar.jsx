@@ -21,6 +21,11 @@ class Toolbar extends React.Component {
 
 		document.head.appendChild( m );
 		document.head.appendChild( m2 );
+
+		this.contentPanel = {
+			notifications: <NotificationsPanel/>,
+			bounty: <BountyPanel/>
+		}
 	}
 
 	setUnreadCount( unreadCount ) {
@@ -94,15 +99,10 @@ class Toolbar extends React.Component {
 			personal = <li><a href="/personal" title="Me">&#xe001;</a></li>
 		}
 
-		let contentPanel = {
-			notifications: <NotificationsPanel/>,
-			bounty: <BountyPanel/>
-		}
-
 		return (
 			<div id="toolbar" className={ this.state.open ? 'open' : '' }>
 				<div id="toolbar-panel">
-					{contentPanel[this.state.panel]}
+					{this.contentPanel[this.state.panel]}
 				</div>
 				<ul id="toolbar-buttons">
 					<li id="grabber" onClick={this.toggleOpen.bind(this)}>{Toolbar.grabber()}</li>
