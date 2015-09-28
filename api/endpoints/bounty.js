@@ -13,7 +13,7 @@ module.exports = function( Bureau ) {
 				}
 
 				if ( !isGuild ) {
-					callback( 'Insufficient privileges to reset a user password' )
+					callback( 'Insufficient privileges to create a bounty' )
 					return
 				}
 
