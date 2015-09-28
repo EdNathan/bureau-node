@@ -29,6 +29,37 @@ module.exports = function( Bureau ) {
 
 		'updateBounty/:bountyId': function( data, params, callback ) {
 
+			Bureau.bounty.getBounty( params.bountyId, function( err, bounty ) {
+
+				if ( err ) {
+					callback( err )
+					return
+				}
+
+				Bureau.assassin.isGuild( data.USER_ID, function( err, isGuild ) {
+
+					if ( err ) {
+						callback( err )
+						return
+					}
+
+					if ( !isGuild ) {
+						callback( 'Insufficient privileges to update a bounty' )
+						return
+					}
+
+					Bureau.assassin.getGamegroup( data.USER_ID, function( err, ggid ) {
+
+						if ( bounty.gamegroup !== ggid ) {
+							callback( 'Bounty with id ' + params.bountyId + ' does not exist' )
+							return
+						}
+
+						Bureau.bounty.updateBounty( params.bountyId, data, callback )
+
+					} )
+				} )
+			} )
 		},
 
 		'getBounty/:bountyId': function( data, params, callback ) {

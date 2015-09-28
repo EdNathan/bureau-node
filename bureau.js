@@ -1,5 +1,6 @@
 var MongoClient = require( 'mongodb' ).MongoClient,
 	mongo = require( 'mongodb' ),
+	mongoose = require( 'mongoose' ),
 	utils = require( './utils' ),
 	lethalities = require( './lethalities' ),
 	moment = require( 'moment' ),
@@ -14,7 +15,6 @@ function id( uid ) {
 		return false
 	}
 }
-
 
 function empty( obj ) {
 	return _.isEmpty( obj )
@@ -69,6 +69,7 @@ function line( indent ) {
 
 var Bureau = {
 	db: null,
+	mongoose: null,
 	_initted: false,
 	init: function( callback ) {
 		var start = new Date(),
@@ -126,7 +127,24 @@ var Bureau = {
 
 
 			}
+
+			mongoose.connect( utils.mongourl() )
+
+			mongoose.connection.on( 'error', console.error.bind( console, 'mongoose connection error:' ) );
+
+			mongoose.connection.once( 'open', function() {
+				Bureau.mongoose = mongoose
+				Bureau.loadModule( 'bounty' )
+			} );
+
 		} )
+
+
+
+	},
+
+	loadModule: function( moduleName ) {
+		Bureau[ moduleName ] = require( './server/' + moduleName )( Bureau )
 	},
 
 	loadGames: function() {
@@ -1924,145 +1942,6 @@ var Bureau = {
 				Bureau.games[ game.type ].changeGameState( game, playerid, data,
 					callback )
 			} )
-		}
-	},
-
-	bounty: {
-
-		STATES: {
-			ACTIVE: 0,
-			CLAIMED: 1,
-			INACTIVE: 2
-		},
-
-		createBounty: function( data, callback ) {
-
-			/* Data object format
-
-			{
-				title: 'String', //Length min 10 chars
-				comment: 'String', //Optional
-				anyPlayer: Boolean, //If specified then no players needed
-				players: ['playerId'], //If !anyPlayer then must be array of player ids
-				gamegroup: 'gamegroupId'
-			}
-
-			*/
-
-			if ( data.hasOwnProperty( '_id' ) ) {
-				delete data._id;
-			}
-
-			if ( !data || _.isEmpty( data ) || !_.isPlainObject( data ) ) {
-				callback( 'Invalid or no data object supplied to create bounty' )
-				return;
-			}
-			if ( !data.gamegroup ) {
-				callback( 'A bounty must belong to a gamegroup' )
-				return;
-			}
-			if ( !data.title || !_.isString( data.title ) || data.title.trim().length <
-				10 ) {
-				callback( 'A bounty must have a title at minimum 10 chars long' )
-				return;
-			}
-			if ( !data.anyPlayer && ( !data.players ||
-					!_.isArray( data.players ) ||
-					_.isEmpty( data.players ) ) ) {
-				callback( 'A bounty must target some players' )
-				return;
-			}
-
-			data = _.pick( data, 'title', 'comment', 'anyPlayer', 'players', 'gamegroup' )
-
-			data.created = new Date()
-			data.state = Bureau.bounty.STATES.ACTIVE
-
-			Bureau.db.collection( 'bounties' ).insert( data, {
-				safe: true
-			}, function( err, docs ) {
-
-				if ( err ) {
-					callback( err, {} )
-					return;
-				}
-
-				if ( !docs || _.isEmpty( docs ) || _.isEmpty( docs[ 0 ] ) ) {
-					callback( 'Bounty not created', {} )
-					return;
-				}
-
-				callback( err, docs[ 0 ] )
-
-			} );
-		},
-
-		getBounty: function( bountyId, callback ) {
-
-			var objID = id( bountyId )
-
-			Bureau.db.collection( 'bounties' ).findOne( {
-				_id: objID
-			}, function( err, doc ) {
-				if ( err ) {
-					callback( err, {} )
-					return;
-				}
-
-				if ( !doc || _.isEmpty( doc ) ) {
-					callback( 'Bounty with id ' + bountyId + ' does not exist', {} )
-					return;
-				}
-
-				callback( err, doc )
-			} )
-		},
-
-		updateBounty: function( bountyId, stuff, callback ) {
-
-			var objID = id( bountyId )
-
-			delete stuff._id;
-
-			Bureau.db.collection( 'bounties' ).update( {
-				_id: objID
-			}, {
-				$set: stuff
-			}, {
-				multi: false
-			}, function( err, docs ) {
-
-				if ( err ) {
-					callback( err, {} )
-					return;
-				}
-
-				if ( !docs || _.isEmpty( docs ) || _.isEmpty( docs[ 0 ] ) ) {
-					callback( 'Bounty not updated', {} )
-					return;
-				}
-
-				callback( err, docs[ 0 ] )
-
-			} );
-		},
-
-		getActiveBounties: function( ggid, callback ) {
-
-			Bureau.db.collection( 'bounties' ).find( {
-				gamegroup: ggid,
-				state: Bureau.bounty.STATES.ACTIVE
-			} ).toArray( function( err, bounties ) {
-
-				if ( err ) {
-					callback( err, [] )
-					return
-				}
-
-				callback( null, bounties )
-
-			} )
-
 		}
 	}
 

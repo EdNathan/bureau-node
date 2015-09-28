@@ -70,6 +70,11 @@ var handleApiRequest = function( handler, req, res ) {
 
 var _filter_id = function( obj ) {
 
+	if ( obj.toObject ) {
+		obj = obj.toObject()
+		delete obj.__v
+	}
+
 	if ( _.isPlainObject( obj ) && obj._id ) {
 		obj = _.clone( obj )
 		obj.id = obj._id
