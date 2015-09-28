@@ -12,7 +12,10 @@ module.exports = function( Bureau ) {
 			var uid = data.USER_ID,
 				id = params.notificationId
 
-			Bureau.assassin.markNotificationRead( uid, id, function( err ) {
+			Bureau.assassin.markNotificationRead( uid, id, function( err, shit ) {
+				console.log( shit.notifications.filter( function( n ) {
+					return n.id === id
+				} ) )
 				Bureau.assassin.getNotifications( uid, 20, callback )
 			} )
 		}

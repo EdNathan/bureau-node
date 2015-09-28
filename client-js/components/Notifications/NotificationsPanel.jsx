@@ -28,6 +28,14 @@ class NotificationsPanel extends React.Component {
 		} )
 	}
 
+	markRead(notification) {
+		return (e) => {
+			BureauApi( `notifications/markRead/${notification.id}`, ( err, notifications ) => {
+				this.refresh()
+			} )
+		}
+	}
+
 	render() {
 
 		let notifications = this.state.notifications
@@ -36,7 +44,7 @@ class NotificationsPanel extends React.Component {
 			<div className="toolbar-panel-wrapper">
 				<div className="toolbar-header" style={{color:CHOSEN_COLOUR}}>Notifcations</div>
 				<ul className="toolbar-content">
-					{this.state.notifications.map( ( notification, i ) => <NotificationListItem notification={notification} key={i} /> )}
+					{this.state.notifications.map( ( notification, i ) => <NotificationListItem onClick={this.markRead(notification)} notification={notification} key={i} /> )}
 				</ul>
 			</div>
 		)

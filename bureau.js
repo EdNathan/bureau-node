@@ -513,7 +513,9 @@ var Bureau = {
 		getNotifications: function( uid, limit, callback ) {
 			Bureau.assassin.getAssassin( uid, function( err, a ) {
 				if ( a.notifications && a.notifications.length > 0 ) {
-					callback( err, a.notifications.reverse().slice( 0, limit ) )
+					callback( err, a.notifications.sort( function( a, b ) {
+						return b.added - a.added
+					} ).slice( 0, limit ) )
 				} else {
 					callback( err, [] )
 				}
@@ -525,7 +527,7 @@ var Bureau = {
 				n = {
 					added: now,
 					text: notification,
-					id: utils.md5( now + '' + uid ),
+					id: utils.md5( now + '' + Math.random() + '' + uid ),
 					priority: !!priority
 				}
 			if ( !!source ) {
