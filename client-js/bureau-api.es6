@@ -25,7 +25,13 @@ const BureauApi = function( endpoint, data, callback = function() {} ) {
 
 		} else {
 			console.error( req.status, req.statusText, req.responseText )
-			callback( req.responseText, null )
+
+			try {
+				let response = JSON.parse( req.responseText )
+				callback( response.error )
+			} catch ( e ) {
+				callback( req.responseText, null )
+			}
 		}
 	}
 
