@@ -1,4 +1,5 @@
 var _ = require( 'lodash' )
+var utils = require( '../../utils' )
 
 module.exports = function( Bureau ) {
 
@@ -93,6 +94,55 @@ module.exports = function( Bureau ) {
 					callback( null, assassins.map( projectAssassin ) )
 
 				} )
+			} )
+		},
+
+		searchAssassinsByName: function( data, params, callback ) {
+
+			var query = data.name
+
+			if ( !_.isString( query ) || !query ) {
+				callback( 'name must be a string' )
+				return
+			}
+
+			query = utils.makeFuzzyRegex( query )
+
+			var queryRegex = new RegExp( query, 'i' )
+
+			var projector = _.transform( _.indexBy( assassinProjection ), function( result, n, key ) {
+				result[ key ] = 1
+			} )
+
+			projector.fullname = {
+				$concat: [ "$forename", " ", "$surname" ]
+			}
+
+			Bureau.assassin.getGamegroup( data.USER_ID, function( err, ggid ) {
+
+				var aggregationPipeline = [ {
+					$match: {
+						gamegroup: ggid
+					}
+				}, {
+					$project: projector
+				}, {
+					$match: {
+						fullname: queryRegex
+					}
+				} ]
+
+				Bureau.db.collection( 'assassins' ).aggregate( aggregationPipeline, function( err, assassins ) {
+
+					if ( err ) {
+						callback( err )
+						return
+					}
+
+					callback( null, assassins.map( projectAssassin ) )
+
+				} )
+
 			} )
 		}
 	}

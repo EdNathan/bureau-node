@@ -168,6 +168,10 @@ var utils = {
 				return utils.walkdir( dir + '/' + file, file + '/' )
 			}
 		} ) ) )
+	},
+
+	makeFuzzyRegex: function( str ) {
+		return _.map( str.trim().toLowerCase(), _.escapeRegExp ).join( '.*' )
 	}
 
 }
