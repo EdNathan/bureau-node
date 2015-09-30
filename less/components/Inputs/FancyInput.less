@@ -1,0 +1,29 @@
+.bureau-input-fancy-transition {
+
+	&-appear, &-enter {
+
+		opacity: 0;
+		.transition( 1s );
+
+		&-active {
+
+			opacity: 1;
+
+		}
+	}
+
+	&-leave {
+
+		opacity: 1;
+
+		&-active {
+
+			opacity: 0;
+			.transition( 1s );
+
+		}
+	}
+}
+
+
+@import 'FancyTextInput.less';

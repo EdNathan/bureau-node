@@ -5,16 +5,11 @@ class BureauFancyTextInput extends React.Component {
 		this.state = {
 			value: ''
 		}
+		this.autogrown = false
 	}
 
 	componentWillMount() {
 		this.state.value = this.props.defaultValue
-	}
-
-	componentDidMount() {
-		if ( this.props.multiline ) {
-			$( React.findDOMNode( this.refs.input ) ).autogrow()
-		}
 	}
 
 	get value() {
@@ -28,14 +23,21 @@ class BureauFancyTextInput extends React.Component {
 		var props = {
 			ref: 'input',
 			defaultValue: this.props.defaultValue,
-			className: `bureau-input-text-fancy ${this.props.inputClassName}`,
-			placeholder: this.props.placeholder
+			className: `bureau-input-fancy bureau-input-text-fancy ${this.props.inputClassName}`,
+			placeholder: this.props.placeholder,
+			key: 0
+		}
+
+		var bindAutogrow = (e) => {
+			if(this.autogrown) return
+			$( React.findDOMNode( this.refs.input ) ).autogrow()
+			this.autogrown = true
 		}
 
 		return (
-			<div className="bureau-input-text-fancy-wrapper">
-				{ multiline ? <textarea {...props}/> : <input {...props}/> }
-				<div className="bureau-input-text-fancy-highlight-bar"></div>
+			<div className="bureau-input-fancy-wrapper bureau-input-text-fancy-wrapper">
+				{ multiline ? <textarea {...props} onFocus={bindAutogrow}/> : <input {...props}/> }
+				<div className="bureau-input-fancy-highlight-bar bureau-input-text-fancy-highlight-bar" key={1}></div>
 			</div>
 		)
 

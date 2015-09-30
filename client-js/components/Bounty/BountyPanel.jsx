@@ -25,7 +25,7 @@ class BountyPanel extends React.Component {
 				</div>
 				<div className="toolbar-content">
 					<ReactCSSTransitionGroup transitionName="toolbar-content-slideup" className="toolbar-content-overlay" component='div'>
-						{ this.state.createBountyOpen ? <BountyCreate/> : null }
+						{ this.state.createBountyOpen ? <BountyCreate key={0}/> : null }
 					</ReactCSSTransitionGroup>
 					<BountyList/>
 				</div>
