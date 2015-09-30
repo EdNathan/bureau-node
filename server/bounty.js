@@ -22,6 +22,11 @@ module.exports = function( Bureau ) {
 			type: Boolean
 		},
 		players: [ String ],
+		anyKillmethod: {
+			required: true,
+			type: Boolean
+		},
+		killmethods: [ String ],
 		gamegroup: {
 			required: true,
 			type: String
@@ -70,6 +75,12 @@ module.exports = function( Bureau ) {
 					!_.isArray( data.players ) ||
 					_.isEmpty( data.players ) ) ) {
 				callback( 'A bounty must target some players' )
+				return;
+			}
+			if ( !data.anyKillmethod && ( !data.killmethods ||
+					!_.isArray( data.killmethods ) ||
+					_.isEmpty( data.killmethods ) ) ) {
+				callback( 'A bounty must utilise at least 1 killmethod' )
 				return;
 			}
 
