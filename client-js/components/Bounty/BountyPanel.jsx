@@ -3,7 +3,7 @@ class BountyPanel extends React.Component {
 	constructor() {
 		super()
 		this.state = {
-			createBountyOpen: true
+			createBountyOpen: false
 		}
 	}
 
