@@ -15,21 +15,20 @@
 	width: 100%;
 	margin-top: 1.2em;
 
+	&:hover {
+
+		background: fade(@dust, 10%);
+		cursor: pointer;
+
+	}
+
 	&:focus  {
 
 		background: fade(@dust, 20%);
+		cursor: text;
 
 		+ .bureau-input-text-fancy-highlight-bar {
 			width: 100%;
 		}
 	}
-}
-
-.bureau-input-text-fancy-highlight-bar {
-	width: 0%;
-	height: 1px;
-	position: relative;
-	border-bottom-width: 1px;
-	border-bottom-style: solid;
-	.transition(0.2s);
 }

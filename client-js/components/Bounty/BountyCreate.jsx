@@ -13,6 +13,7 @@ class BountyCreate extends React.Component {
 				<div style={{color:CHOSEN_COLOUR}}>
 			 		<BureauFancyTextInput ref="titleInput" placeholder="Title" inputClassName="bounty-create-title"/>
 					<BureauFancyTextInput ref="commentInput" placeholder="Description" multiline={true}/>
+					<BureauFancyCheckboxInput ref="anyPlayerInput" label="Any player"/>
 				</div>
 			</div>
 		)

@@ -1,29 +1,25 @@
-.bureau-input-fancy-transition {
+.bureau-input-fancy-highlight-bar {
+	width: 0%;
+	height: 1px;
+	position: relative;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	.transition(0.2s);
+}
 
-	&-appear, &-enter {
+.bureau-input-fancy-wrapper {
 
-		opacity: 0;
-		.transition( 1s );
+	position: relative;
 
-		&-active {
+	&:hover {
 
-			opacity: 1;
-
+		.bureau-input-fancy-highlight-bar {
+			width: 10%;
 		}
-	}
 
-	&-leave {
-
-		opacity: 1;
-
-		&-active {
-
-			opacity: 0;
-			.transition( 1s );
-
-		}
 	}
 }
 
 
 @import 'FancyTextInput.less';
+@import 'FancyCheckboxInput.less';

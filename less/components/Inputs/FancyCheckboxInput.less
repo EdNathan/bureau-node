@@ -1,0 +1,67 @@
+input[type="checkbox"].bureau-input-checkbox-fancy {
+	display: none;
+
+	& + .bureau-input-checkbox-fancy-decorators {
+		.flex-container();
+		-ms-flex-align: center;
+		-webkit-align-items: center;
+		-webkit-box-align: center;
+
+		align-items: center;
+
+		height: 2.5em;
+		padding-left: 0.2em;
+		cursor: pointer;
+		margin-top: 0.7em;
+
+		* {
+			cursor: pointer;
+		}
+
+		.bureau-input-checkbox-fancy-decorators-box {
+			width: 1em;
+			height: 1em;
+			border: 2px solid currentColor;
+			margin-right: 0.6em;
+			position: relative;
+
+			div {
+				@border: 1px;
+				position: absolute;
+				top: @border;
+				left: @border;
+				right: @border;
+				bottom: @border;
+				.transform(scaleY(0));
+				.transform-origin(center);
+				.transition(0.1s);
+				background: currentColor;
+			}
+		}
+
+		label {
+			display: block;
+			.flex(1);
+			color: #888;
+			font-weight: 300;
+			.transition();
+		}
+
+	}
+
+	&:checked + .bureau-input-checkbox-fancy-decorators {
+		.bureau-input-checkbox-fancy-decorators-box {
+			div {
+				.transform(scaleY(1));
+			}
+		}
+	}
+}
+
+.bureau-input-checkbox-fancy-wrapper {
+	&:hover {
+
+		background: fade(@dust, 10%);
+
+	}
+}
