@@ -9,6 +9,9 @@ class BureauFancyCheckboxInput extends React.Component {
 
 	handleInputChange(e) {
 
+		e.preventDefault()
+		e.stopPropagation()
+
 		this.setState({
 			checked: e.target.checked
 		})
@@ -35,7 +38,8 @@ class BureauFancyCheckboxInput extends React.Component {
 			className: `bureau-input-fancy bureau-input-checkbox-fancy ${this.props.inputClassName}`,
 			placeholder: this.props.placeholder,
 			checked: this.state.checked,
-			onChange: this.handleInputChange.bind(this)
+			onChange: this.handleInputChange.bind(this),
+			onTouchStart: this.handleInputChange.bind(this)
 		}
 
 		return (
