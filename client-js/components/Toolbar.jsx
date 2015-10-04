@@ -7,7 +7,7 @@ class Toolbar extends React.Component {
 
 		this.state = {
 			unreadCount: 0,
-			open: false,
+			open: true,
 			panel: 'bounty'
 		}
 

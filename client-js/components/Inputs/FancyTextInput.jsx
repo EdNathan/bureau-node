@@ -21,8 +21,18 @@ class BureauFancyTextInput extends React.Component {
 		this.props.onChange(e)
 	}
 
+	handleKeyPressed(e) {
+		this.props.onKeyPress(e)
+	}
+
 	get value() {
 		return this.state.value
+	}
+
+	set value(val) {
+		this.setState({
+			value: val
+		})
 	}
 
 	render() {
@@ -34,7 +44,10 @@ class BureauFancyTextInput extends React.Component {
 			className: `bureau-input-fancy bureau-input-text-fancy ${this.props.inputClassName}`,
 			placeholder: this.props.placeholder,
 			value: this.state.value,
-			onChange: this.handleInputChange.bind(this)
+			onChange: this.handleInputChange.bind(this),
+			onKeyPress: this.props.onKeyPress,
+			onKeyDown: this.props.onKeyDown,
+			onKeyUp: this.props.onKeyUp
 		}
 
 		var bindAutogrow = (e) => {
@@ -58,5 +71,8 @@ BureauFancyTextInput.defaultProps = {
 	defaultValue: '',
 	placeholder: 'Text',
 	inputClassName: '',
-	onChange: function(){}
+	onChange: function(){},
+	onKeyPress: function(){},
+	onKeyDown: function(){},
+	onKeyUp: function(){}
 }
