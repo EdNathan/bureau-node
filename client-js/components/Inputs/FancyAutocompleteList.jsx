@@ -101,7 +101,7 @@ class BureauFancyAutocompleteList extends React.Component {
 
 	render() {
 
-		let suggestions = this.state.suggestions.slice( 0, this.props.maxSuggestions )
+		let suggestions = this.state.suggestions.slice( 0, this.props.maxSuggestions + 1 )
 
 		var suggestionsList = null
 
