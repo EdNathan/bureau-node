@@ -54,7 +54,7 @@ module.exports = function( Bureau ) {
 		STATES: {
 			ACTIVE: 0,
 			CLAIMED: 1,
-			INACTIVE: 2
+			ARCHIVED: 2
 		},
 
 		createBounty: function( data, callback ) {
@@ -136,6 +136,17 @@ module.exports = function( Bureau ) {
 				} )
 
 			} );
+		},
+
+		setBountyState: function( bountyId, state, callback ) {
+
+			Bureau.bounty.updateBounty( bountyId, {
+				state: state
+			}, callback )
+		},
+
+		archiveBounty: function( bountyId, callback ) {
+			Bureau.bounty.setBountyState( bountyId, Bureau.bounty.STATES.ARCHIVED, callback )
 		},
 
 		getActiveBounties: function( ggid, callback ) {
