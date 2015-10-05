@@ -1,14 +1,21 @@
 //Grab saved colours
 var colours = retrieveObj( 'bureau-colours' )
 
+var BUREAU_COLOURS = {
+	blue: '#0e83cd', //Bureau Blue
+	red: '#f06060', //Relaxed Red
+	//yellow: '#fcd04b', //Yi-Fan Yellow  <-  Not used, too light and illegible
+	green: '#2ecc71', //Groves Green
+	purple: '#9e54bd' //Pavan Purple
+}
+
 //If there aren't any saved then just use the defaults
 if ( !colours ) {
 	colours = [
-		'#0e83cd', //Bureau Blue
-		'#f06060', //Relaxed Red
-		//'#fcd04b', //Yi-Fan Yellow  <-  Not used, too light and illegible
-		'#2ecc71', //Groves Green
-		'#9e54bd' //Pavan Purple
+		BUREAU_COLOURS.blue,
+		BUREAU_COLOURS.red,
+		BUREAU_COLOURS.green,
+		BUREAU_COLOURS.purple
 	]
 	storeObj( 'bureau-colours', colours )
 }
@@ -116,9 +123,9 @@ function colourItems( items ) {
 
 // XXX time ago
 function timeSince( date ) {
-	
+
 	if ( typeof date === 'string' ) {
-		date = new Date(date)
+		date = new Date( date )
 	}
 
 	var seconds = Math.floor( ( new Date() - date ) / 1000 );
