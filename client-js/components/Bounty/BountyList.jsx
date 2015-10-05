@@ -7,6 +7,13 @@ class BountyList extends React.Component {
 
 	componentDidMount() {
 
+		this.refresh()
+
+		makeColourItem(React.findDOMNode(this))
+	}
+
+	refresh() {
+
 		BureauApi( 'bounty/getActiveBounties', ( err, bounties ) => {
 
 			this.setState( {
@@ -16,8 +23,6 @@ class BountyList extends React.Component {
 			bureau.toolbar.setBountyCount( bounties.length )
 
 		})
-
-		makeColourItem(React.findDOMNode(this))
 	}
 
 	static getUnclaimedBountyCount(callback) {

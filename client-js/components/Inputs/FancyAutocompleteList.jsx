@@ -79,7 +79,7 @@ class BureauFancyAutocompleteList extends React.Component {
 		})
 	}
 
-	populateSuggestions(suggestions) {
+	populateSuggestions( suggestions ) {
 
 		let highlightedSuggestion = Math.min(this.state.highlightedSuggestion, Math.min(suggestions.length, this.props.maxSuggestions))
 
