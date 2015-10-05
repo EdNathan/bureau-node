@@ -39,17 +39,8 @@ class BureauFancyAutocompleteList extends React.Component {
 				break;
 
 			case 'Enter':
-				let values = this.state.values
 				if ( this.state.suggestions.length > 0 ) {
-					values.push(this.state.suggestions[this.state.highlightedSuggestion])
-					values = _.unique(values, 'value')
-					this.setState({
-						values,
-						suggestions: [],
-						highlightedSuggestion: 0,
-						waiting: false
-					})
-					this.refs.input.value = ''
+					this.addValue(this.state.suggestions[this.state.highlightedSuggestion])
 				}
 				break;
 
@@ -64,6 +55,22 @@ class BureauFancyAutocompleteList extends React.Component {
 				e.preventDefault()
 				this.setHighlightedSuggestion(this.state.highlightedSuggestion + 1)
 				break;
+		}
+	}
+
+	addValue( value, e ) {
+		let values = this.state.values
+		values.push(value)
+		values = _.unique(values, 'value')
+		this.setState({
+			values,
+			suggestions: [],
+			highlightedSuggestion: 0,
+			waiting: false
+		})
+		this.refs.input.value = ''
+		if ( e ) {
+			React.findDOMNode(this.refs.input.refs.input).focus()
 		}
 	}
 
@@ -112,6 +119,7 @@ class BureauFancyAutocompleteList extends React.Component {
 			}
 			let highlightedStyle = {
 				color: 'white',
+				cursor: 'pointer',
 				background: CHOSEN_COLOUR
 			}
 			suggestionsList = (
@@ -119,7 +127,14 @@ class BureauFancyAutocompleteList extends React.Component {
 					{suggestions.map( ( value, i ) => {
 						let isHighlighted = i === this.state.highlightedSuggestion
 						let className = (isHighlighted ? 'highlighted' : '')
-						return (<div className={className} key={i} style={isHighlighted ? highlightedStyle : style}>{value.label}</div>)
+						let props = {
+							className,
+							key: i,
+							style: isHighlighted ? highlightedStyle : style,
+							onMouseOver: this.setHighlightedSuggestion.bind(this, i),
+							onClick: this.addValue.bind(this, value)
+						}
+						return (<div {...props}>{value.label}</div>)
 					} )}
 				</div>
 			)
