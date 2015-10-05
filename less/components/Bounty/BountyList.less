@@ -68,4 +68,23 @@
 		}
 	}
 
+	.bounty-editbuttons {
+
+		.flex-container();
+		height: 40px;
+		line-height: 40px;
+		border-top: 1px solid #aaa;
+		margin: 0.6em -10px -10px;
+
+		.bounty-editbutton {
+			.flex(1);
+			text-align: center;
+			cursor: pointer;
+
+			&:hover {
+				background: fade(black, 10%);
+			}
+		}
+	}
+
 }
