@@ -10,6 +10,9 @@ var logApiRequest = function( req, res, next ) {
 }
 
 var sendError = function( err, req, res ) {
+	res.header( 'Access-Control-Allow-Origin', '*' )
+	res.header( 'Access-Control-Allow-Credentials', 'true' )
+	res.header( 'Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept' )
 	res.json( 400, {
 		error: err
 	} )
