@@ -1,14 +1,14 @@
 class Toolbar extends React.Component {
 
-	constructor() {
-		super()
+	constructor(props) {
+		super(props)
 
 		bureau.toolbar = this
 
 		this.state = {
 			unreadCount: 0,
 			open: false,
-			panel: 'bounty'
+			panel: 'notifications'
 		}
 
 		var m = document.createElement( 'meta' );
@@ -22,10 +22,19 @@ class Toolbar extends React.Component {
 		document.head.appendChild( m );
 		document.head.appendChild( m2 );
 
+		let notificationsPanel = <NotificationsPanel/>
+		let bountyPanel = <BountyPanel/>
+
 		this.contentPanel = {
-			notifications: <NotificationsPanel/>,
-			bounty: <BountyPanel/>
+			notifications: notificationsPanel,
+			bounty: bountyPanel
 		}
+	}
+
+	componentDidMount() {
+		BountyList.getUnclaimedBountyCount( ( err, bountyCount ) => {
+			this.setBountyCount( bountyCount )
+		} )
 	}
 
 	setUnreadCount( unreadCount ) {

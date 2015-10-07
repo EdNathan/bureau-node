@@ -1,7 +1,7 @@
 class NotificationsPanel extends React.Component {
 
-	constructor() {
-		super()
+	constructor(props) {
+		super(props)
 		this.state = {
 			notifications: []
 		}
