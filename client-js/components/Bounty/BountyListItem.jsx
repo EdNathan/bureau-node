@@ -28,6 +28,12 @@ class BountyListItem extends React.Component {
 
 	}
 
+	onArchive() {
+		BureauApi(`bounty/archiveBounty/${this.props.bounty.id}`, (err, response) => {
+			bureau.bountyPanel.refresh()
+		})
+	}
+
 	render() {
 
 		let bounty = this.props.bounty;
@@ -51,7 +57,7 @@ class BountyListItem extends React.Component {
 		if ( BUREAU_ASSASSIN.guild ) {
 			editBountyButtons = (
 				<div className="bounty-editbuttons">
-					<div className="bounty-editbutton" style={{color: BUREAU_COLOURS.red}}>Archive</div>
+					<div className="bounty-editbutton" onClick={this.onArchive.bind(this)} style={{color: BUREAU_COLOURS.red}}>Archive</div>
 				</div>
 			)
 		}

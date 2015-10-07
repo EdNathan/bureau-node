@@ -14,8 +14,12 @@ class BountyPanel extends React.Component {
 		})
 	}
 
-	bountyCreateCallback() {
+	refresh() {
 		this.refs.bountyList.refresh()
+	}
+
+	bountyCreateCallback() {
+		this.refresh()
 		this.setState({
 			createBountyOpen: false
 		})
