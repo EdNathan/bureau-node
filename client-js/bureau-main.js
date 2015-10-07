@@ -980,8 +980,7 @@ var bureau = {
 			var parts = d.split( ' ' ),
 				dat = parts[ 0 ].split( '-' ),
 				tim = parts[ 1 ].split( ':' )
-			result = new Date( dat[ 0 ], dat[ 1 ] - 1, dat[ 2 ], tim[ 0 ], tim[ 1 ], tim[ 2 ] );
-			return result;
+			return new Date( dat[ 0 ], dat[ 1 ] - 1, dat[ 2 ], tim[ 0 ], tim[ 1 ], tim[ 2 ] );
 		},
 		dateRegex: /[0-9]{4}-[0-1][0-9]-[0-3][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9]/,
 		date2Digits: function( d ) {
