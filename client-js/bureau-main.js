@@ -525,7 +525,7 @@ var bureau = {
 						'data-gameid' ) );
 				}
 
-				for ( key in validate.results ) {
+				for ( var key in validate.results ) {
 					if ( key.indexOf( 'submit' ) === -1 ) { //Not the submit button
 						el = $( '#section-' + key );
 						if ( !validate.results[ key ] ) {
@@ -708,7 +708,7 @@ var bureau = {
 					validate.results[ f.name ] = validate.checks[ n ]( f.value );
 				}
 
-				for ( key in validate.results ) {
+				for ( var key in validate.results ) {
 					el = $( '#' + key );
 					if ( !validate.results[ key ] ) {
 						el.addClass( 'problem' )
@@ -795,7 +795,7 @@ var bureau = {
 					validate.results[ f.name ] = validate.checks[ n ]( f.value );
 				}
 
-				for ( key in validate.results ) {
+				for ( var key in validate.results ) {
 					el = $( '#' + key );
 					if ( !validate.results[ key ] ) {
 						el.parent().addClass( 'problem' )
