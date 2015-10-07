@@ -430,7 +430,7 @@ var bureau = {
 					validate.results[ f.name ] = validate.checks[ n ]( f.value );
 				}
 
-				for ( key in validate.results ) {
+				for ( var key in validate.results ) {
 					el = $( '#' + key );
 					if ( !validate.results[ key ] ) {
 						el.addClass( 'problem' )
