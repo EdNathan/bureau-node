@@ -41,6 +41,7 @@ class BountyListItem extends React.Component {
 		let comment = bounty.comment ? <div className="bounty-comment">{bounty.comment}</div> : false;
 
 		var targets;
+		var killmethods;
 
 		if ( bounty.anyPlayer ) {
 			targets = <div className="bounty-anyplayers">This bounty can be claimed on any player</div>
@@ -49,6 +50,38 @@ class BountyListItem extends React.Component {
 		} else {
 			targets = <div className="bounty-targets">
 				{ this.state.bountyTargets.map( (assassin) => `${assassin.forename} ${assassin.surname}`).join(`, `) }
+			</div>
+		}
+
+		if ( bounty.anyKillmethod ) {
+			killmethods = <div className="bounty-anyplayers">This bounty can be claimed with any kill method</div>
+		} else {
+			killmethods = <div className="bounty-killmethods">
+				{ bounty.killmethods.map( ( killmethodId, i ) => {
+					let { id, name, zone, rules } =  _.find( BUREAU_KILLMETHODS, {id: killmethodId})
+					let props = {
+						key: i,
+						className: 'bounty-killmethod',
+						'data-rules': rules,
+						style: {
+							color: BUREAU_COLOURS[zone] ? BUREAU_COLOURS[zone] : zone,
+							border: `1px solid ${KillmethodRules.style.body.background}`,
+							marginBottom: '1em'
+						}
+					}
+
+					let titleStyle = {
+						background: humanBrightness( stringToRgb( props.style.color ) ) > 0.75 ? 'rgba(0,0,0,0.5)' : '',
+						padding: '0.5em 10px'
+					}
+
+					return (
+						<div {...props}>
+							<div style={titleStyle}>{name}</div>
+							<KillmethodRules style={{margin:0}} killmethodid={id}/>
+						</div>
+					)
+				} ) }
 			</div>
 		}
 
@@ -67,6 +100,7 @@ class BountyListItem extends React.Component {
 				<div className="bounty-title" style={{color:CHOSEN_COLOUR}}>{ bounty.title }</div>
 				{comment}
 				{targets}
+				{killmethods}
 				{editBountyButtons}
 			</li>
 		)
