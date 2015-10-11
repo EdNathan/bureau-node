@@ -192,8 +192,7 @@ var bureau = {
 					marker = new google.maps.Marker( {
 						position: latlng,
 						map: map,
-						icon: ( ( document.title.indexOf( '-' ) !== -1 ) ? '../' : '' ) +
-							'images/target-small.svg'
+						icon: ( ( document.title.indexOf( '-' ) !== -1 ) ? '../' : '/' ) + 'images/target-small.svg'
 					} )
 			} )
 
@@ -261,8 +260,7 @@ var bureau = {
 					marker = new google.maps.Marker( {
 						position: latlng,
 						map: map,
-						icon: ( ( document.title.indexOf( '-' ) !== -1 ) ? '../' : '' ) +
-							'images/target-small.svg'
+						icon: ( ( document.title.indexOf( '-' ) !== -1 ) ? '../' : '/' ) + 'images/target-small.svg'
 					} )
 			} )
 
