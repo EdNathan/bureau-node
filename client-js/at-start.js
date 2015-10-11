@@ -275,6 +275,30 @@ function rgbToHex( r, g, b ) {
 	return "#" + componentToHex( r ) + componentToHex( g ) + componentToHex( b );
 }
 
+function stringToRgb( colourName ) {
+	var d = document.createElement( 'div' );
+	d.style.color = colourName;
+	document.body.appendChild( d )
+	var rgb = window.getComputedStyle( d ).color
+
+	rgb = rgb.split( '(' )[ 1 ].split( ')' )[ 0 ].split( ',' ).map( parseFloat )
+
+	document.body.removeChild( d )
+
+	return {
+		r: rgb[ 0 ],
+		g: rgb[ 1 ],
+		b: rgb[ 2 ]
+	}
+}
+
+function humanBrightness( c ) {
+	return Math.sqrt(
+		c.r * c.r * .241 +
+		c.g * c.g * .691 +
+		c.b * c.b * .068 ) / 255
+}
+
 /* Sexy innerHTML transition */
 function sexyInnerHTML( el, t2 ) { //only works for letters, spaces and numbers!!!
 	var t1 = el.innerHTML,
