@@ -1268,7 +1268,10 @@ var Bureau = {
 					} )
 					reports.forEach( function( r ) {
 						Bureau.report.fullReport( r, function( err, report ) {
-							games[ idMap[ report.gameid ] ].reports.push( report )
+							var game = games[ idMap[ report.gameid ] ]
+							if ( game ) {
+								game.reports.push( report )
+							}
 							reportLoaded()
 						} )
 					} )
