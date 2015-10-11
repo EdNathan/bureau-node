@@ -6,13 +6,14 @@
 	<input type="hidden" name="bureau-token" id="bureau-token" value="{{ token }}">
 </form>
 <script>
-	var APP_TOKEN = "{{ APP_TOKEN }}"
-	var BUREAU_USER = {
-		uid: "{{ uid }}",
-		gamegroup: "{{ gamegroup.ggid }}",
-		token: "{{ token }}"
-	}
-	var BUREAU_ASSASSIN = {{projectedAssassin|json|safe}}
+	var APP_TOKEN = "{{ APP_TOKEN }}",
+		BUREAU_USER = {
+			uid: "{{ uid }}",
+			gamegroup: "{{ gamegroup.ggid }}",
+			token: "{{ token }}"
+		},
+		BUREAU_KILLMETHODS = {{gamegroup.killmethods|json|safe}},
+		BUREAU_ASSASSIN = {{projectedAssassin|json|safe}};
 </script>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
