@@ -182,9 +182,8 @@ var bureau = {
 			$( '.mapcontainer' ).each( function() {
 				var el = this,
 					coords = this.getAttribute( 'data-coords' ).split( ',' ),
-					latlng = new google.maps.LatLng( parseFloat( coords[ 0 ] ), parseFloat(
-						coords[ 1 ] ) )
-				mapOptions = {
+					latlng = new google.maps.LatLng( parseFloat( coords[ 0 ] ), parseFloat( coords[ 1 ] ) ),
+					mapOptions = {
 						zoom: 18,
 						center: latlng,
 						mapTypeId: google.maps.MapTypeId.HYBRID
@@ -252,9 +251,8 @@ var bureau = {
 			$( '.mapcontainer' ).each( function() {
 				var el = this,
 					coords = this.getAttribute( 'data-coords' ).split( ',' ),
-					latlng = new google.maps.LatLng( parseFloat( coords[ 0 ] ), parseFloat(
-						coords[ 1 ] ) )
-				mapOptions = {
+					latlng = new google.maps.LatLng( parseFloat( coords[ 0 ] ), parseFloat( coords[ 1 ] ) ),
+					mapOptions = {
 						zoom: 18,
 						center: latlng,
 						mapTypeId: google.maps.MapTypeId.HYBRID
