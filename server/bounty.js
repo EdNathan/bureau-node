@@ -22,6 +22,10 @@ module.exports = function( Bureau ) {
 			type: Boolean
 		},
 		players: [ String ],
+		issuers: {
+			type: [ String ],
+			default: []
+		},
 		anyKillmethod: {
 			required: true,
 			type: Boolean

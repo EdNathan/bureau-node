@@ -63,6 +63,7 @@ class BountyCreate extends React.Component {
 
 		let bountyData = {
 			title: this.refs.titleInput.value,
+			issuers: this.refs.issuersInput.values,
 			comment: this.refs.commentInput.value,
 			anyPlayer: this.refs.anyPlayerInput.checked,
 			players: this.refs.playersInput.values,
@@ -116,6 +117,10 @@ class BountyCreate extends React.Component {
 				<div style={{color:CHOSEN_COLOUR}}>
 					{errorDisplay}
 			 		<BureauFancyTextInput ref="titleInput" placeholder="Title" inputClassName="bounty-create-title"/>
+					<BureauFancyAutocompleteList
+						ref="issuersInput"
+						placeholder="Search for issuers (optional)"
+						autocomplete={this.getAssassinSuggestions}/>
 					<BureauFancyTextInput ref="commentInput" placeholder="Description" multiline={true}/>
 					<BureauFancyCheckboxInput ref="anyPlayerInput" label="Any player"/>
 					<BureauFancyAutocompleteList

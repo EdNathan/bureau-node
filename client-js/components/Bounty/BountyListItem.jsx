@@ -4,7 +4,9 @@ class BountyListItem extends React.Component {
 		super();
 		this.state = {
 			bountyTargets: [],
-			haveBountyTargets: false
+			haveBountyTargets: false,
+			bountyIssuers: [],
+			haveBountyIssuers: false
 		};
 	}
 
@@ -26,6 +28,20 @@ class BountyListItem extends React.Component {
 			} );
 		}
 
+		if( bounty.issuers.length ) {
+			BureauApi( 'assassin/getAssassinsFromAssassinIds', {
+				assassinIds: bounty.issuers
+			}, (err, assassins) => {
+
+				if ( !err ) {
+					this.setState( {
+						bountyIssuers: assassins,
+						haveBountyIssuers: true
+					} );
+				}
+			} );
+		}
+
 	}
 
 	onArchive() {
@@ -41,6 +57,7 @@ class BountyListItem extends React.Component {
 		let comment = bounty.comment ? <div className="bounty-comment">{bounty.comment}</div> : false;
 
 		var targets;
+		var issuers;
 		var killmethods;
 
 		if ( bounty.anyPlayer ) {
@@ -50,6 +67,16 @@ class BountyListItem extends React.Component {
 		} else {
 			targets = <div className="bounty-targets">
 				{ this.state.bountyTargets.map( (assassin) => `${assassin.forename} ${assassin.surname}`).join(`, `) }
+			</div>
+		}
+
+		if( !bounty.issuers.length ) {
+			issuers = <div className="bounty-anyplayers">This bounty was issued by the Guild</div>
+		} else if ( !this.state.haveBountyIssuers ) {
+			issuers = <div className="bounty-loadingtargets">Getting issuers...</div>
+		} else {
+			issuers = <div className="bounty-issuers">
+				{ this.state.bountyIssuers.map( (assassin) => `${assassin.forename} ${assassin.surname}`).join(`, `) }
 			</div>
 		}
 
@@ -99,6 +126,7 @@ class BountyListItem extends React.Component {
 			<li className="bounty-list-item">
 				<div className="bounty-title" style={{color:CHOSEN_COLOUR}}>{ bounty.title }</div>
 				{comment}
+				{issuers}
 				{targets}
 				{killmethods}
 				{editBountyButtons}
