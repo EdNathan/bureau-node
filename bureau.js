@@ -197,20 +197,7 @@ var Bureau = {
 			data.detailsUpdated = true
 			data.detailsLastUpdated = new Date()
 
-			//Add some welcome notifications
-			data.notifications = [ {
-					added: now,
-					text: 'Welcome to Bureau! Have a look around!',
-					id: utils.md5( now + 'bacon' ),
-					priority: false
-				}, {
-					added: now,
-					text: 'Try heading to the personal page and changing your profile picture!',
-					link: '/personal',
-					id: utils.md5( now + 'cheese' ),
-					priority: false
-				} ]
-				//Add the email confirmation token
+			//Add the email confirmation token
 			data.token = utils.md5( data.email + data.password )
 
 			Bureau.db.collection( 'unconfirmed-assassins' ).insert( data, {
