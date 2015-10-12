@@ -101,6 +101,20 @@ module.exports = function( Bureau ) {
 
 		addNotification: function( uid, data, callback ) {
 
+			if ( !callback ) {
+				callback = _.noop
+			}
+
+			if ( _.isString( data ) ) {
+				data = {
+					text: data
+				}
+			}
+
+			if ( !_.isString( uid ) ) {
+				uid = uid + ''
+			}
+
 			if ( data.hasOwnProperty( '_id' ) ) {
 				delete data._id;
 			}
