@@ -36,6 +36,12 @@ class NotificationsPanel extends React.Component {
 		}
 	}
 
+	markAllRead() {
+		BureauApi( `notifications/markAllRead`, ( err, notifications ) => {
+			this.refresh()
+		} )
+	}
+
 	render() {
 
 		let notifications = this.state.notifications
@@ -44,7 +50,10 @@ class NotificationsPanel extends React.Component {
 
 		return (
 			<div className="toolbar-panel-wrapper">
-				<div className="toolbar-header" style={{color:CHOSEN_COLOUR}}>Notifcations</div>
+				<div className="toolbar-header" style={{color:CHOSEN_COLOUR}}>
+					Notifcations
+					<div className="toolbar-header-button" style={{fontSize:'0.8em', fontWeight: 200}} title="Mark all Read" onClick={this.markAllRead.bind(this)}>✓</div>
+				</div>
 				<ReactCSSTransitionGroup transitionName="toolbar-content-slideleft" className="toolbar-content notification-list" component='ul'>
 					{this.state.notifications.map( ( notification, i ) => <NotificationListItem onClick={this.markRead(notification)} notification={notification} key={this.state.notifications.length - i} /> )}
 				</ReactCSSTransitionGroup>

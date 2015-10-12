@@ -531,44 +531,20 @@ var Bureau = {
 		},
 
 		getNotifications: function( uid, limit, callback ) {
-			Bureau.assassin.getAssassin( uid, function( err, a ) {
-				if ( a.notifications && a.notifications.length > 0 ) {
-					callback( err, a.notifications.sort( function( a, b ) {
-						return b.added - a.added
-					} ).slice( 0, limit ) )
-				} else {
-					callback( err, [] )
-				}
-			} )
 			Bureau.notifications.getNotifications( uid, limit, callback )
 		},
 
 		addNotification: function( uid, notification, source, priority ) {
-			var now = new Date(),
-				n = {
-					added: now,
-					text: notification,
-					id: utils.md5( now + '' + Math.random() + '' + uid ),
-					priority: !!priority,
-					read: false
-				}
-			if ( !!source ) {
-				n.source = source
+			var n = {
+				text: notification,
+				source: source,
+				priority: !!priority
 			}
-			Bureau.assassin.updateAssassin( uid, {
-				$push: {
-					notifications: n
-				}
-			}, function() {} )
+			Bureau.notifications.addNotification( uid, n )
 		},
 
-		markNotificationRead: function( uid, notificationid, callback ) {
-			Bureau.assassin.updateAssassin( uid, {
-				'notifications.$.read': true,
-				filter: {
-					'notifications.id': notificationid
-				}
-			}, callback )
+		markNotificationRead: function( uid, notificationId, callback ) {
+			Bureau.notifications.markNotificationRead( notificationId, callback )
 		},
 
 		getGamegroup: function( uid, callback ) {
@@ -1101,6 +1077,7 @@ var Bureau = {
 				ids.forEach( addNotification )
 
 				log( 'Notification: "' + notification + '" sent to all ' + ggid )
+				callback()
 			} )
 
 		},
@@ -1134,6 +1111,7 @@ var Bureau = {
 				ids.forEach( addNotification )
 
 				log( 'Notification: "' + notification + '" sent to guild for ' + ggid )
+				callback()
 			} )
 		},
 

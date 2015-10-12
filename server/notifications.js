@@ -135,6 +135,8 @@ module.exports = function( Bureau ) {
 
 			data.added = new Date()
 
+			data.player = uid
+
 			var notification = new Notification( data )
 
 			notification.save( function( err, notification ) {

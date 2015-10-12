@@ -5,14 +5,14 @@ module.exports = function( Bureau ) {
 			var uid = data.USER_ID,
 				limit = data.limit ? data.limit : 30
 
-			Bureau.assassin.getNotifications( uid, limit, callback )
+			Bureau.notifications.getNotifications( uid, limit, callback )
 		},
 
 		'markRead/:notificationId': function( data, params, callback ) {
 			var uid = data.USER_ID,
 				id = params.notificationId
 
-			Bureau.assassin.markNotificationRead( uid, id, function( err, stuff ) {
+			Bureau.notifications.markNotificationRead( id, function( err, stuff ) {
 				Bureau.assassin.getNotifications( uid, 20, callback )
 			} )
 		},
@@ -20,8 +20,8 @@ module.exports = function( Bureau ) {
 		markAllRead: function( data, params, callback ) {
 			var uid = data.USER_ID
 
-			Bureau.assassin.markAllNotificationsRead( uid, function( err, stuff ) {
-				Bureau.assassin.getNotifications( uid, 20, callback )
+			Bureau.notifications.markAllNotificationsRead( uid, function( err, notifications ) {
+				Bureau.notifications.getNotifications( uid, 20, callback )
 			} )
 		}
 	}
