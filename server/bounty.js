@@ -100,6 +100,41 @@ module.exports = function( Bureau ) {
 					return
 				}
 
+				if ( !bounty.anyPlayer ) {
+
+					var message = ''
+
+					var sendNotification = function() {
+						bounty.players.map( function( playerId ) {
+							Bureau.notifications.addNotification( playerId, {
+								text: message,
+								source: 'The Bounty Office'
+							} )
+						} )
+					}
+
+					if ( bounty.issuers.length > 0 ) {
+						Bureau.assassin.getAssassinsFromIds( bounty.issuers, function( err, assassins ) {
+							var names = assassins.map( function( assassin ) {
+								return assassin.forename + ' ' + assassin.surname
+							} )
+
+							if ( names.length > 1 ) {
+								message = names.slice( 0, -1 ).join( ', ' ) + ' and ' + names.slice( -1 )[ 0 ]
+							} else {
+								message = names[ 0 ]
+							}
+
+							message += ' set a bounty on you!'
+							sendNotification()
+
+						} )
+					} else {
+						message = 'The Guild set a bounty on you!'
+						sendNotification()
+					}
+				}
+
 				callback( null, bounty )
 			} )
 		},
