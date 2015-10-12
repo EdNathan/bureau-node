@@ -135,6 +135,7 @@ var Bureau = {
 			mongoose.connection.once( 'open', function() {
 				Bureau.mongoose = mongoose
 				Bureau.loadModule( 'bounty' )
+				Bureau.loadModule( 'notifications' )
 			} );
 
 		} )
@@ -144,6 +145,7 @@ var Bureau = {
 	},
 
 	loadModule: function( moduleName ) {
+		console.log( 'Loading module: ' + moduleName )
 		Bureau[ moduleName ] = require( './server/' + moduleName )( Bureau )
 	},
 
@@ -546,7 +548,8 @@ var Bureau = {
 					added: now,
 					text: notification,
 					id: utils.md5( now + '' + Math.random() + '' + uid ),
-					priority: !!priority
+					priority: !!priority,
+					read: false
 				}
 			if ( !!source ) {
 				n.source = source

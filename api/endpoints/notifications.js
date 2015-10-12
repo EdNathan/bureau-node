@@ -12,7 +12,15 @@ module.exports = function( Bureau ) {
 			var uid = data.USER_ID,
 				id = params.notificationId
 
-			Bureau.assassin.markNotificationRead( uid, id, function( err, shit ) {
+			Bureau.assassin.markNotificationRead( uid, id, function( err, stuff ) {
+				Bureau.assassin.getNotifications( uid, 20, callback )
+			} )
+		},
+
+		markAllRead: function( data, params, callback ) {
+			var uid = data.USER_ID
+
+			Bureau.assassin.markAllNotificationsRead( uid, function( err, stuff ) {
 				Bureau.assassin.getNotifications( uid, 20, callback )
 			} )
 		}
