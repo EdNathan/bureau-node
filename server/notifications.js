@@ -46,19 +46,33 @@ module.exports = function( Bureau ) {
 
 	return {
 
-		getNotifications: function( uid, callback ) {
+		getNotifications: function( uid, limit, callback ) {
+
+			if ( _.isFunction( limit ) ) {
+				callback = limit
+				limit = 20
+			}
+
+			if ( limit < 1 ) {
+				limit = 1
+			}
 
 			Notification.find( {
-				player: uid
-			}, function( err, notifications ) {
+					player: uid
+				} )
+				.sort( {
+					added: -1
+				} )
+				.limit( limit )
+				.exec( function( err, notifications ) {
 
-				if ( err ) {
-					callback( err )
-					return;
-				}
+					if ( err ) {
+						callback( err )
+						return;
+					}
 
-				callback( err, notifications )
-			} )
+					callback( err, notifications )
+				} )
 		},
 
 		markNotificationRead: function( notificationId, callback ) {

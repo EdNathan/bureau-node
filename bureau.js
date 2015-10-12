@@ -234,7 +234,7 @@ var Bureau = {
 						' has joined Bureau'
 					Bureau.gamegroup.getGuild( data.gamegroup, function( err, guild ) {
 						guild.forEach( function( el ) {
-							Bureau.assassin.addNotification( el._id + '', notif )
+							Bureau.notifications.addNotification( el._id + '', notif )
 						} )
 					} )
 					callback( err, docs )
@@ -540,6 +540,7 @@ var Bureau = {
 					callback( err, [] )
 				}
 			} )
+			Bureau.notifications.getNotifications( uid, limit, callback )
 		},
 
 		addNotification: function( uid, notification, source, priority ) {
@@ -1086,18 +1087,22 @@ var Bureau = {
 			line()
 			log( 'Sending Notification: "' + notification + '" to all ' + ggid )
 
-			Bureau.assassin.updateAssassins( {
+			Bureau.assassin.getAssassins( {
 				gamegroup: ggid
-			}, {
-				$push: {
-					notifications: n
-				}
 			}, function( err, assassins ) {
-				if ( callback ) {
-					log( 'Notification: "' + notification + '" sent to all ' + ggid )
-					callback( err, assassins )
+				var ids = assassins.map( function( assassin ) {
+					return assassin._id + ''
+				} )
+
+				var addNotification = function( uid ) {
+					Bureau.notifications.addNotification( uid, n )
 				}
+
+				ids.forEach( addNotification )
+
+				log( 'Notification: "' + notification + '" sent to all ' + ggid )
 			} )
+
 		},
 
 		notifyGuild: function( ggid, notification, source, priority, callback ) {
@@ -1114,18 +1119,21 @@ var Bureau = {
 			line()
 			log( 'Sending Notification: "' + notification + '" to guild for ' + ggid )
 
-			Bureau.assassin.updateAssassins( {
+			Bureau.assassin.getAssassins( {
 				gamegroup: ggid,
 				guild: true
-			}, {
-				$push: {
-					notifications: n
-				}
 			}, function( err, assassins ) {
-				if ( callback ) {
-					log( 'Notification: "' + notification + '" sent to guild for ' + ggid )
-					callback( err, assassins )
+				var ids = assassins.map( function( assassin ) {
+					return assassin._id + ''
+				} )
+
+				var addNotification = function( uid ) {
+					Bureau.notifications.addNotification( uid, n )
 				}
+
+				ids.forEach( addNotification )
+
+				log( 'Notification: "' + notification + '" sent to guild for ' + ggid )
 			} )
 		},
 
