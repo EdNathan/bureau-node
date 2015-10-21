@@ -1044,9 +1044,15 @@ var Bureau = {
 					id: utils.md5( now + '' + ggid ),
 					priority: !!priority
 				}
+
 			if ( !!source ) {
 				n.source = source
 			}
+
+			if ( !callback ) {
+				callback = _.noop
+			}
+
 			line()
 			log( 'Sending Notification: "' + notification + '" to all ' + ggid )
 
@@ -1077,9 +1083,15 @@ var Bureau = {
 					id: utils.md5( now + '' + ggid ),
 					priority: !!priority
 				}
+
 			if ( !!source ) {
 				n.source = source
 			}
+
+			if ( !callback ) {
+				callback = _.noop
+			}
+
 			line()
 			log( 'Sending Notification: "' + notification + '" to guild for ' + ggid )
 
