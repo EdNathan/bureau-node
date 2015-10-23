@@ -939,10 +939,21 @@ var authPages = {
 						} else {
 							Bureau.report.rejectReport( reportid, comment, function( err, report ) {
 								Bureau.assassin.getAssassin( report.victimid, function( err, victim ) {
-									var notif = 'Your kill on ' + utils.fullname( victim ) +
+
+									var killerNotification = 'Your kill on ' + utils.fullname( victim ) +
 										' was rejected by ' + utils.fullname( res.locals.assassin ) +
 										' with reason "' + comment + '"'
-									Bureau.assassin.addNotification( killerid, notif )
+									Bureau.assassin.addNotification( killerid, killerNotification )
+
+									Bureau.assassin.getAssassin( report.killerid, function( err, killer ) {
+
+										var victimNotification = utils.fullname( killer ) +
+											'\'s kill on you was rejected by ' + utils.fullname( res.locals.assassin ) +
+											' with reason "' + comment + '"'
+
+										Bureau.assassin.addNotification( victim._id + '', victimNotification )
+									} )
+
 									loadPage()
 								} )
 							} )
