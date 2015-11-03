@@ -97,7 +97,7 @@
 {% macro possiblePlayer(a) %}
 <li class="addplayer-row addplayer-row-newgame {% if a.optout %}opted-out{% endif %} {% if a.detailsUpdated === false %}details-outdated{% endif %}" data-index="{{a|search}}">
 	<div class="name">{{ a.forename }} {{ a.surname }}</div>
-	<input type="checkbox" name="uids[]" value="{{ a._id|safe }}" {% if a.autoinclude && !a.optout && !(a.detailsUpdated === false) %}checked{% endif %}>
+	<input type="checkbox" name="uids[]" value="{{ a._id|safe }}" {% if !a.optout && !(a.detailsUpdated === false) %}checked{% endif %}>
 </li>
 {% endmacro %}
 
