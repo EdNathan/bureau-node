@@ -175,7 +175,7 @@ var Bureau = {
 	register: {
 		emailExists: function( email, callback ) {
 			Bureau.db.collection( 'assassins' ).find( {
-				'email': email
+				'email': email.toLowerCase()
 			} ).toArray( function( err, docs ) {
 				callback( err, docs.length > 0 )
 			} )
@@ -184,6 +184,7 @@ var Bureau = {
 		registerNewAssassin: function( data, callback ) {
 			data.joindate = new Date()
 			data.guild = false
+			data.email = data.email.toLowerCase()
 
 			var now = new Date()
 
@@ -230,7 +231,7 @@ var Bureau = {
 
 		confirmEmail: function( email, token, callback ) {
 			var query = {
-				email: email,
+				email: email.toLowerCase(),
 				token: token
 			}
 
@@ -265,7 +266,7 @@ var Bureau = {
 		loginAssassin: function( email, password, callback ) {
 			Bureau.db.collection( 'assassins' ).find( {
 				$or: [ {
-					email: email
+					email: email.toLowerCase()
 				}, {
 					nickname: email
 				} ]

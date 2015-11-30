@@ -52,7 +52,7 @@ var pages = {
 			res.render( 'forgotpassword' )
 		},
 		confirmemail: function( req, res ) {
-			var email = req.query.e,
+			var email = req.query.e.toLowerCase(),
 				token = req.query.t
 
 			Bureau.register.confirmEmail( email, token, function( err, assassin ) {
@@ -70,7 +70,7 @@ var pages = {
 	},
 	post: {
 		login: function( req, res ) {
-			var email = req.body.email.replace( '@dur.ac.uk', '@durham.ac.uk' ),
+			var email = req.body.email.toLowerCase().replace( '@dur.ac.uk', '@durham.ac.uk' ),
 				password = req.body.password,
 				passwordconfirm = req.body.passwordconfirm,
 				forename = req.body.forename,
