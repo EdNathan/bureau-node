@@ -13,7 +13,7 @@ module.exports = function( Bureau ) {
 				validator: function( val ) {
 					return val && val.trim().length >= 10
 				},
-				message: 'A bounty must have a title at minimum 10 chars long'
+				message: 'A bounty must have a title at minimum 10 characters long'
 			}
 		},
 		comment: String,
