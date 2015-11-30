@@ -206,8 +206,7 @@ var Bureau = {
 				//Send an email to gamegroup master email
 				Bureau.gamegroup.getGamegroup( data.gamegroup, function( err, gg ) {
 
-					Mail.sendText( gg.email, 'New Bureau User', utils.fullname( data ) +
-						' has joined Bureau',
+					Mail.sendText( gg.email, 'New Bureau User', utils.fullname( data ) + ' has joined Bureau',
 						function( err, res ) {
 							console.log( err, res )
 						} )
