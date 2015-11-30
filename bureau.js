@@ -218,6 +218,7 @@ var Bureau = {
 
 					//Notify guild of them joining
 					var notif = data.forename + ' ' + data.surname + ' has joined Bureau'
+					console.log( notif )
 					Bureau.gamegroup.getGuild( data.gamegroup, function( err, guild ) {
 						guild.forEach( function( el ) {
 							Bureau.notifications.addNotification( el._id + '', notif )
