@@ -426,8 +426,7 @@ var concentricsgame = {
 						targetsWithPendingReports: pendingReports,
 						targets: targetAssassins,
 						deadline: moment( deadline ).format( 'MMMM Do YYYY, h:mm:ss a' ),
-						timeremaining: moment( deadline ).fromNow( true ),
-						pendingReport: pendingReport
+						timeremaining: moment( deadline ).fromNow( true )
 					},
 					function( err, output ) {
 						if ( err ) {
