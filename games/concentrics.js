@@ -304,6 +304,7 @@ var concentricsgame = {
 
 		var newTargets = []
 
+		// console.log( 'player', playerId )
 		// console.log( 'inner', self.getPlayersInCircle( game, CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE ) )
 		// console.log( 'middle', self.getPlayersInCircle( game, CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE ) )
 		// console.log( 'outer', self.getPlayersInCircle( game, CONCENTRICS_GAME.CIRCLES.OUTER_CIRCLE ) )
@@ -323,7 +324,7 @@ var concentricsgame = {
 
 		// Get the circles with the other targets removed
 		var innerCircle = _.difference(
-			self.getPlayersInCircle( game, CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE ),
+			self.getPlayersInCircle( game, CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE ),
 			lastTargets,
 			playersTargeting
 		)
@@ -335,14 +336,14 @@ var concentricsgame = {
 		)
 
 		var outerCircle = _.difference(
-			self.getPlayersInCircle( game, CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE ),
+			self.getPlayersInCircle( game, CONCENTRICS_GAME.CIRCLES.OUTER_CIRCLE ),
 			lastTargets,
 			playersTargeting
 		)
 
-		// console.log( innerCircle )
-		// console.log( middleCircle )
-		// console.log( outerCircle )
+		// console.log( 'evaluated inner', innerCircle )
+		// console.log( 'evaluated middle', middleCircle )
+		// console.log( 'evaluated outer', outerCircle )
 
 		// Select from inner circle for first. Keep sampling wider circles until we get a target
 		newTargets = newTargets.concat( _.sample( innerCircle, 1 ) )
