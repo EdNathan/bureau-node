@@ -274,9 +274,9 @@ var concentricsgame = {
 		}
 	},
 
-	getPlayersTargettingPlayer: function( game, playerId ) {
-		return _.keys( _.pick( game.players, function( targettingPlayer, targettingPlayerId ) {
-			var currentTargets = _.last( targettingPlayer.targets ).targetStatuses
+	getPlayersTargetingPlayer: function( game, playerId ) {
+		return _.keys( _.pick( game.players, function( targetingPlayer, targetingPlayerId ) {
+			var currentTargets = _.last( targetingPlayer.targets ).targetStatuses
 
 			// Find out if another player has this player as an in progress target
 			return currentTargets.filter( function( target ) {
@@ -307,26 +307,26 @@ var concentricsgame = {
 			// The ids of the last targets
 		var lastTargets = _.pluck( _.last( player.targets ).targetStatuses, 'id' )
 
-		// Find out which players are targetting the current player
-		var playersTargetting = self.getPlayersTargettingPlayer( game, playerId )
+		// Find out which players are targeting the current player
+		var playersTargeting = self.getPlayersTargetingPlayer( game, playerId )
 
 		// Get the circles with the other targets removed
 		var innerCircle = _.difference(
 			self.getCircle( game, CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE ),
 			lastTargets,
-			playersTargetting
+			playersTargeting
 		)
 
 		var middleCircle = _.difference(
 			self.getCircle( game, CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE ),
 			lastTargets,
-			playersTargetting
+			playersTargeting
 		)
 
 		var outerCircle = _.difference(
 			self.getCircle( game, CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE ),
 			lastTargets,
-			playersTargetting
+			playersTargeting
 		)
 
 		// Select from inner circle for first. Keep sampling wider circles until we get a target
