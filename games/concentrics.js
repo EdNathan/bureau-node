@@ -186,16 +186,13 @@ var concentricsgame = {
 	tick: function( game, callback ) {
 		var now = moment().toDate(),
 			self = this,
-			last = function( arr ) {
-				return arr.slice( -1 )[ 0 ]
-			},
 			playersNeedingTargets = [];
 
 
 		// Find which players need new circles and targets
 		_.each( game.players, function( player, playerId ) {
 
-			var lastTargets = last( player.targets )
+			var lastTargets = _.last( player.targets )
 
 			// See if deadline has expired
 			if ( lastTargets.deadline < now ) {
