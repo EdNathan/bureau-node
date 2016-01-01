@@ -42,13 +42,12 @@
 
 <div class="game-info">{{game.kills.length}} kill{{game.kills.length|plural}}, {{game.deaths.length}} death{{game.deaths.length|plural}}</div>
 
-<section class="spiral-deadline">
+<h2>Your Targets</h2>
+
+<section class="spiral-deadline" style="margin-bottom: 30px">
     {{deadline}}<br>
     You have {{timeremaining}} left
 </section>
-
-<h2>Your Targets</h2>
-
 
 {% for target in targets %}
     {{card.card(target)}}
