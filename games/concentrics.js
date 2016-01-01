@@ -86,7 +86,6 @@ var concentricsgame = {
 
 			game.players = {}
 
-
 			playerIds.map( function( playerId, i ) {
 
 				//The player object
@@ -100,7 +99,7 @@ var concentricsgame = {
 				}
 
 				// Give them the next 3 targets in the list
-				player.targets.targetStatuses = [
+				player.targets[ 0 ].targetStatuses = [
 					playerIds[ ( i + 1 ) % l ],
 					playerIds[ ( i + 2 ) % l ],
 					playerIds[ ( i + 3 ) % l ]
