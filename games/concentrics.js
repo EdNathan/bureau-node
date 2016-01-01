@@ -364,7 +364,7 @@ var concentricsgame = {
 
 		playerIds.map( function( playerId ) {
 			var player = game.players[ playerId ]
-			var newTargets = self.pickNewTargetsForPlayer( game.playerId )
+			var newTargets = self.pickNewTargetsForPlayer( game, playerId )
 
 			player.targets.push( {
 				deadline: newDeadline,
