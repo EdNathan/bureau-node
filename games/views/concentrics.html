@@ -1,0 +1,74 @@
+{% include './basegame.html' %}
+
+
+{% macro spiralNonTarget(a, g, verb) %}
+    <li class="player-row" data-index="{{a|search}}">
+        <section>
+            <header>
+                <div class="name">{{ a.forename }} {{ a.surname }}</div>
+                <div class="nickname-rank"><span class="nickname">{{a.nickname}}</span><!--  Lethality: #lethality --></div>
+            </header>
+            <div class="fields">
+                <div title="address" class="address-group">
+                    <p>{{ a.address|address }}</p>
+                    {% if a.liverin %}
+                    <p>(Living In)</p>
+                    {% endif %}
+                </div>
+
+                <div class="academic-group">
+                    <p title="college">{{ a.college }}</p>
+                    <p title="course">{{ a.course }}</p>
+                </div>
+            </div>
+            <div class="form-wrapper">
+                <form action="/report" method="get">
+                    <input type="hidden" name="victimid" value="{{a._id|safe}}">
+                    <input type="hidden" name="gameid" value="{{g.gameid}}">
+                    <input type="submit" name="kill" value="{{{true:verb, false:"Kill"}[!!verb]}}">
+                </form>
+            </div>
+
+        </section>
+        <aside>
+            <div class="display-picture" style="background-image:url({{a.imgname}})"></div>
+        </aside>
+
+        <div>
+
+        </div>
+    </li>
+{% endmacro %}
+
+<div class="game-info">{{game.kills.length}} kill{{game.kills.length|plural}}, {{game.deaths.length}} death{{game.deaths.length|plural}}</div>
+
+<section class="spiral-deadline">
+    {{deadline}}<br>
+    You have {{timeremaining}} left
+</section>
+
+<h2>Your Targets</h2>
+
+
+{% for target in targets %}
+    {{card.card(target)}}
+
+    <form action="/report" method="get" class="spiral">
+    	<input type="hidden" name="victimid" value="{{target._id|safe}}">
+        <input type="hidden" name="gameid" value="{{game.gameid}}">
+        {% if !(target._id in targetsWithPendingReports) %}
+        <input class="spiral-kill-button" type="submit" name="kill" value="Kill">
+        {% else %}
+        <div class="spiral-kill-button">Report Pending Approval</div>
+        <span class="spiral-reassurance">You will receive more targets once all your targets have been killed</span>
+        {% endif %}
+    </form>
+{% endfor %}
+
+<ul id="game-{{game.gameid}}" class="player-table searchable {{game.type}}" data-search="search other players" data-searchmethod="inclusive">
+    {% for a in nonTargets %}
+        {% if a._id|safe != uid %}
+            {{ spiralNonTarget(a,game,'kill') }}
+        {% endif %}
+    {% endfor %}
+</ul>

@@ -391,7 +391,6 @@ var concentricsgame = {
 
 	},
 
-	// TODO -> WIP
 	renderGame: function( game, assassin, gamegroup, callback ) {
 		var self = this
 		self.tick( game, function( err, success ) {
@@ -403,24 +402,30 @@ var concentricsgame = {
 			var uid = assassin._id + '',
 				players = game.players,
 				player = game.players[ uid ],
-				deadline = player.deadlines.slice( -1 )[ 0 ],
+				currentTargets = _.last( player.targets ).targetStatuses,
+				currentTargetIds = _.pluck( currentTargets, 'id' ),
+				deadline = _.last( player.targets ).deadline,
 				targetid = player.targets.slice( -1 )[ 0 ],
 				nonTargets = game.assassins.filter( function( el ) {
-					return el._id + '' !== targetid && el._id + '' !== uid
+					return !_.contains( currentTargetIds, el._id + '' ) && el._id + '' !== uid
 				} )
 
-			var pendingReport = assassin.kills.filter( function( kill ) {
-				return kill.gameid === game.gameid && kill.victimid === targetid && kill.state === 'waiting'
-			} ).length > 0
+			var pendingReports = _.pluck( assassin.kills.filter( function( kill ) {
+				var sameGame = kill.gameid === game.gameid,
+					onCurrentTarget = _.contains( currentTargetIds, kill.victimid )
+				return sameGame && onCurrentTarget && kill.state === 'waiting'
+			} ), 'victimid' )
 
-			self.Bureau.assassin.getAssassin( targetid, function( err, target ) {
+			self.Bureau.assassin.getAssassinsFromIds( currentTargetIds, function( err, targetAssassins ) {
+
 				self.swig.renderFile( './games/views/concentrics.html', {
 						game: game,
 						assassin: assassin,
 						uid: uid,
 						gamegroup: gamegroup,
 						nonTargets: nonTargets,
-						target: target,
+						targetsWithPendingReports: pendingReports,
+						targets: targetAssassins,
 						deadline: moment( deadline ).format( 'MMMM Do YYYY, h:mm:ss a' ),
 						timeremaining: moment( deadline ).fromNow( true ),
 						pendingReport: pendingReport
