@@ -274,6 +274,16 @@ var concentricsgame = {
 		}
 	},
 
+	getPlayersTargettingPlayer: function( game, playerId ) {
+		return _.keys( _.pick( game.players, function( targettingPlayer, targettingPlayerId ) {
+			var currentTargets = _.last( targettingPlayer.targets ).targetStatuses
+
+			// Find out if another player has this player as an in progress target
+			return currentTargets.filter( function( target ) {
+				return target.id === playerId && target.status === CONCENTRICS_GAME.TARGET_STATES.IN_PROGRESS
+			} ).length > 0
+		} ) )
+	},
 
 	// Algorithm for picking new targets
 	// Returns an array of target ids
@@ -298,15 +308,7 @@ var concentricsgame = {
 		var lastTargets = _.pluck( _.last( player.targets ).targetStatuses, 'id' )
 
 		// Find out which players are targetting the current player
-		var playersTargetting = _.keys( _.pick( game.players, function( targettingPlayer, targettingPlayerId ) {
-			var currentTargets = _.last( targettingPlayer.targets ).targetStatuses
-
-			// Find out if another player has this player as an in progress target
-			return currentTargets.filter( function( target ) {
-				return target.id === playerId && target.status === CONCENTRICS_GAME.TARGET_STATES.IN_PROGRESS
-			} ).length > 0
-		} ) )
-
+		var playersTargetting = self.getPlayersTargettingPlayer( game, playerId )
 
 		// Get the circles with the other targets removed
 		var innerCircle = _.difference(
@@ -389,7 +391,7 @@ var concentricsgame = {
 
 	},
 
-	// TODO
+	// TODO -> WIP
 	renderGame: function( game, assassin, gamegroup, callback ) {
 		var self = this
 		self.tick( game, function( err, success ) {
