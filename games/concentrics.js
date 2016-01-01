@@ -300,6 +300,8 @@ var concentricsgame = {
 
 			No player may have two targets as the same person.
 		*/
+		var self = this
+
 		var newTargets = []
 
 		var player = game.players[ playerId ]
