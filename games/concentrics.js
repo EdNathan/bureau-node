@@ -358,6 +358,7 @@ var concentricsgame = {
 	assignNewTargetsForPlayers: function( game, playerIds, callback ) {
 		var toSet = {},
 			self = this,
+			now = moment(),
 			deadlineDays = game.custom[ 'concentrics-deadline-days' ],
 			newDeadline = moment( now ).add( deadlineDays, 'days' ).toDate()
 
