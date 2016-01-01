@@ -304,31 +304,45 @@ var concentricsgame = {
 
 		var newTargets = []
 
+		// console.log( 'inner', self.getPlayersInCircle( game, CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE ) )
+		// console.log( 'middle', self.getPlayersInCircle( game, CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE ) )
+		// console.log( 'outer', self.getPlayersInCircle( game, CONCENTRICS_GAME.CIRCLES.OUTER_CIRCLE ) )
+
 		var player = game.players[ playerId ]
 			// The ids of the last targets
 		var lastTargets = _.pluck( _.last( player.targets ).targetStatuses, 'id' )
 
+		// Prevent the player from being chosen
+		lastTargets.concat( playerId )
+
 		// Find out which players are targeting the current player
 		var playersTargeting = self.getPlayersTargetingPlayer( game, playerId )
 
+		// console.log( 'last targets', lastTargets )
+		// console.log( 'players targeting', playersTargeting )
+
 		// Get the circles with the other targets removed
 		var innerCircle = _.difference(
-			self.getCircle( game, CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE ),
+			self.getPlayersInCircle( game, CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE ),
 			lastTargets,
 			playersTargeting
 		)
 
 		var middleCircle = _.difference(
-			self.getCircle( game, CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE ),
+			self.getPlayersInCircle( game, CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE ),
 			lastTargets,
 			playersTargeting
 		)
 
 		var outerCircle = _.difference(
-			self.getCircle( game, CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE ),
+			self.getPlayersInCircle( game, CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE ),
 			lastTargets,
 			playersTargeting
 		)
+
+		// console.log( innerCircle )
+		// console.log( middleCircle )
+		// console.log( outerCircle )
 
 		// Select from inner circle for first. Keep sampling wider circles until we get a target
 		newTargets = newTargets.concat( _.sample( innerCircle, 1 ) )
