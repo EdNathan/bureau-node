@@ -84,7 +84,10 @@ var concentricsgame = {
 
 			var l = playerIds.length
 
-			game.players = playerIds.map( function( playerId, i ) {
+			game.players = {}
+
+
+			playerIds.map( function( playerId, i ) {
 
 				//The player object
 				var player = {
@@ -108,7 +111,7 @@ var concentricsgame = {
 					}
 				} )
 
-				return player
+				game.players[ playerId ] = player
 			} )
 
 			callback( null, game )
