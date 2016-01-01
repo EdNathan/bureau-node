@@ -363,6 +363,7 @@ var concentricsgame = {
 			newDeadline = moment( now ).add( deadlineDays, 'days' ).toDate()
 
 		playerIds.map( function( playerId ) {
+
 			var player = game.players[ playerId ]
 			var newTargets = self.pickNewTargetsForPlayer( game, playerId )
 
