@@ -131,7 +131,6 @@ var concentricsgame = {
 		} ).length
 	},
 
-	// TODO
 	//Given a player uid, construct a game state fragment for the player
 	getGameStateForUid: function( game, playerId, callback ) {
 		var self = this,
