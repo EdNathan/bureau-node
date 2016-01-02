@@ -180,7 +180,6 @@ var concentricsgame = {
 		} )
 	},
 
-
 	changeGameState: function( game, playerid, data, callback ) {
 		var permaCircle = !!data.permacircle,
 			toSet = {
@@ -482,8 +481,6 @@ var concentricsgame = {
 		} )
 	},
 
-
-	// TODO
 	//Given killer, victim, kill method, time and everything else in the report if needed, determine whether the kill is valid
 	checkKillValid: function( game, killerid, victimid, killmethod, time, report, callback ) {
 		//No rules about who can and can't be killed
