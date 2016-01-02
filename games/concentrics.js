@@ -181,7 +181,6 @@ var concentricsgame = {
 	},
 
 
-	// TODO
 	changeGameState: function( game, playerid, data, callback ) {
 		var permaCircle = !!data.permacircle,
 			toSet = {
