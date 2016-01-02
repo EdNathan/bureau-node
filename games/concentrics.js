@@ -168,9 +168,10 @@ var concentricsgame = {
 					requester: self.Bureau.isAdmin( requester ) ? false : requester,
 					targets: player.targets.map( function( target ) {
 						target.targetStatuses.map( function( targetStatus ) {
-							targetStatus.assassin = assassinsObj[ targetStatus.id ]
-							targetStatus.statusText = statusText[ targetStatus.status ]
-							return targetStatus
+							var s = _.cloneDeep( targetStatus )
+							s.assassin = assassinsObj[ s.id ]
+							s.statusText = statusText[ s.status ]
+							return s
 						} )
 
 						return target
@@ -478,7 +479,7 @@ var concentricsgame = {
 						score: self.getScoreForUid( game, uid ),
 						nonTargets: nonTargets,
 						targetsWithPendingReports: _.zipObject( pendingReports ),
-						targets: _.clone( currentTargets ).map( function( target ) {
+						targets: _.cloneDeep( currentTargets ).map( function( target ) {
 							target.assassin = targetAssassins[ target.id ]
 							return target
 						} ),
@@ -511,8 +512,8 @@ var concentricsgame = {
 		var self = this,
 			gameid = game.gameid,
 			killerPlayer = game.players[ killerId ],
-			victimPlayer = game.players[ victimId ],
-			toSet = {}
+			victimPlayer = game.players[ victimId ]
+
 
 		// Find which deadlines it corresponds with
 		var killerIndex = _.findIndex( killerPlayer.targets, function( target ) {
