@@ -35,7 +35,7 @@ module.exports = function( Bureau ) {
 							gametype: game.type,
 							gamestatefragment: gamestate
 						} )
-					} )
+					}, uid )
 				} )
 			} )
 		}

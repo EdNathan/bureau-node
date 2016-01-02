@@ -144,6 +144,10 @@ var Bureau = {
 
 	},
 
+	isAdmin: function( uid ) {
+		return _.contains( Bureau.admins, uid )
+	},
+
 	loadModule: function( moduleName ) {
 		console.log( 'Loading module: ' + moduleName )
 		Bureau[ moduleName ] = require( './server/' + moduleName )( Bureau )

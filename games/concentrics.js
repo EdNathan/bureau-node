@@ -132,7 +132,7 @@ var concentricsgame = {
 	},
 
 	//Given a player uid, construct a game state fragment for the player
-	getGameStateForUid: function( game, playerId, callback ) {
+	getGameStateForUid: function( game, playerId, callback, requester ) {
 		var self = this,
 			gameid = game.gameid
 
@@ -165,6 +165,7 @@ var concentricsgame = {
 						return utils.fullname( assassinsObj[ pid ] )
 					} ).join( ', ' ),
 					circleText: circleText[ player.circle ],
+					requester: self.Bureau.isAdmin( requester ) ? false : requester,
 					targets: player.targets.map( function( target ) {
 						target.targetStatuses.map( function( targetStatus ) {
 							targetStatus.assassin = assassinsObj[ targetStatus.id ]

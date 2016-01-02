@@ -1,6 +1,10 @@
 Circle: {{circleText}}<br><br>
 
+{% if requester != playerid %}
 Being targeted by: {{playersTargeting}}<br><br>
+{% else %}
+Being targeted by: xXx_C H E A T B O Y S_xXx<br><br>
+{% endif %}
 
 {% for target in player.targets|reverse %}
 	<em>Deadline: {{ target.deadline | prettyTimestamp }}</em><br>
