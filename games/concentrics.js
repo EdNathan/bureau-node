@@ -167,14 +167,17 @@ var concentricsgame = {
 					circleText: circleText[ player.circle ],
 					requester: self.Bureau.isAdmin( requester ) ? false : requester,
 					targets: player.targets.map( function( target ) {
-						target.targetStatuses.map( function( targetStatus ) {
+
+						var t = _.cloneDeep( target )
+
+						t.targetStatuses = t.targetStatuses.map( function( targetStatus ) {
 							var s = _.cloneDeep( targetStatus )
 							s.assassin = assassinsObj[ s.id ]
 							s.statusText = statusText[ s.status ]
 							return s
 						} )
 
-						return target
+						return t
 					} )
 				}
 
@@ -552,8 +555,10 @@ var concentricsgame = {
 			var newCircle = killerPlayer.circle
 
 			//Now compute their circle
+			//If they are inner circle then keep them there, otherwise...
 			//If the kill happened in the current or last set of targets then move them to the middle circle
-			if ( victimTargetIndex >= killerDeadline.targetStatuses.length - 2 ) {
+			if ( ( newCircle !== CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE ) && ( victimTargetIndex >= killerDeadline.targetStatuses
+					.length - 2 ) ) {
 				//If they have completed all their targets
 				var completedAllTargets = _.filter( killerDeadline.targetStatuses, {
 					status: CONCENTRICS_GAME.TARGET_STATES.KILLED
