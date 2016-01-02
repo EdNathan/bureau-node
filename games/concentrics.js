@@ -118,6 +118,11 @@ var concentricsgame = {
 		} )
 	},
 
+	getScoreForUid: function( game, playerId ) {
+		return _.filter( _.flatten( _.pluck( game.players[ playerId ].targets, 'targetStatuses' ) ), {
+			status: CONCENTRICS_GAME.TARGET_STATES.KILLED
+		} ).length
+	},
 
 	// TODO
 	//Given a player uid, construct a game state fragment for the player

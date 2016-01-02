@@ -487,9 +487,20 @@ var authPages = {
 
 					for ( i; i < l; i++ ) {
 						g = games[ i ]
+
 						Bureau.game.getAssassins( g.gameid, ( function( j ) {
 							return function( err, assassins ) {
 								loaded++
+
+								if ( Bureau.games[ games[ j ].type ].hasOwnProperty( 'getScoreForUid' ) ) {
+									var gameController = Bureau.games[ games[ j ].type ]
+
+									assassins.map( function( assassin ) {
+										var uid = assassin._id + ''
+										games[ j ].players[ uid ].score = gameController.getScoreForUid( games[ j ], uid )
+									} )
+								}
+
 								games[ j ].assassins = assassins.sort( function( a, b ) {
 									return games[ j ].players[ b._id + '' ].score - games[ j ].players[
 										a._id + '' ].score
@@ -499,6 +510,7 @@ var authPages = {
 								}
 							}
 						} )( i ) )
+
 						Bureau.game.getPossibleAssassins( g.gameid, ggid, ( function( j ) {
 							return function( err, assassins ) {
 								loaded++
@@ -508,6 +520,7 @@ var authPages = {
 								}
 							}
 						} )( i ) )
+
 						if ( Bureau.games[ g.type ].getParamChangeFragment ) {
 							Bureau.games[ g.type ].getParamChangeFragment( g, ( function( j ) {
 								return function( err, frag ) {
@@ -524,6 +537,7 @@ var authPages = {
 								displayPage( games )
 							}
 						}
+
 					}
 
 				} )
