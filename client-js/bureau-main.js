@@ -510,7 +510,7 @@ var bureau = {
 				}
 
 			}
-			console.log( validate );
+// 			console.log( validate );
 
 			function updateValidation() {
 				var f, n, el;
@@ -561,7 +561,7 @@ var bureau = {
 					if ( clicked.indexOf( k ) < 0 ) {
 						//Need to load in gamestate data
 						clicked.push( k )
-						console.log( k )
+// 						console.log( k )
 						BureauApi( 'gamestatefragment/' + gameid + '/' + uid, function( err, j ) {
 							$( el ).parent().find( '.gamestate-block' ).html( j.gamestatefragment )
 						} )

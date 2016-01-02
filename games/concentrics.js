@@ -290,14 +290,16 @@ var concentricsgame = {
 		} )
 
 		if ( !playersNeedingTargets.length ) {
-
+			// console.log( 'No players need new targets' )
+			// console.trace()
 			callback( null, true )
 
 		} else {
-
+			// console.log( 'assigning targets', playersNeedingTargets )
 			self.assignNewTargetsForPlayers( game, playersNeedingTargets, function( err, gg ) {
+				// console.log( 'done assigning targets for new players' )
 				if ( err ) {
-					console.log( 'ERROR TICKING GAME', err, game )
+					// console.log( 'ERROR TICKING GAME', err, game )
 					callback( err, false )
 				} else {
 					callback( null, true )
@@ -567,6 +569,7 @@ var concentricsgame = {
 				newCircle = CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE
 
 				if ( completedAllTargets ) {
+					// console.log( 'Moving to inner circle' )
 					newCircle = CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE
 				}
 			}
@@ -575,7 +578,9 @@ var concentricsgame = {
 				targets: killerPlayer.targets,
 				circle: killerPlayer.permaCircle ? CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE : newCircle,
 			}, function( err, gamegroup ) {
+				// console.log( 'Set the player data' )
 				self.Bureau.game.getGame( gameid, function( err, game ) {
+					// console.log( 'got the game' )
 					self.tick( game, callback )
 				} )
 			} )
