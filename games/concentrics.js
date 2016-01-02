@@ -497,111 +497,70 @@ var concentricsgame = {
 	},
 
 
-	// TODO
+	// TODO -> WIP
 	//Given killer, victim, kill method and the report, handle the kill
-	handleKill: function( game, killerid, victimid, report, callback ) {
+	handleKill: function( game, killerId, victimId, report, callback ) {
 		var self = this,
 			gameid = game.gameid,
-			killedCurrentTarget = game.players[ killerid ].targets.slice( -1 )[ 0 ] === victimid,
-			killedCurrentHunter = game.players[ victimid ].targets.slice( -1 )[ 0 ] === killerid,
-			addScore = function() {
-				self.Bureau.game.changeScore( game.gameid, killerid, 1, callback )
-			}
-			//Case 1, the target or hunter is the latest one
-		if ( killedCurrentTarget || killedCurrentHunter ) {
-			if ( killedCurrentTarget ) {
-				// console.log('Is current target')
-				//We need to give them a new target
-				var newstatuses = game.players[ killerid ].targetstatuses
-				newstatuses.pop()
-				newstatuses.push( 1 )
+			killerPlayer = game.players[ killerId ],
+			victimPlayer = game.players[ victimId ],
+			toSet = {}
 
-				self.Bureau.game.setPlayerData( gameid, killerid, {
-					targetstatuses: newstatuses
-				}, function( err, gamegroup ) {
-					// console.log('Set new target status')
-					self.Bureau.game.getGame( gameid, function( err, game ) {
-						// console.log('Got game')
-						// console.log(game)
-						self.tick( game, function() {
-							// console.log('Tick completed')
-							//Add 1 to the score
-							addScore()
-						} )
-					} )
+		// Find which deadlines it corresponds with
+		var killerIndex = _.findIndex( killerPlayer.targets, function( target ) {
+				return report.time < target.deadline
+			} ),
+			killerDeadline = killerPlayer.targets[ killerIndex ]
+
+
+		var victimIndex = _.findIndex( victimPlayer.targets, function( target ) {
+				return report.time < target.deadline
+			} ),
+			victimDeadline = victimPlayer.targets[ victimIndex ]
+
+		console.log( report )
+		console.log( killerIndex, killerDeadline )
+		console.log( victimIndex, victimDeadline )
+
+		// Find which target it corresponds to
+		var victimTargetIndex = _.findIndex( killerDeadline.targetStatuses, {
+			id: victimId
+		} )
+		var killerTargetIndex = _.findIndex( victimDeadline.targetStatuses, {
+			id: killerId
+		} )
+
+		var killerVictimTarget = killerDeadline.targetStatuses[ victimTargetIndex ]
+		var victimKillerTarget = victimDeadline.targetStatuses[ killerTargetIndex ]
+
+		console.log( 'index of victim', victimTargetIndex, killerVictimTarget )
+		console.log( 'index of killer', killerTargetIndex, victimKillerTarget )
+
+		if ( killerVictimTarget ) {
+			// The killer successfully killed a victim
+			killerVictimTarget.status = CONCENTRICS_GAME.TARGET_STATES.KILLED
+
+			self.Bureau.game.setPlayerData( gameid, killerId, {
+				targets: killerPlayer.targets
+			}, function( err, gamegroup ) {
+				self.Bureau.game.getGame( gameid, function( err, game ) {
+					self.tick( game, callback )
 				} )
-			} else if ( killedCurrentHunter ) {
-				// console.log('Is current hunted')
-				//The hunter needs a new target
-				var newstatuses = game.players[ victimid ].targetstatuses
-				newstatuses.pop()
-				newstatuses.push( -1 )
-				self.Bureau.game.setPlayerData( gameid, victimid, {
-					targetstatuses: newstatuses
-				}, function( err, gamegroup ) {
-					self.Bureau.game.getGame( gameid, function( err, game ) {
-						self.tick( game, function( err, success ) {
-							callback( err, game )
-						} )
-					} )
-				} )
-			}
-		} else {
-			//Case 2, target is a past target but the kill was made at the right time
-			var indexOfTarget = game.players[ killerid ].targets.lastIndexOf( victimid ),
-				deadlines = game.players[ killerid ].deadlines,
-				indexOfHunter = game.players[ victimid ].targets.lastIndexOf( killerid ),
-				huntedDeadlines = game.players[ victimid ].deadlines
-
-			if ( indexOfTarget > -1 && report.time < deadlines[ indexOfTarget ] ) {
-				var newstatuses = game.players[ killerid ].targetstatuses
-				newstatuses[ indexOfTarget ] = 1
-
-				self.Bureau.game.setPlayerData( gameid, killerid, {
-					targetstatuses: newstatuses
-				}, function( err, gamegroup ) {
-					self.Bureau.game.getGame( gameid, function( err, game ) {
-						self.tick( game, function() {
-							//Add 1 to the score
-							addScore()
-						} )
-					} )
-				} )
-			} else if ( indexOfHunter > -1 && report.time < huntedDeadlines[ indexOfHunter ] ) {
-				var newstatuses = game.players[ victimid ].targetstatuses
-				newstatuses[ indexOfHunter ] = -1
-
-				self.Bureau.game.setPlayerData( gameid, victimid, {
-					targetstatuses: newstatuses
-				}, function( err, gamegroup ) {
-					self.Bureau.game.getGame( gameid, function( err, game ) {
-						self.tick( game, function( err, success ) {
-							callback( err, game )
-						} )
-					} )
-				} )
-			} else {
-				//Old way of doing nothing
-				/* self.tick(game, function(err, success) {
-					callback(err, game)
-				}) */
-
-				//Now the person who was killed kind of unfairly has to be shifted out of the circle
-				var newstatuses = game.players[ victimid ].targetstatuses
-				newstatuses[ newstatuses.length - 1 ] = -1
-
-				self.Bureau.game.setPlayerData( gameid, victimid, {
-					targetstatuses: newstatuses
-				}, function( err, gamegroup ) {
-					self.Bureau.game.getGame( gameid, function( err, game ) {
-						self.tick( game, function( err, success ) {
-							callback( err, game )
-						} )
-					} )
-				} )
-			}
+			} )
 		}
 
+		if ( victimKillerTarget ) {
+			// The killer killed in self defence against the victim
+			victimKillerTarget.status = CONCENTRICS_GAME.TARGET_STATES.KILLED_BY
+			console.log( JSON.stringify( victimPlayer.targets, null, '\t' ) )
+			self.Bureau.game.setPlayerData( gameid, victimId, {
+				targets: victimPlayer.targets
+			}, function( err, gamegroup ) {
+				self.Bureau.game.getGame( gameid, function( err, game ) {
+					self.tick( game, callback )
+				} )
+			} )
+		}
 	},
 
 
