@@ -1396,7 +1396,7 @@ var Bureau = {
 
 		getKillSentence: function( report ) {
 			var killmethod = report.killmethod,
-				verb = killmethod.verb,
+				verb = killmethod ? killmethod.verb : '',
 				killer = report.killer,
 				victim = report.victim
 			return verb.replace( '#v', utils.fullname( victim ) ).replace( '#k', utils
