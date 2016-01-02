@@ -2,25 +2,39 @@ module.exports = function( Bureau ) {
 
 	return {
 		':gameId/:playerId': function( data, params, callback ) {
-			var uid = params.playerId,
-				gameid = params.gameId
+			var playerId = params.playerId,
+				gameid = params.gameId,
+				uid = data.USER_ID
 
-			Bureau.game.getGame( gameid, function( err, game ) {
+			Bureau.assassin.isGuild( uid, function( err, isGuild ) {
+
 				if ( err ) {
 					callback( err )
 					return
 				}
-				Bureau.games[ game.type ].getGameStateForUid( game, uid, function( err, gamestate ) {
+
+				if ( !isGuild ) {
+					callback( 'Insufficient privileges to read gamestate' )
+					return
+				}
+
+				Bureau.game.getGame( gameid, function( err, game ) {
 					if ( err ) {
 						callback( err )
 						return
 					}
+					Bureau.games[ game.type ].getGameStateForUid( game, playerId, function( err, gamestate ) {
+						if ( err ) {
+							callback( err )
+							return
+						}
 
-					callback( null, {
-						gameid: gameid,
-						uid: uid,
-						gametype: game.type,
-						gamestatefragment: gamestate
+						callback( null, {
+							gameid: gameid,
+							uid: playerId,
+							gametype: game.type,
+							gamestatefragment: gamestate
+						} )
 					} )
 				} )
 			} )
