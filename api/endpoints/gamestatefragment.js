@@ -15,7 +15,7 @@ module.exports = function( Bureau ) {
 						callback( err )
 						return
 					}
-					console.log( gamestate )
+
 					callback( null, {
 						gameid: gameid,
 						uid: uid,
