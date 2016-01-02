@@ -119,37 +119,56 @@ var concentricsgame = {
 	},
 
 	getScoreForUid: function( game, playerId ) {
-		return _.filter( _.flatten( _.pluck( game.players[ playerId ].targets, 'targetStatuses' ) ), {
+
+		var player = game.players[ playerId ]
+
+		if ( !player ) {
+			return 0
+		}
+
+		return _.filter( _.flatten( _.pluck( player.targets, 'targetStatuses' ) ), {
 			status: CONCENTRICS_GAME.TARGET_STATES.KILLED
 		} ).length
 	},
 
 	// TODO
 	//Given a player uid, construct a game state fragment for the player
-	getGameStateForUid: function( game, playerid, callback ) {
+	getGameStateForUid: function( game, playerId, callback ) {
 		var self = this,
 			gameid = game.gameid
 
 		self.Bureau.game.getAssassinsObj( gameid, function( err, assassinsObj ) {
-			self.Bureau.game.getPlayer( gameid, playerid, function( err, player ) {
-				err = !!err ? err : null
+			self.Bureau.game.getPlayer( gameid, playerId, function( err, player ) {
+
 				if ( err ) {
 					console.log( 'ERROR RENDERING GAME STATE', err )
 					callback( err, '' )
 					return
 				}
+
+				var statusText = {}
+
+				statusText[ CONCENTRICS_GAME.TARGET_STATES.EXPIRED ] = 'Expired'
+				statusText[ CONCENTRICS_GAME.TARGET_STATES.IN_PROGRESS ] = 'In Progress'
+				statusText[ CONCENTRICS_GAME.TARGET_STATES.KILLED ] = 'Killed'
+				statusText[ CONCENTRICS_GAME.TARGET_STATES.KILLED_BY ] = 'Killed By'
+
 				var state = {
 					game: game,
-					playerid: playerid,
+					playerid: playerId,
 					player: player,
-					history: player.targets.map( function( t, i ) {
-						return {
-							target: assassinsObj[ t ],
-							deadline: player.deadlines[ i ],
-							targetstatus: player.targetstatuses[ i ]
-						}
-					} ),
+					targets: player.targets.map( function( target ) {
+						target.targetStatuses.map( function( targetStatus ) {
+							targetStatus.assassin = assassinsObj[ targetStatus.id ]
+							targetStatus.statusText = statusText[ targetStatus.status ]
+
+							return targetStatus
+						} )
+
+						return target
+					} )
 				}
+
 				self.swig.renderFile( './games/fragments/concentricsGamestateFragment.html', state, function( err, output ) {
 					if ( err ) {
 						console.log( 'ERROR RENDERING GAME STATE', err )

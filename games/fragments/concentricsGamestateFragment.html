@@ -1,8 +1,9 @@
-{% for h in history %}
-{{ h.target | fullname }}<br>
-{{ h.deadline | prettyTimestamp }}<br>
-{{ h.targetstatus }}
-{%if !loop.last %}<hr>{% endif %}
+{% for target in player.targets|reverse %}
+	<em>Deadline: {{ target.deadline | prettyTimestamp }}</em><br>
+	{% for targetStatus in target.targetStatuses %}
+		{{targetStatus.assassin | fullname}}: {{targetStatus.statusText}}<br>
+	{% endfor %}
+	{%if !loop.last %}<hr>{% endif %}
 {% endfor %}
 <br>
 <div class="param">
