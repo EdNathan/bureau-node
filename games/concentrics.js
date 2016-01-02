@@ -472,7 +472,7 @@ var concentricsgame = {
 						uid: uid,
 						gamegroup: gamegroup,
 						nonTargets: nonTargets,
-						targetsWithPendingReports: pendingReports,
+						targetsWithPendingReports: _.zipObject( pendingReports ),
 						targets: targetAssassins,
 						deadline: moment( deadline ).format( 'MMMM Do YYYY, h:mm:ss a' ),
 						timeremaining: moment( deadline ).fromNow( true )
