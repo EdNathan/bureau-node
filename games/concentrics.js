@@ -14,7 +14,7 @@ var CONCENTRICS_GAME = {
 		EXPIRED: -1,
 		IN_PROGRESS: 0,
 		KILLED: 1,
-		KILLED_BY: 3
+		KILLED_BY: 2
 	}
 }
 
@@ -146,21 +146,26 @@ var concentricsgame = {
 				}
 
 				var statusText = {}
+				var circleText = {}
 
 				statusText[ CONCENTRICS_GAME.TARGET_STATES.EXPIRED ] = 'Expired'
 				statusText[ CONCENTRICS_GAME.TARGET_STATES.IN_PROGRESS ] = 'In Progress'
 				statusText[ CONCENTRICS_GAME.TARGET_STATES.KILLED ] = 'Killed'
 				statusText[ CONCENTRICS_GAME.TARGET_STATES.KILLED_BY ] = 'Killed By'
 
+				circleText[ CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE ] = 'Inner'
+				circleText[ CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE ] = 'Middle'
+				circleText[ CONCENTRICS_GAME.CIRCLES.OUTER_CIRCLE ] = 'Outer'
+
 				var state = {
 					game: game,
 					playerid: playerId,
 					player: player,
+					circleText: circleText[ player.circle ],
 					targets: player.targets.map( function( target ) {
 						target.targetStatuses.map( function( targetStatus ) {
 							targetStatus.assassin = assassinsObj[ targetStatus.id ]
 							targetStatus.statusText = statusText[ targetStatus.status ]
-
 							return targetStatus
 						} )
 
