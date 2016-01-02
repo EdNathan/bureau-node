@@ -249,3 +249,40 @@ form.spiral::before {
 		display: block;
 	}
 }
+
+.concentrics-target {
+
+	margin-bottom: 50px;
+
+	&-killed {
+		opacity: 0.7;
+		.transition();
+
+		form.spiral::before {
+			color: @green;
+		}
+
+		div.spiral-kill-button {
+			opacity: 1;
+			background-color: @green;
+		}
+
+		&:hover {
+			opacity: 1;
+		}
+	}
+
+	&-killedby {
+		opacity: 0.7;
+
+		form.spiral::before {
+			color: #666;
+		}
+
+		div.spiral-kill-button {
+			opacity: 1;
+			background-color: #666;
+		}
+
+	}
+}

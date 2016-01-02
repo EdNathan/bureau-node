@@ -40,7 +40,7 @@
     </li>
 {% endmacro %}
 
-<div class="game-info">{{game.kills.length}} kill{{game.kills.length|plural}}, {{game.deaths.length}} death{{game.deaths.length|plural}}</div>
+<div class="game-info">You have {{score}} point{{score|plural}}</div>
 
 <h2>Your Targets</h2>
 
@@ -50,18 +50,26 @@
 </section>
 
 {% for target in targets %}
-    {{card.card(target)}}
+<div class="concentrics-target concentrics-target-{% if target.status === TARGET_STATES.KILLED %}killed{% endif %}{% if target.status === TARGET_STATES.KILLED_BY %}killedby{% endif %}">
+    {{card.card(target.assassin)}}
 
     <form action="/report" method="get" class="spiral">
-    	<input type="hidden" name="victimid" value="{{target._id|safe}}">
+    	<input type="hidden" name="victimid" value="{{target.id|safe}}">
         <input type="hidden" name="gameid" value="{{game.gameid}}">
-        {% if !(target._id|safe in targetsWithPendingReports) %}
-        <input class="spiral-kill-button" type="submit" name="kill" value="Kill">
+        {% if target.status === TARGET_STATES.KILLED %}
+            <div class="spiral-kill-button">Kill Approved</div>
+        {% elif target.status === TARGET_STATES.KILLED_BY %}
+            <div class="spiral-kill-button">They Killed You</div>
         {% else %}
-        <div class="spiral-kill-button">Report Pending Approval</div>
-        <span class="spiral-reassurance">You will receive more targets once the reports on all of your targets have been approved</span>
+            {% if !(target.id|safe in targetsWithPendingReports) %}
+            <input class="spiral-kill-button" type="submit" name="kill" value="Kill">
+            {% else %}
+            <div class="spiral-kill-button">Report Pending Approval</div>
+            <span class="spiral-reassurance">You will receive more targets once the reports on all of your targets have been approved</span>
+            {% endif %}
         {% endif %}
     </form>
+</div>
 {% endfor %}
 
 <ul id="game-{{game.gameid}}" class="player-table searchable {{game.type}}" data-search="search other players" data-searchmethod="inclusive">

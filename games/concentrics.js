@@ -450,7 +450,9 @@ var concentricsgame = {
 			var uid = assassin._id + '',
 				players = game.players,
 				player = game.players[ uid ],
-				currentTargets = _.last( player.targets ).targetStatuses,
+				currentTargets = _.last( player.targets ).targetStatuses.sort( function( a, b ) {
+					return a.status - b.status
+				} ),
 				currentTargetIds = _.pluck( currentTargets, 'id' ),
 				deadline = _.last( player.targets ).deadline,
 				targetid = player.targets.slice( -1 )[ 0 ],
@@ -466,14 +468,21 @@ var concentricsgame = {
 
 			self.Bureau.assassin.getAssassinsFromIds( currentTargetIds, function( err, targetAssassins ) {
 
+				targetAssassins = self.Bureau.assassin.objFromAssassins( targetAssassins )
+
 				self.swig.renderFile( './games/views/concentrics.html', {
 						game: game,
 						assassin: assassin,
 						uid: uid,
 						gamegroup: gamegroup,
+						score: self.getScoreForUid( game, uid ),
 						nonTargets: nonTargets,
 						targetsWithPendingReports: _.zipObject( pendingReports ),
-						targets: targetAssassins,
+						targets: _.clone( currentTargets ).map( function( target ) {
+							target.assassin = targetAssassins[ target.id ]
+							return target
+						} ),
+						TARGET_STATES: CONCENTRICS_GAME.TARGET_STATES,
 						deadline: moment( deadline ).format( 'MMMM Do YYYY, h:mm:ss a' ),
 						timeremaining: moment( deadline ).fromNow( true )
 					},
@@ -497,7 +506,6 @@ var concentricsgame = {
 	},
 
 
-	// TODO -> WIP
 	//Given killer, victim, kill method and the report, handle the kill
 	handleKill: function( game, killerId, victimId, report, callback ) {
 		var self = this,
@@ -518,9 +526,9 @@ var concentricsgame = {
 			} ),
 			victimDeadline = victimPlayer.targets[ victimIndex ]
 
-		console.log( report )
-		console.log( killerIndex, killerDeadline )
-		console.log( victimIndex, victimDeadline )
+		// console.log( report )
+		// console.log( killerIndex, killerDeadline )
+		// console.log( victimIndex, victimDeadline )
 
 		// Find which target it corresponds to
 		var victimTargetIndex = _.findIndex( killerDeadline.targetStatuses, {
@@ -533,15 +541,33 @@ var concentricsgame = {
 		var killerVictimTarget = killerDeadline.targetStatuses[ victimTargetIndex ]
 		var victimKillerTarget = victimDeadline.targetStatuses[ killerTargetIndex ]
 
-		console.log( 'index of victim', victimTargetIndex, killerVictimTarget )
-		console.log( 'index of killer', killerTargetIndex, victimKillerTarget )
+		// console.log( 'index of victim', victimTargetIndex, killerVictimTarget )
+		// console.log( 'index of killer', killerTargetIndex, victimKillerTarget )
 
 		if ( killerVictimTarget ) {
 			// The killer successfully killed a victim
 			killerVictimTarget.status = CONCENTRICS_GAME.TARGET_STATES.KILLED
 
+			var newCircle = killerPlayer.circle
+
+			//Now compute their circle
+			//If the kill happened in the current or last set of targets then move them to the middle circle
+			if ( victimTargetIndex >= killerDeadline.targetStatuses.length - 2 ) {
+				//If they have completed all their targets
+				var completedAllTargets = _.filter( killerDeadline.targetStatuses, {
+					status: CONCENTRICS_GAME.TARGET_STATES.KILLED
+				} ).length === killerDeadline.targetStatuses.length
+
+				newCircle = CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE
+
+				if ( completedAllTargets ) {
+					newCircle = CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE
+				}
+			}
+
 			self.Bureau.game.setPlayerData( gameid, killerId, {
-				targets: killerPlayer.targets
+				targets: killerPlayer.targets,
+				circle: killerPlayer.permaCircle ? CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE : newCircle,
 			}, function( err, gamegroup ) {
 				self.Bureau.game.getGame( gameid, function( err, game ) {
 					self.tick( game, callback )
@@ -552,7 +578,7 @@ var concentricsgame = {
 		if ( victimKillerTarget ) {
 			// The killer killed in self defence against the victim
 			victimKillerTarget.status = CONCENTRICS_GAME.TARGET_STATES.KILLED_BY
-			console.log( JSON.stringify( victimPlayer.targets, null, '\t' ) )
+
 			self.Bureau.game.setPlayerData( gameid, victimId, {
 				targets: victimPlayer.targets
 			}, function( err, gamegroup ) {
