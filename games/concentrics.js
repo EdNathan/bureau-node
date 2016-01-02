@@ -161,6 +161,9 @@ var concentricsgame = {
 					game: game,
 					playerid: playerId,
 					player: player,
+					playersTargeting: self.getPlayersTargetingPlayer( game, playerId ).map( function( pid ) {
+						return utils.fullname( assassinsObj[ pid ] )
+					} ).join( ', ' ),
 					circleText: circleText[ player.circle ],
 					targets: player.targets.map( function( target ) {
 						target.targetStatuses.map( function( targetStatus ) {

@@ -1,5 +1,7 @@
 Circle: {{circleText}}<br><br>
 
+Being targeted by: {{playersTargeting}}<br><br>
+
 {% for target in player.targets|reverse %}
 	<em>Deadline: {{ target.deadline | prettyTimestamp }}</em><br>
 	{% for targetStatus in target.targetStatuses %}
