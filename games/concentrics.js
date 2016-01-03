@@ -620,52 +620,168 @@ var concentricsgame = {
 	},
 
 
-	// TODO
 	//Given killer, victim, kill method and the report, undo the effects of the kill (if possible)
 	undoKill: function( game, killerid, victimid, report, callback ) {
 		var self = this,
-			gameid = game.gameid,
-			subtractScore = function() {
-				self.Bureau.game.changeScore( game.gameid, killerid, -1, callback )
+			gameid = game.gameid
+
+		,
+		killerPlayer = game.players[ killerId ],
+			victimPlayer = game.players[ victimId ]
+
+
+		// Find which deadlines it corresponds with
+		var killerIndex = _.findIndex( killerPlayer.targets, function( target ) {
+				return report.time < target.deadline
+			} ),
+			killerDeadline = killerPlayer.targets[ killerIndex ]
+
+
+		var victimIndex = _.findIndex( victimPlayer.targets, function( target ) {
+				return report.time < target.deadline
+			} ),
+			victimDeadline = victimPlayer.targets[ victimIndex ]
+
+		// console.log( report )
+		// console.log( killerIndex, killerDeadline )
+		// console.log( victimIndex, victimDeadline )
+
+		// Find which target it corresponds to
+		var victimTargetIndex, killerVictimTarget, killerTargetIndex, victimKillerTarget
+
+		if ( killerDeadline ) {
+			victimTargetIndex = _.findIndex( killerDeadline.targetStatuses, {
+				id: victimId
+			} )
+			killerVictimTarget = killerDeadline.targetStatuses[ victimTargetIndex ]
+		}
+
+		if ( victimDeadline ) {
+			killerTargetIndex = _.findIndex( victimDeadline.targetStatuses, {
+				id: killerId
+			} )
+			victimKillerTarget = victimDeadline.targetStatuses[ killerTargetIndex ]
+		}
+
+		if ( killerVictimTarget ) {
+			// The killer successfully killed a victim, we should undo it
+			// If it's a current target then set it to unfulfilled, otherwise expired
+			if ( killerIndex === killerPlayer.targets.length - 1 ) {
+				killerVictimTarget.status = CONCENTRICS_GAME.TARGET_STATES.IN_PROGRESS
+			} else {
+				killerVictimTarget.status = CONCENTRICS_GAME.TARGET_STATES.EXPIRED
 			}
 
-		var indexOfTarget = game.players[ killerid ].targets.lastIndexOf( victimid ),
-			deadlines = game.players[ killerid ].deadlines,
-			indexOfHunter = game.players[ victimid ].targets.lastIndexOf( killerid ),
-			huntedDeadlines = game.players[ victimid ].deadlines
+			// Now we need to conpute their circle
+			var newCircle = killerPlayer.circle
+			var numTargets = killerDeadline.targetStatuses.length
+			var numCompletedTargets = _.filter( killerDeadline.targetStatuses, {
+				status: CONCENTRICS_GAME.TARGET_STATES.KILLED
+			} ).length
 
-		if ( indexOfTarget > -1 && report.time < deadlines[ indexOfTarget ] ) {
-			var newstatuses = game.players[ killerid ].targetstatuses
-			newstatuses[ indexOfTarget ] = -1
+			var previousCircle = CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE
+			if ( killerPlayer.targets[ killerIndex - 1 ] ) {
+				// If the previous deadline exists
+				var previousTargets = killerPlayer.targets[ killerIndex - 1 ].targetStatuses
+				var numPreviousCompletedTargets = _.filter( previousTargets, {
+					status: CONCENTRICS_GAME.TARGET_STATES.KILLED
+				} ).length
 
-			self.Bureau.game.setPlayerData( gameid, killerid, {
-				targetstatuses: newstatuses
+				if ( numPreviousCompletedTargets === previousTargets.length ) {
+					previousCircle = CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE
+				} else if ( numPreviousCompletedTargets > 0 ) {
+					previousCircle = CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE
+				} else {
+					previousCircle = CONCENTRICS_GAME.CIRCLES.OUTER_CIRCLE
+				}
+
+			}
+
+
+
+			if ( killerIndex === killerPlayer.targets.length - 1 ) {
+				// If the kill was in the current set of targets
+				// We need to know previous performance, default to inner circle
+				if ( numCompletedTargets === 0 ) {
+					// Circle is based on previous performance
+					newCircle = previousCircle
+				} else if ( previousCircle !== CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE ) {
+					// If the previous circle wasn't the inner circle, then they should be middle
+					newCircle = CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE
+				} else {
+					//Otherwise make them inner
+					newCircle = CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE
+				}
+
+			} else if ( killerIndex === killerPlayer.targets.length - 2 ) {
+				// If the kill was in the previous set of targets
+				if ( numCompletedTargets === 0 ) {
+					// If there are now no completed targets we transitioned to the current targets in the outer circle
+					// Work out how many targets we have completed in the current set
+					// Find out performance in the next circle
+
+					var currentTargets = killerPlayer.targets[ killerIndex + 1 ].targetStatuses
+					var numCurrentCompletedTargets = _.filter( currentTargets, {
+						status: CONCENTRICS_GAME.TARGET_STATES.KILLED
+					} ).length
+
+					if ( numPreviousCompletedTargets > 0 ) {
+						newCircle = CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE
+					} else {
+						newCircle = CONCENTRICS_GAME.CIRCLES.OUTER_CIRCLE
+					}
+
+				} else {
+					// Otherwise we must have completed at least 1 target and so will be in the middle
+					newCircle = CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE
+				}
+
+
+			}
+
+			if ( !killerPlayer.permaCircle && killerIndex >= killerPlayer.targets.length - 2 ) {
+				//If they have completed all their targets
+				var completedAllTargets = _.filter( killerDeadline.targetStatuses, {
+					status: CONCENTRICS_GAME.TARGET_STATES.KILLED
+				} ).length === killerDeadline.targetStatuses.length
+
+				newCircle = CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE
+
+				if ( completedAllTargets ) {
+					// console.log( 'Moving to inner circle' )
+					newCircle = CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE
+				}
+			}
+
+			self.Bureau.game.setPlayerData( gameid, killerId, {
+				targets: killerPlayer.targets,
+				circle: killerPlayer.permaCircle ? CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE : newCircle,
 			}, function( err, gamegroup ) {
+				// console.log( 'Set the player data' )
 				self.Bureau.game.getGame( gameid, function( err, game ) {
-					self.tick( game, function() {
-						//Subtract 1 from score
-						subtractScore()
-					} )
+					// console.log( 'got the game' )
+					self.tick( game, callback )
 				} )
-			} )
-		} else if ( indexOfHunter > -1 && report.time < huntedDeadlines[ indexOfHunter ] ) {
-			var newstatuses = game.players[ victimid ].targetstatuses
-			newstatuses[ indexOfHunter ] = 0
-
-			self.Bureau.game.setPlayerData( gameid, victimid, {
-				targetstatuses: newstatuses
-			}, function( err, gamegroup ) {
-				self.Bureau.game.getGame( gameid, function( err, game ) {
-					self.tick( game, function( err, success ) {
-						callback( err, game )
-					} )
-				} )
-			} )
-		} else {
-			self.tick( game, function( err, success ) {
-				callback( err, game )
 			} )
 		}
+
+		if ( victimKillerTarget ) {
+			// The killer killed in self defence against the victim, undo this
+			if ( victimIndex === victimPlayer.targets.length - 1 ) {
+				victimKillerTarget.status = CONCENTRICS_GAME.TARGET_STATES.IN_PROGRESS
+			} else {
+				victimKillerTarget.status = CONCENTRICS_GAME.TARGET_STATES.EXPIRED
+			}
+
+			self.Bureau.game.setPlayerData( gameid, victimId, {
+				targets: victimPlayer.targets
+			}, function( err, gamegroup ) {
+				self.Bureau.game.getGame( gameid, function( err, game ) {
+					self.tick( game, callback )
+				} )
+			} )
+		}
+
 	},
 
 
