@@ -315,7 +315,10 @@ var concentricsgame = {
 
 	getPlayersTargetingPlayer: function( game, playerId ) {
 		return _.keys( _.pick( game.players, function( targetingPlayer, targetingPlayerId ) {
-			var currentTargets = _.last( targetingPlayer.targets ).targetStatuses
+			var currentTargets = []
+			if ( targetingPlayer.targets && targetingPlayer.targets.length > 0 ) {
+				currentTargets = _.last( targetingPlayer.targets ).targetStatuses
+			}
 
 			// Find out if another player has this player as an in progress target
 			return currentTargets.filter( function( target ) {
