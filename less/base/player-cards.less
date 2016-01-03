@@ -78,13 +78,13 @@
 	}
 
 	.display-picture {
-		background: url(../images/target.svg) white;
+		background: url(../images/target.svg) @dust;
 		background-size: cover;
 		width: 128px;
 		height: 128px;
 		.border-radius(50%);
 		.box-shadow(~"0 0 0 5px white, 0px 10px 25px -15px rgba(0, 0, 0, 1)");
-		margin-bottom: 40px;
+		margin-bottom: 10px;
 
 		.right &, .left & {
 			margin-bottom: 0;
@@ -93,7 +93,7 @@
 
 	.rhs {
 		position: absolute;
-		top: 0;
+		top: 60px;
 		right: 10px;
 		bottom: 0;
 		.flex-container();
