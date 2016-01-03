@@ -578,7 +578,7 @@ var concentricsgame = {
 			//Now compute their circle
 			//If they are inner circle then keep them there, otherwise...
 			//If the kill happened in the current or last set of targets then move them to the middle circle
-			if ( ( newCircle !== CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE ) && ( victimTargetIndex >= killerDeadline.targetStatuses
+			if ( ( newCircle !== CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE ) && ( killerIndex >= killerPlayer.targets
 					.length - 2 ) ) {
 				//If they have completed all their targets
 				var completedAllTargets = _.filter( killerDeadline.targetStatuses, {
