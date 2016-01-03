@@ -351,7 +351,10 @@ var concentricsgame = {
 
 		var player = game.players[ playerId ]
 			// The ids of the last targets
-		var lastTargets = _.pluck( _.last( player.targets ).targetStatuses, 'id' )
+		var lastTargets = []
+		if ( player && player.targets && player.targets.length > 0 ) {
+			lastTargets = _.pluck( _.last( player.targets ).targetStatuses, 'id' )
+		}
 
 		// Prevent the player from being chosen
 		lastTargets = lastTargets.concat( playerId )
