@@ -621,12 +621,10 @@ var concentricsgame = {
 
 
 	//Given killer, victim, kill method and the report, undo the effects of the kill (if possible)
-	undoKill: function( game, killerid, victimid, report, callback ) {
+	undoKill: function( game, killerId, victimId, report, callback ) {
 		var self = this,
-			gameid = game.gameid
-
-		,
-		killerPlayer = game.players[ killerId ],
+			gameid = game.gameid,
+			killerPlayer = game.players[ killerId ],
 			victimPlayer = game.players[ victimId ]
 
 
@@ -641,10 +639,6 @@ var concentricsgame = {
 				return report.time < target.deadline
 			} ),
 			victimDeadline = victimPlayer.targets[ victimIndex ]
-
-		// console.log( report )
-		// console.log( killerIndex, killerDeadline )
-		// console.log( victimIndex, victimDeadline )
 
 		// Find which target it corresponds to
 		var victimTargetIndex, killerVictimTarget, killerTargetIndex, victimKillerTarget
@@ -703,7 +697,7 @@ var concentricsgame = {
 				// If the kill was in the current set of targets
 				// We need to know previous performance, default to inner circle
 				if ( numCompletedTargets === 0 ) {
-					// Circle is based on previous performance
+					// Circle is based on previous performance if past performance exists
 					newCircle = previousCircle
 				} else if ( previousCircle !== CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE ) {
 					// If the previous circle wasn't the inner circle, then they should be middle
@@ -739,27 +733,11 @@ var concentricsgame = {
 
 			}
 
-			if ( !killerPlayer.permaCircle && killerIndex >= killerPlayer.targets.length - 2 ) {
-				//If they have completed all their targets
-				var completedAllTargets = _.filter( killerDeadline.targetStatuses, {
-					status: CONCENTRICS_GAME.TARGET_STATES.KILLED
-				} ).length === killerDeadline.targetStatuses.length
-
-				newCircle = CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE
-
-				if ( completedAllTargets ) {
-					// console.log( 'Moving to inner circle' )
-					newCircle = CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE
-				}
-			}
-
 			self.Bureau.game.setPlayerData( gameid, killerId, {
 				targets: killerPlayer.targets,
 				circle: killerPlayer.permaCircle ? CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE : newCircle,
 			}, function( err, gamegroup ) {
-				// console.log( 'Set the player data' )
 				self.Bureau.game.getGame( gameid, function( err, game ) {
-					// console.log( 'got the game' )
 					self.tick( game, callback )
 				} )
 			} )
