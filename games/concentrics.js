@@ -198,8 +198,12 @@ var concentricsgame = {
 			toSet = {
 				permaCircle: permaCircle
 			},
-			gameid = game.gameid
-		self = this
+			gameid = game.gameid,
+			self = this
+
+		if ( permaCircle ) {
+			toSet.circle = CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE
+		}
 
 		self.Bureau.game.setPlayerData( gameid, playerid, toSet, function( err, game ) {
 			if ( err ) {
