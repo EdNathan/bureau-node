@@ -1327,6 +1327,15 @@ var authPages = {
 										res.locals.pageErrors.push(
 											'There was an error removing the player from the game' )
 									}
+
+
+									Bureau.assassin.getAssassin( uid, function( err, removedAssassin ) {
+										var assassinName = utils.fullname( removedAssassin )
+										var notificationText = assassinName + ' was removed from the game "' +
+											game.name + '" by ' + utils.fullname( res.locals.assassin )
+										Bureau.gamegroup.notifyGuild( res.locals.gamegroup.ggid, notificationText )
+									} )
+
 									authPages.get.guild.gamestate( req, res )
 								} )
 							} )

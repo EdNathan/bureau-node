@@ -172,7 +172,10 @@ var concentricsgame = {
 
 						t.targetStatuses = t.targetStatuses.map( function( targetStatus ) {
 							var s = _.cloneDeep( targetStatus )
-							s.assassin = assassinsObj[ s.id ]
+							s.assassin = assassinsObj[ s.id ] ? assassinsObj[ s.id ] : {
+								forename: 'Left Game',
+								surname: ''
+							}
 							s.statusText = statusText[ s.status ]
 							return s
 						} )
@@ -696,36 +699,43 @@ var concentricsgame = {
 
 	},
 
-
-	// TODO
 	//Given the uid of a player just removed, handle all in game effects
-	handlePlayerRemoved: function( game, playerid, callback ) {
+	handlePlayerRemoved: function( game, playerId, callback ) {
 		//No effect
-		console.log( 'Removing ' + playerid + ' from game ' + game.name )
+		console.log( 'Removing ' + playerId + ' from game ' + game.name )
 		var now = moment().toDate(),
 			self = this,
-			deadlineDays = game.custom[ 'spiral-deadline-days' ],
-			newDeadline = moment( now ).add( deadlineDays, 'days' ).toDate(),
-			newTarget = game.players[ playerid ].slice( -1 )[ 0 ],
-			playersToUpdate = Object.keys( game.players ).filter( function( pid ) {
-				return game.players[ pid ].targets.slice( -1 )[ 0 ] === playerid
-			} ),
 			updatedPlayers = {}
 
-		playersToUpdates.forEach( function( pid ) {
-			game.players[ pid ].targets.pop()
-			game.players[ pid ].targets.push( newTarget )
-			game.players[ pid ].deadlines.pop()
-			game.players[ pid ].deadlines.push( newDeadline )
-			game.players[ pid ].targetstatuses.pop()
-			game.players[ pid ].targetstatuses.push( 0 )
+		var playersNeedingUpdates = self.getPlayersTargetingPlayer( game, playerId )
 
-			updatedPlayers[ 'players.' + pid + '.targets' ] = game.players[ pid ].targets
-			updatedPlayers[ 'players.' + pid + '.deadlines' ] = game.players[ pid ].deadlines
-			updatedPlayers[ 'players.' + pid + '.targetstatuses' ] = game.players[ pid ].targetstatuses
+		playersNeedingUpdates.forEach( function( pid ) {
+			var player = game.players[ pid ],
+				currentTargets = _.last( player.targets )
+
+			// Remove in place any targets matching the player
+			_.remove( currentTargets.targetStatuses, {
+				id: playerId
+			} )
+
+			updatedPlayers[ 'players.' + pid + '.targets' ] = player.targets
 		} )
 
-		self.Bureau.game.updateGame( gameid, updatedPlayers, callback )
+		//Send notifications
+		self.Bureau.assassin.getAssassin( playerId, function( err, removedAssassin ) {
+
+			var assassinName = utils.fullname( removedAssassin )
+			var notificationText = 'Your target ' + assassinName + ' has left the game.' +
+				'\n\nYou now have 1 less target, do not disappoint'
+
+			playersNeedingUpdates.map( function( uid ) {
+				self.Bureau.notifications.addNotification( uid, notificationText )
+			} )
+
+			self.Bureau.game.updateGame( game.gameid, updatedPlayers, callback )
+		} )
+
+
 	}
 }
 
