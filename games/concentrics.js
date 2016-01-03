@@ -666,27 +666,30 @@ var concentricsgame = {
 	},
 
 
-	// TODO
 	//Given the uid of a new player added, handle all in game effects
-	handlePlayerAdded: function( game, playerid, callback ) {
+	handlePlayerAdded: function( game, playerId, callback ) {
 		//Give the player a new deadline and target
-		console.log( 'Adding ' + playerid + ' to game ' + game.name )
-		callback( null )
+		console.log( 'Adding ' + playerId + ' to game ' + game.name )
 		var now = moment().toDate(),
 			self = this,
-			deadlineDays = game.custom[ 'spiral-deadline-days' ],
+			deadlineDays = game.custom[ 'concentrics-deadline-days' ],
 			newDeadline = moment( now ).add( deadlineDays, 'days' ).toDate(),
-			innerCircle = self.getInnerCircle( game ),
 			newPlayer = {
-				targetstatuses: [ 0 ],
-				deadlines: [ newDeadline ],
-				targets: [ utils.choose( innerCircle, [ playerid ] ) ]
+				targets: [],
+				circle: CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE,
+				permaCircle: false
 			}
 
-		self.Bureau.game.setPlayerData( gameid, playerid, newPlayer, function( err, gamegroup ) {
-			self.Bureau.game.getGame( gameid, function( err, game ) {
-				self.tick( game, function( err, success ) {
-					callback( err )
+		self.Bureau.game.setPlayerData( game.gameid, playerId, newPlayer, function( err, gamegroup ) {
+			self.Bureau.game.getGame( game.gameid, function( err, game ) {
+				self.assignNewTargetsForPlayers( game, [ playerId ], function( err, success ) {
+					if ( err ) {
+						callback( err )
+						return
+					}
+					self.tick( game, function( err, success ) {
+						callback( err )
+					} )
 				} )
 			} )
 		} )
@@ -699,7 +702,6 @@ var concentricsgame = {
 	handlePlayerRemoved: function( game, playerid, callback ) {
 		//No effect
 		console.log( 'Removing ' + playerid + ' from game ' + game.name )
-		callback( null )
 		var now = moment().toDate(),
 			self = this,
 			deadlineDays = game.custom[ 'spiral-deadline-days' ],
