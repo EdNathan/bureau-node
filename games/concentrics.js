@@ -541,15 +541,21 @@ var concentricsgame = {
 		// console.log( victimIndex, victimDeadline )
 
 		// Find which target it corresponds to
-		var victimTargetIndex = _.findIndex( killerDeadline.targetStatuses, {
-			id: victimId
-		} )
-		var killerTargetIndex = _.findIndex( victimDeadline.targetStatuses, {
-			id: killerId
-		} )
+		var victimTargetIndex, killerVictimTarget, killerTargetIndex, victimKillerTarget
 
-		var killerVictimTarget = killerDeadline.targetStatuses[ victimTargetIndex ]
-		var victimKillerTarget = victimDeadline.targetStatuses[ killerTargetIndex ]
+		if ( killerDeadline ) {
+			victimTargetIndex = _.findIndex( killerDeadline.targetStatuses, {
+				id: victimId
+			} )
+			killerVictimTarget = killerDeadline.targetStatuses[ victimTargetIndex ]
+		}
+
+		if ( victimDeadline ) {
+			killerTargetIndex = _.findIndex( victimDeadline.targetStatuses, {
+				id: killerId
+			} )
+			victimKillerTarget = victimDeadline.targetStatuses[ killerTargetIndex ]
+		}
 
 		// console.log( 'index of victim', victimTargetIndex, killerVictimTarget )
 		// console.log( 'index of killer', killerTargetIndex, victimKillerTarget )
