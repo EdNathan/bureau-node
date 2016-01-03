@@ -354,7 +354,7 @@ var concentricsgame = {
 		var lastTargets = _.pluck( _.last( player.targets ).targetStatuses, 'id' )
 
 		// Prevent the player from being chosen
-		lastTargets.concat( playerId )
+		lastTargets = lastTargets.concat( playerId )
 
 		// Find out which players are targeting the current player
 		var playersTargeting = self.getPlayersTargetingPlayer( game, playerId )
