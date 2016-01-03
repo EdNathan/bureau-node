@@ -6,7 +6,7 @@ Being targeted by: {{playersTargeting}}<br><br>
 Being targeted by: xXx_C H E A T B O Y S_xXx<br><br>
 {% endif %}
 
-{% for target in targets|reverse %}
+{% for target in targets %}
 	<em>Deadline: {{ target.deadline | prettyTimestamp }}</em><br>
 	{% for targetStatus in target.targetStatuses %}
 		{{targetStatus.assassin | fullname}}: {{targetStatus.statusText}}<br>
