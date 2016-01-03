@@ -828,9 +828,14 @@ var concentricsgame = {
 			var player = game.players[ pid ],
 				currentTargets = _.last( player.targets )
 
-			// Remove in place any targets matching the player
+			// Remove in place any targets matching the player that haven't been scored on
 			_.remove( currentTargets.targetStatuses, {
-				id: playerId
+				id: playerId,
+				status: CONCENTRICS_GAME.TARGET_STATES.IN_PROGRESS
+			} )
+			_.remove( currentTargets.targetStatuses, {
+				id: playerId,
+				status: CONCENTRICS_GAME.TARGET_STATES.KILLED_BY
 			} )
 
 			updatedPlayers[ 'players.' + pid + '.targets' ] = player.targets
