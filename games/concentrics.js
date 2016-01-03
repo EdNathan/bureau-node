@@ -572,9 +572,6 @@ var concentricsgame = {
 
 			var newCircle = killerPlayer.circle
 
-			console.log( 'old circle:', newCircle )
-			console.log( 'victimTargetIndex:', victimTargetIndex, killerDeadline.targetStatuses.length - 2 )
-
 			//Now compute their circle
 			//If they are inner circle then keep them there, otherwise...
 			//If the kill happened in the current or last set of targets then move them to the middle circle
@@ -584,8 +581,6 @@ var concentricsgame = {
 				var completedAllTargets = _.filter( killerDeadline.targetStatuses, {
 					status: CONCENTRICS_GAME.TARGET_STATES.KILLED
 				} ).length === killerDeadline.targetStatuses.length
-
-				console.log( 'completed all targets:', completedAllTargets )
 
 				newCircle = CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE
 
