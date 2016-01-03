@@ -534,23 +534,33 @@ var concentricsgame = {
 
 
 		// Find which deadlines it corresponds with
-		var killerIndex = _.findIndex( killerPlayer.targets, function( target ) {
+		var killerIndex = -1,
+			killerDeadline = null
+		if ( killerPlayer && killerPlayer.targets ) {
+			killerIndex = _.findIndex( killerPlayer.targets, function( target ) {
 				return report.time < target.deadline
-			} ),
+			} )
 			killerDeadline = killerPlayer.targets[ killerIndex ]
+		}
 
-
-		var victimIndex = _.findIndex( victimPlayer.targets, function( target ) {
+		var victimIndex = -1,
+			victimDeadline = null
+		if ( victimPlayer && victimPlayer.targets ) {
+			victimIndex = _.findIndex( victimPlayer.targets, function( target ) {
 				return report.time < target.deadline
-			} ),
+			} )
 			victimDeadline = victimPlayer.targets[ victimIndex ]
+		}
 
 		// console.log( report )
 		// console.log( killerIndex, killerDeadline )
 		// console.log( victimIndex, victimDeadline )
 
 		// Find which target it corresponds to
-		var victimTargetIndex, killerVictimTarget, killerTargetIndex, victimKillerTarget
+		var victimTargetIndex = -1,
+			killerVictimTarget = null,
+			killerTargetIndex = -1,
+			victimKillerTarget = null
 
 		if ( killerDeadline ) {
 			victimTargetIndex = _.findIndex( killerDeadline.targetStatuses, {
@@ -629,19 +639,30 @@ var concentricsgame = {
 
 
 		// Find which deadlines it corresponds with
-		var killerIndex = _.findIndex( killerPlayer.targets, function( target ) {
+		var killerIndex = -1,
+			killerDeadline = null
+		if ( killerPlayer && killerPlayer.targets ) {
+			killerIndex = _.findIndex( killerPlayer.targets, function( target ) {
 				return report.time < target.deadline
-			} ),
+			} )
 			killerDeadline = killerPlayer.targets[ killerIndex ]
+		}
 
 
-		var victimIndex = _.findIndex( victimPlayer.targets, function( target ) {
+		var victimIndex = -1,
+			victimDeadline = null
+		if ( victimPlayer && victimPlayer.targets ) {
+			victimIndex = _.findIndex( victimPlayer.targets, function( target ) {
 				return report.time < target.deadline
-			} ),
+			} )
 			victimDeadline = victimPlayer.targets[ victimIndex ]
+		}
 
 		// Find which target it corresponds to
-		var victimTargetIndex, killerVictimTarget, killerTargetIndex, victimKillerTarget
+		var victimTargetIndex = -1,
+			killerVictimTarget = null,
+			killerTargetIndex = -1,
+			victimKillerTarget = null
 
 		if ( killerDeadline ) {
 			victimTargetIndex = _.findIndex( killerDeadline.targetStatuses, {
