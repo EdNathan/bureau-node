@@ -1313,6 +1313,8 @@ var authPages = {
 
 							var gametype = game.type
 
+							console.log( utils.fullname( res.locals.assassin ) + ' is removing player ' + uid + 'from game ' + game.name )
+
 							Bureau.games[ gametype ].handlePlayerRemoved( game, uid, function(
 								err ) {
 								if ( err ) {

@@ -1688,9 +1688,11 @@ var Bureau = {
 				err,
 				count ) {
 				if ( !!count ) {
-					Bureau.db.collection( 'gamegroups' ).findOne( filters, function( err,
-						doc ) {
-						if ( Bureau.gamegroup.cachedGamegroups.hasOwnProperty( doc.ggid ) ) {
+					Bureau.db.collection( 'gamegroups' ).findOne( filters, function( err, doc ) {
+						if ( err ) {
+							console.log( 'Error getting gamegroup: ' + err )
+						}
+						if ( doc && doc.ggid && Bureau.gamegroup.cachedGamegroups.hasOwnProperty( doc.ggid ) ) {
 							delete Bureau.gamegroup.cachedGamegroups[ doc.ggid ]
 						}
 						Bureau.gamegroup.getGamegroup( doc.ggid, function( err, doc ) {
