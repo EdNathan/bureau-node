@@ -94,7 +94,7 @@ var concentricsgame = {
 						deadline: firstDeadline,
 						targetStatuses: []
 					} ],
-					circle: CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE, // Start everyone in the inner circle
+					circle: assassins[ playerId ].guild ? CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE : CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE, // Start guild in the inner circle
 					permaCircle: assassins[ playerId ].guild // Guild always in inner circle
 				}
 
