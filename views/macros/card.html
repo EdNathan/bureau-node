@@ -1,8 +1,8 @@
 {% macro card(a) %}
 <div class="player-card" data-kills="#kills" data-deaths="#deaths" data-uid="#uid">
 	<div class="header-details">
-		<div class="name-row">{{util.fullname(a)}}</div>
-		<div class="nickname-rank">&nbsp;</div>
+		<div class="name-row">{{a.forename}} {{a.surname}}</div>
+		<div class="nickname-rank">{% if a.nickname %} {{a.nickname}} {% else %} &nbsp; {% endif %}</div>
 	</div>
 	<div class="rhs">
 		<div class="display-picture" style="background-image:url({{a.imgname}})"></div>
