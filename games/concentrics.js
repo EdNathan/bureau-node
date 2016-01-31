@@ -538,7 +538,9 @@ var concentricsgame = {
 			killerDeadline = null
 		if ( killerPlayer && killerPlayer.targets ) {
 			killerIndex = _.findIndex( killerPlayer.targets, function( target ) {
-				return report.time < target.deadline
+				return report.time < target.deadline && _.findIndex( target.targetStatuses, {
+					id: victimId
+				} ) > -1
 			} )
 			killerDeadline = killerPlayer.targets[ killerIndex ]
 		}
@@ -547,7 +549,9 @@ var concentricsgame = {
 			victimDeadline = null
 		if ( victimPlayer && victimPlayer.targets ) {
 			victimIndex = _.findIndex( victimPlayer.targets, function( target ) {
-				return report.time < target.deadline
+				return report.time < target.deadline && _.findIndex( target.targetStatuses, {
+					id: killerId
+				} ) > -1
 			} )
 			victimDeadline = victimPlayer.targets[ victimIndex ]
 		}
@@ -643,7 +647,9 @@ var concentricsgame = {
 			killerDeadline = null
 		if ( killerPlayer && killerPlayer.targets ) {
 			killerIndex = _.findIndex( killerPlayer.targets, function( target ) {
-				return report.time < target.deadline
+				return report.time < target.deadline && _.findIndex( target.targetStatuses, {
+					id: victimId
+				} ) > -1
 			} )
 			killerDeadline = killerPlayer.targets[ killerIndex ]
 		}
@@ -653,7 +659,9 @@ var concentricsgame = {
 			victimDeadline = null
 		if ( victimPlayer && victimPlayer.targets ) {
 			victimIndex = _.findIndex( victimPlayer.targets, function( target ) {
-				return report.time < target.deadline
+				return report.time < target.deadline && _.findIndex( target.targetStatuses, {
+					id: killerId
+				} ) > -1
 			} )
 			victimDeadline = victimPlayer.targets[ victimIndex ]
 		}
