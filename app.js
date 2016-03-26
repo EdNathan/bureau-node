@@ -1819,7 +1819,10 @@ app.map = function( a, route, method, auth ) { //Returns an array of mapped urls
 						checkForceRedirect,
 						a[ !key ? '/' : key ] )
 				} else {
-					app[ method ]( route + glue + key, a[ !key ? '/' : key ] )
+					app[ method ]( route + glue + key, ( req, res, next ) => {
+						res.locals.PRODUCTION_ENV = isProduction
+						next()
+					}, a[ !key ? '/' : key ] )
 				}
 				break
 		}
