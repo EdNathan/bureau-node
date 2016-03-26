@@ -1854,9 +1854,7 @@ Bureau.init( function( err, db ) {
 		} ).join( ' ' )
 	} )
 
-	var port = ( process.env.VMC_APP_PORT || process.env.OPENSHIFT_NODEJS_PORT ||
-		3000 );
-	var host = ( process.env.VCAP_APP_HOST || process.env.OPENSHIFT_NODEJS_IP ||
-		'localhost' );
+	var port = ( process.env.VMC_APP_PORT || process.env.OPENSHIFT_NODEJS_PORT || 3000 )
+	var host = ( process.env.VCAP_APP_HOST || process.env.OPENSHIFT_NODEJS_IP || 'localhost' )
 	app.listen( port, host )
 } )
