@@ -1600,7 +1600,7 @@ var authPages = {
 					Bureau.assassin.setOptout( uid, optout, function( err ) {
 
 						if ( err ) {
-							res.send( 500, err )
+							res.status( 500 ).send( err )
 							return
 						}
 
@@ -1836,7 +1836,7 @@ for ( var method in authPages ) {
 
 //Handle 404
 app.use( function( req, res, next ) {
-	res.send( 404, 'Hello yes this is dog.<br><br>Dog cannot find your page :(' )
+	res.status( 404 ).send( 'Hello yes this is dog.<br><br>Dog cannot find your page :(' )
 	console.log( 404, req.url )
 } )
 
