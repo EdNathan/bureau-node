@@ -317,7 +317,7 @@ var concentricsgame = {
 	},
 
 	getPlayersTargetingPlayer: function( game, playerId ) {
-		return _.keys( _.pick( game.players, function( targetingPlayer, targetingPlayerId ) {
+		return _.keys( _.pickBy( game.players, function( targetingPlayer, targetingPlayerId ) {
 			var currentTargets = []
 			if ( targetingPlayer.targets && targetingPlayer.targets.length > 0 ) {
 				currentTargets = _.last( targetingPlayer.targets ).targetStatuses
