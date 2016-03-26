@@ -1,7 +1,6 @@
 var Bureau = require( './bureau' ),
 	utils = require( './utils' ),
 	express = require( 'express' ),
-	cons = require( 'consolidate' ),
 	swig = require( 'swig' ),
 	gm = require( 'gm' ),
 	AWS = require( 'aws-sdk' ),
