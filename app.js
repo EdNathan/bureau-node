@@ -1622,10 +1622,16 @@ var authURLS = []
 
 var isProduction = process.env.NODE_ENV === 'production'
 
+var bodyParser = require( 'body-parser' )
+
 //Setup middleware
 app.use( require( 'compression' )() )
 app.use( require( 'serve-static' )( isProduction ? 'build/static' : 'static' ) )
-app.use( express.bodyParser() )
+app.use( bodyParser.json() )
+app.use( bodyParser.urlencoded( {
+	extended: true
+} ) )
+app.use( require( 'multer' )() )
 app.use( express.cookieParser( process.env.BUREAU_COOKIE_SECRET ) )
 app.use( express.session( {
 	store: new MongoStore( {
