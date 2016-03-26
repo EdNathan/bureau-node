@@ -60,7 +60,7 @@ var sendHeadersForOptions = function( req, res, next ) {
 
 var authPipeline = [ sendHeadersForOptions, checkAppToken, checkUserToken ]
 
-authPipeline.map( app.use.bind( app, '/api' ) )
+authPipeline.map( ( fn ) => app.use.bind( app, '/api', fn ) )
 
 var handleApiRequest = function( handler, req, res ) {
 
