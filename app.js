@@ -1787,6 +1787,10 @@ var checkToken = function( req, res, next ) {
 	}
 }
 
+app.use( '/health', ( req, res ) => res.status( 200 ).end() )
+
+app.use( '/env', ( req, res ) => res.send( `Version: ${process.version}` ) )
+
 app.get( '/', function( req, res ) {
 	if ( !req.session.uid || !req.session.gamegroup || !req.session.token ) {
 		res.render( 'landingpage' )
