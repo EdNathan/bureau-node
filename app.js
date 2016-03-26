@@ -1626,6 +1626,7 @@ var bodyParser = require( 'body-parser' )
 
 //Setup middleware
 app.use( require( 'compression' )() )
+app.use( '/js/libs/:lib', require( './serve-js-libs' ) )
 app.use( require( 'serve-static' )( isProduction ? 'build/static' : 'static' ) )
 app.use( bodyParser.json() )
 app.use( bodyParser.urlencoded( {
