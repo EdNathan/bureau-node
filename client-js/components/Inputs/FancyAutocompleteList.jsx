@@ -61,7 +61,7 @@ class BureauFancyAutocompleteList extends React.Component {
 	addValue( value, e ) {
 		let values = this.state.values
 		values.push(value)
-		values = _.unique(values, 'value')
+		values = _.uniqBy(values, 'value')
 		this.setState({
 			values,
 			suggestions: [],
