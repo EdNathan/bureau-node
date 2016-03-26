@@ -1,5 +1,5 @@
 var crypto = require( 'crypto' ),
-	bcrypt = require( 'bcrypt' ),
+	bcrypt = require( 'bcryptjs' ),
 	Autolinker = require( 'autolinker' ),
 	fs = require( 'fs' ),
 	_ = require( 'lodash' )

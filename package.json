@@ -15,7 +15,7 @@
         "autolinker": "^0.12.3",
         "aws-sdk": "~2.0.0-rc10",
         "babel-core": "^5.8.25",
-        "bcrypt": "^0.8.0",
+        "bcryptjs": "^2.3.0",
         "connect-mongo": "^0.4.1",
         "consolidate": "0.10.x",
         "express": "3.4.x",
