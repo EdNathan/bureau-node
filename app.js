@@ -1638,6 +1638,8 @@ app.use( session( {
 	store: new MongoStore( {
 		url: utils.mongourl()
 	} ),
+	resave: true,
+	saveUninitialized: false,
 	secret: process.env.BUREAU_COOKIE_SECRET,
 	cookie: {
 		expires: new Date( Date.now() + 60 * 60 * 24 * 60 )
