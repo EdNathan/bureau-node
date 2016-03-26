@@ -1632,7 +1632,7 @@ app.use( bodyParser.urlencoded( {
 	extended: true
 } ) )
 app.use( require( 'multer' )() )
-app.use( express.cookieParser( process.env.BUREAU_COOKIE_SECRET ) )
+app.use( require( 'cookie-parser' )( process.env.BUREAU_COOKIE_SECRET ) )
 app.use( express.session( {
 	store: new MongoStore( {
 		url: utils.mongourl()
