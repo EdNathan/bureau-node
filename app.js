@@ -7,7 +7,8 @@ var Bureau = require( './bureau' ),
 	AWS = require( 'aws-sdk' ),
 	fs = require( 'fs' ),
 	validator = require( 'validator' ),
-	MongoStore = require( 'connect-mongo' )( express ),
+	session = require( 'express-session' ),
+	MongoStore = require( 'connect-mongo' )( session ),
 	moment = require( 'moment' )
 
 
@@ -1631,9 +1632,9 @@ app.use( bodyParser.json() )
 app.use( bodyParser.urlencoded( {
 	extended: true
 } ) )
-app.use( require( 'multer' )() )
+app.use( '/personal', require( 'multer' )().any() )
 app.use( require( 'cookie-parser' )( process.env.BUREAU_COOKIE_SECRET ) )
-app.use( require( 'express-session' )( {
+app.use( session( {
 	store: new MongoStore( {
 		url: utils.mongourl()
 	} ),

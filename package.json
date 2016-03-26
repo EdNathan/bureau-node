@@ -18,7 +18,7 @@
     "bcryptjs": "^2.3.0",
     "body-parser": "^1.15.0",
     "compression": "^1.6.1",
-    "connect-mongo": "^0.4.1",
+    "connect-mongo": "^1.1.0",
     "consolidate": "0.10.x",
     "cookie-parser": "^1.4.1",
     "express": "^4.13.4",
