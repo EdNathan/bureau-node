@@ -126,7 +126,7 @@ var concentricsgame = {
 			return 0
 		}
 
-		return _.filter( _.flatten( _.pluck( player.targets, 'targetStatuses' ) ), {
+		return _.filter( _.flatten( _.map( player.targets, 'targetStatuses' ) ), {
 			status: CONCENTRICS_GAME.TARGET_STATES.KILLED
 		} ).length
 	},
@@ -359,7 +359,7 @@ var concentricsgame = {
 			// The ids of the last targets
 		var lastTargets = []
 		if ( player && player.targets && player.targets.length > 0 ) {
-			lastTargets = _.pluck( _.last( player.targets ).targetStatuses, 'id' )
+			lastTargets = _.map( _.last( player.targets ).targetStatuses, 'id' )
 		}
 
 		// Prevent the player from being chosen
@@ -472,14 +472,14 @@ var concentricsgame = {
 				currentTargets = _.last( player.targets ).targetStatuses.sort( function( a, b ) {
 					return a.status - b.status
 				} ),
-				currentTargetIds = _.pluck( currentTargets, 'id' ),
+				currentTargetIds = _.map( currentTargets, 'id' ),
 				deadline = _.last( player.targets ).deadline,
 				targetid = player.targets.slice( -1 )[ 0 ],
 				nonTargets = game.assassins.filter( function( el ) {
 					return !_.contains( currentTargetIds, el._id + '' ) && el._id + '' !== uid
 				} )
 
-			var pendingReports = _.pluck( assassin.kills.filter( function( kill ) {
+			var pendingReports = _.map( assassin.kills.filter( function( kill ) {
 				var sameGame = kill.gameid === game.gameid,
 					onCurrentTarget = _.contains( currentTargetIds, kill.victimid )
 				return sameGame && onCurrentTarget && kill.state === 'waiting'
