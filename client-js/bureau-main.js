@@ -43,7 +43,7 @@ var bureau = {
 	},
 
 	setupToolbar: function() {
-		React.render( React.createElement( Toolbar ), $I( 'navbar-container' ) )
+		ReactDOM.render( React.createElement( Toolbar ), $I( 'navbar-container' ) )
 	},
 
 	setup: {

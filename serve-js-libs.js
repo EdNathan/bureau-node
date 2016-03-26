@@ -4,7 +4,8 @@ const getFile = ( filename ) => require( 'fs' ).readFileSync( filename )
 
 const getLib = {
 	'lodash.min.js': getFile( 'node_modules/lodash/lodash.min.js' ),
-	'react-with-addons.min.js': getFile( 'node_modules/react/dist/react-with-addons.min.js' )
+	'react-with-addons.min.js': getFile( 'node_modules/react/dist/react-with-addons.min.js' ),
+	'react-dom.min.js': getFile( 'node_modules/react-dom/dist/react-dom.min.js' )
 }
 
 

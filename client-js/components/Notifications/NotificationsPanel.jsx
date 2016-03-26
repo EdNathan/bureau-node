@@ -54,7 +54,7 @@ class NotificationsPanel extends React.Component {
 					Notifications
 					<div className="toolbar-header-button" style={{fontSize:'0.8em', fontWeight: 200}} title="Mark all Read" onClick={this.markAllRead.bind(this)}>✓</div>
 				</div>
-				<ReactCSSTransitionGroup transitionName="toolbar-content-slideleft" className="toolbar-content notification-list" component='ul'>
+				<ReactCSSTransitionGroup transitionName="toolbar-content-slideleft" className="toolbar-content notification-list" component='ul' transitionEnterTimeout={500} transitionLeaveTimeout={300}>
 					{this.state.notifications.map( ( notification, i ) => <NotificationListItem onClick={this.markRead(notification)} notification={notification} key={this.state.notifications.length - i} /> )}
 				</ReactCSSTransitionGroup>
 			</div>
