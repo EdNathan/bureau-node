@@ -1623,7 +1623,7 @@ var authURLS = []
 var isProduction = process.env.NODE_ENV === 'production'
 
 //Setup middleware
-app.use( require( 'compression' ) )
+app.use( require( 'compression' )() )
 app.use( require( 'serve-static' )( isProduction ? 'build/static' : 'static' ) )
 app.use( express.bodyParser() )
 app.use( express.cookieParser( process.env.BUREAU_COOKIE_SECRET ) )
