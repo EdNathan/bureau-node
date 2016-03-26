@@ -30,3 +30,6 @@ if [ -f "${OPENSHIFT_REPO_DIR}"/package.json ]; then
    (cd "${OPENSHIFT_REPO_DIR}"; export TMPDIR="/tmp"; npm install -d)
 fi
 
+echo " - Building static files"
+echo
+(cd "${OPENSHIFT_REPO_DIR}"; node_modules/.bin/grunt build)
