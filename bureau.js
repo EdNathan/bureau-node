@@ -145,7 +145,7 @@ var Bureau = {
 	},
 
 	isAdmin: function( uid ) {
-		return _.contains( Bureau.admins, uid )
+		return _.includes( Bureau.admins, uid )
 	},
 
 	loadModule: function( moduleName ) {

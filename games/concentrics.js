@@ -476,12 +476,12 @@ var concentricsgame = {
 				deadline = _.last( player.targets ).deadline,
 				targetid = player.targets.slice( -1 )[ 0 ],
 				nonTargets = game.assassins.filter( function( el ) {
-					return !_.contains( currentTargetIds, el._id + '' ) && el._id + '' !== uid
+					return !_.includes( currentTargetIds, el._id + '' ) && el._id + '' !== uid
 				} )
 
 			var pendingReports = _.map( assassin.kills.filter( function( kill ) {
 				var sameGame = kill.gameid === game.gameid,
-					onCurrentTarget = _.contains( currentTargetIds, kill.victimid )
+					onCurrentTarget = _.includes( currentTargetIds, kill.victimid )
 				return sameGame && onCurrentTarget && kill.state === 'waiting'
 			} ), 'victimid' )
 
