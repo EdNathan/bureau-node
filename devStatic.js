@@ -23,7 +23,7 @@ clientDevFiles = clientDevFiles.map( function( filename ) {
 } )
 
 app.use( '/devstatic/react-with-addons.js', function( req, res, next ) {
-	res.sendfile( 'node_modules/react/dist/react-with-addons.js' )
+	res.sendFile( path.resolve( 'node_modules/react/dist/react-with-addons.js' ) )
 } )
 
 app.use( '/devstatic/js', function( req, res, next ) {

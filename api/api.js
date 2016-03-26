@@ -52,7 +52,8 @@ var sendHeadersForOptions = function( req, res, next ) {
 		res.header( 'Access-Control-Allow-Origin', '*' )
 		res.header( 'Access-Control-Allow-Methods', 'POST' )
 		res.header( 'Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, X-Custom-Header' )
-		res.send( 200 )
+		res.status( 200 )
+		res.end()
 	} else {
 		next()
 	}
@@ -60,7 +61,7 @@ var sendHeadersForOptions = function( req, res, next ) {
 
 var authPipeline = [ sendHeadersForOptions, checkAppToken, checkUserToken ]
 
-authPipeline.map( app.use.bind( app, '/api' ) )
+authPipeline.map( ( fn ) => app.use( '/api/*', fn ) )
 
 var handleApiRequest = function( handler, req, res ) {
 

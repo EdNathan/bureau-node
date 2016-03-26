@@ -7,7 +7,8 @@ var Bureau = require( './bureau' ),
 	AWS = require( 'aws-sdk' ),
 	fs = require( 'fs' ),
 	validator = require( 'validator' ),
-	MongoStore = require( 'connect-mongo' )( express ),
+	session = require( 'express-session' ),
+	MongoStore = require( 'connect-mongo' )( session ),
 	moment = require( 'moment' )
 
 
@@ -1599,7 +1600,7 @@ var authPages = {
 					Bureau.assassin.setOptout( uid, optout, function( err ) {
 
 						if ( err ) {
-							res.send( 500, err )
+							res.status( 500 ).send( err )
 							return
 						}
 
@@ -1622,15 +1623,23 @@ var authURLS = []
 
 var isProduction = process.env.NODE_ENV === 'production'
 
+var bodyParser = require( 'body-parser' )
+
 //Setup middleware
-app.use( express.compress() )
-app.use( express.static( isProduction ? 'build/static' : 'static' ) )
-app.use( express.bodyParser() )
-app.use( express.cookieParser( process.env.BUREAU_COOKIE_SECRET ) )
-app.use( express.session( {
+app.use( require( 'compression' )() )
+app.use( require( 'serve-static' )( isProduction ? 'build/static' : 'static' ) )
+app.use( bodyParser.json() )
+app.use( bodyParser.urlencoded( {
+	extended: true
+} ) )
+app.use( '/personal', require( 'multer' )().any() )
+app.use( require( 'cookie-parser' )( process.env.BUREAU_COOKIE_SECRET ) )
+app.use( session( {
 	store: new MongoStore( {
 		url: utils.mongourl()
 	} ),
+	resave: true,
+	saveUninitialized: false,
 	secret: process.env.BUREAU_COOKIE_SECRET,
 	cookie: {
 		expires: new Date( Date.now() + 60 * 60 * 24 * 60 )
@@ -1827,7 +1836,7 @@ for ( var method in authPages ) {
 
 //Handle 404
 app.use( function( req, res, next ) {
-	res.send( 404, 'Hello yes this is dog.<br><br>Dog cannot find your page :(' )
+	res.status( 404 ).send( 'Hello yes this is dog.<br><br>Dog cannot find your page :(' )
 	console.log( 404, req.url )
 } )
 
