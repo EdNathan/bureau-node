@@ -1,19 +1,18 @@
-module.exports = function( Bureau ) {
+'use strict'
 
-	return {
-		getKillMethods: function( data, params, callback ) {
+module.exports = ( Bureau ) => ( {
+	getKillMethods: ( data, params, callback ) => {
 
-			var uid = data.USER_ID
+		let uid = data.USER_ID
 
-			Bureau.assassin.getGamegroup( uid, function( err, ggid ) {
+		Bureau.assassin.getGamegroup( uid, ( err, ggid ) => {
 
-				if ( err ) {
-					callback( err )
-					return
-				}
+			if ( err ) {
+				callback( err )
+				return
+			}
 
-				Bureau.gamegroup.getKillMethods( ggid, callback )
-			} )
-		}
+			Bureau.gamegroup.getKillMethods( ggid, callback )
+		} )
 	}
-}
+} )
