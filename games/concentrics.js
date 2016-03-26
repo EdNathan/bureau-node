@@ -395,11 +395,11 @@ var concentricsgame = {
 		// console.log( 'evaluated outer', outerCircle )
 
 		// Select from inner circle for first. Keep sampling wider circles until we get a target
-		newTargets = newTargets.concat( _.sample( innerCircle, 1 ) )
+		newTargets = newTargets.concat( _.sampleSize( innerCircle, 1 ) )
 		if ( newTargets.length < 1 ) {
-			newTargets = newTargets.concat( _.sample( middleCircle, 1 ) )
+			newTargets = newTargets.concat( _.sampleSize( middleCircle, 1 ) )
 			if ( newTargets.length < 1 ) {
-				newTargets = newTargets.concat( _.sample( outerCircle, 1 ) )
+				newTargets = newTargets.concat( _.sampleSize( outerCircle, 1 ) )
 				outerCircle = _.pull( outerCircle, newTargets[ 0 ] )
 			} else {
 				middleCircle = _.pull( middleCircle, newTargets[ 0 ] )
@@ -410,10 +410,10 @@ var concentricsgame = {
 
 
 		// Sample inner and middle circles for the rest of the targets
-		newTargets = newTargets.concat( _.sample( _.union( innerCircle, middleCircle ), CONCENTRICS_GAME.TARGET_COUNT - 1 ) )
+		newTargets = newTargets.concat( _.sampleSize( _.union( innerCircle, middleCircle ), CONCENTRICS_GAME.TARGET_COUNT - 1 ) )
 
 		if ( newTargets.length < CONCENTRICS_GAME.TARGET_COUNT ) {
-			newTargets = newTargets.concat( _.sample( outerCircle, CONCENTRICS_GAME.TARGET_COUNT - newTargets.length ) )
+			newTargets = newTargets.concat( _.sampleSize( outerCircle, CONCENTRICS_GAME.TARGET_COUNT - newTargets.length ) )
 		}
 
 		return newTargets
