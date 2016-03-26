@@ -110,7 +110,7 @@ module.exports = function( Bureau ) {
 
 			var queryRegex = new RegExp( query, 'i' )
 
-			var projector = _.transform( _.indexBy( assassinProjection ), function( result, n, key ) {
+			var projector = _.transform( _.keyBy( assassinProjection ), function( result, n, key ) {
 				result[ key ] = 1
 			} )
 
