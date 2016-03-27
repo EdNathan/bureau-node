@@ -12,11 +12,20 @@ var Bureau = require( './bureau' ),
 
 
 var app = express()
+var READY = false
+var DONE_READY_HANDLER = null
+var DONE_READY_HANDLER_CALLED = false
 
 module.exports = {
 	Bureau: Bureau,
 	app: app,
-	swig: swig
+	swig: swig,
+	onLoad: ( callback ) => {
+		DONE_READY_HANDLER = callback
+		if ( READY && !DONE_READY_HANDLER_CALLED ) {
+			DONE_READY_HANDLER()
+		}
+	}
 }
 
 var pages = {
@@ -1874,4 +1883,11 @@ Bureau.init( function( err, db ) {
 	var port = ( process.env.VMC_APP_PORT || process.env.OPENSHIFT_NODEJS_PORT || 3000 )
 	var host = ( process.env.VCAP_APP_HOST || process.env.OPENSHIFT_NODEJS_IP || 'localhost' )
 	app.listen( port, host )
+
+	READY = true
+
+	if ( DONE_READY_HANDLER && !DONE_READY_HANDLER_CALLED ) {
+		DONE_READY_HANDLER_CALLED = true
+		DONE_READY_HANDLER()
+	}
 } )
