@@ -488,38 +488,9 @@ var Bureau = {
 			} )
 		},
 
-		//TODO: Migrate to new reports
 		submitReport: function( uid, report, callback ) {
-			var now = new Date()
-			report.submitted = now
-			report.id = utils.md5( now + uid )
-			Bureau.assassin.updateAssassin( uid, {
-				$push: {
-					kills: report
-				}
-			}, function( err, a ) {
-				if ( err ) {
-					callback( err, {} )
-					return
-				}
-				Bureau.assassin.getAssassin( report.victimid, function( err, victim ) {
-					if ( err ) {
-						callback( err, {} )
-						return
-					}
-					Bureau.game.getGame( report.gameid, function( err, game ) {
-						if ( err ) {
-							callback( err, {} )
-							return
-						}
-						var notif = 'Your report on ' + utils.fullname( victim ) +
-							' in the game ' + game.name + ' has been submitted'
-						Bureau.assassin.addNotification( uid, notif )
-						callback( null, a )
-					} )
-
-				} )
-			} )
+			report.killerid = uid
+			Bureau.report.submitReport( report, callback )
 		},
 
 		getNotifications: function( uid, limit, callback ) {
