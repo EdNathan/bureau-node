@@ -75,7 +75,8 @@ module.exports = ( Bureau ) => {
 
 	return {
 
-		getReports: ( query, filter, callback ) => {},
+		getReports: ( query, callback ) => Report.find( query, callback ),
+
 		getProcessedReportsByGame: ( ggid, callback ) => {},
 		getReport: ( reportid, callback ) => {},
 		submitReport: ( uid, report, callback ) => {},
