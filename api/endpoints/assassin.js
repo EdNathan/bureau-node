@@ -6,6 +6,16 @@ module.exports = function( Bureau ) {
 	var projectAssassin = utils.projectAssassin
 
 	return {
+		/**
+		 * @api {post} /assassin/getAssassin/:uid getAssassin
+		 * @apiDescription Get data for an assassin
+		 * @apiName assassin/getAssassin
+		 * @apiGroup assassin
+		 *
+		 * @apiSuccess {Object} assassin Assassin data
+		 *
+		 */
+
 		'getAssassin/:uid': function( data, params, callback ) {
 
 			var uid = params.uid
@@ -29,9 +39,19 @@ module.exports = function( Bureau ) {
 			} )
 		},
 
-		getAssassins: function( data, params, callback ) {
+		/**
+		 * @api {post} /assassin/getAssassins getAssassins
+		 * @apiDescription Get data for assassins
+		 * @apiName assassin/getAssassins
+		 * @apiGroup assassin
+		 *
+		 * @apiParam {Object} query Query data for matching assassins
+		 *
+		 * @apiSuccess {Object[]} assassins Assassin data
+		 *
+		 */
 
-			var uid = params.uid
+		getAssassins: function( data, params, callback ) {
 
 			Bureau.assassin.getGamegroup( data.USER_ID, function( err, ggid ) {
 
@@ -52,6 +72,18 @@ module.exports = function( Bureau ) {
 			} )
 
 		},
+
+		/**
+		 * @api {post} /assassin/getAssassinsFromAssassinIds getAssassinsFromAssassinIds
+		 * @apiDescription Get data for assassins from their ids
+		 * @apiName assassin/getAssassinsFromAssassinIds
+		 * @apiGroup assassin
+		 *
+		 * @apiParam {String[]} assassinIds An array of assassin ids
+		 *
+		 * @apiSuccess {Object[]} assassins Assassin data
+		 *
+		 */
 
 		getAssassinsFromAssassinIds: function( data, params, callback ) {
 
@@ -80,6 +112,18 @@ module.exports = function( Bureau ) {
 				} )
 			} )
 		},
+
+		/**
+		 * @api {post} /assassin/searchAssassinsByName searchAssassinsByName
+		 * @apiDescription Search for assassin data by name
+		 * @apiName assassin/searchAssassinsByName
+		 * @apiGroup assassin
+		 *
+		 * @apiParam {String} name A search string on assassin names
+		 *
+		 * @apiSuccess {Object[]} assassins Assassin data
+		 *
+		 */
 
 		searchAssassinsByName: function( data, params, callback ) {
 

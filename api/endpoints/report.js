@@ -77,7 +77,15 @@ module.exports = ( Bureau ) => {
 	}
 
 	return {
-
+		/**
+		 * @api {post} /report/getReport/:reportId getReport
+		 * @apiDescription Get report
+		 * @apiName report/getReport
+		 * @apiGroup report
+		 *
+		 * @apiSuccess {Object} report Report data
+		 *
+		 */
 		'getReport/:reportId': ( data, params, callback ) => {
 			let reportId = params.reportId
 
@@ -89,6 +97,16 @@ module.exports = ( Bureau ) => {
 				Bureau.report.getReport( reportId, callback )
 			} )
 		},
+
+		/**
+		 * @api {post} /report/getFullReport/:reportId getFullReport
+		 * @apiDescription Get report with assassin and killmethod data
+		 * @apiName report/getFullReport
+		 * @apiGroup report
+		 *
+		 * @apiSuccess {Object} report Report data with extra fields
+		 *
+		 */
 
 		'getFullReport/:reportId': ( data, params, callback ) => {
 			let reportId = params.reportId
@@ -109,6 +127,18 @@ module.exports = ( Bureau ) => {
 			} )
 		},
 
+		/**
+		 * @api {post} /report/getReports getReports
+		 * @apiDescription Get multiple reports
+		 * @apiName report/getReports
+		 * @apiGroup report
+		 *
+		 * @apiParam {Object} query Query data for matching reports
+		 *
+		 * @apiSuccess {Object[]} reports Report data
+		 *
+		 */
+
 		getReports: ( data, params, callback ) => {
 
 			Bureau.report.getReports( data.query, ( err, reports ) => {
@@ -121,6 +151,18 @@ module.exports = ( Bureau ) => {
 
 			} )
 		},
+
+		/**
+		 * @api {post} /report/getFullReports getFullReports
+		 * @apiDescription Get multiple reports with assassin and killmethod data
+		 * @apiName report/getFullReports
+		 * @apiGroup report
+		 *
+		 * @apiParam {Object} query Query data for matching reports
+		 *
+		 * @apiSuccess {Object[]} reports Report data with extra fields
+		 *
+		 */
 
 		getFullReports: ( data, params, callback ) => {
 
@@ -135,6 +177,16 @@ module.exports = ( Bureau ) => {
 			} )
 		},
 
+		/**
+		 * @api {post} /report/getReportsFromGame/:gameid getReportsFromGame
+		 * @apiDescription Get all reports associated with a game
+		 * @apiName report/getReportsFromGame/:gameid
+		 * @apiGroup report
+		 *
+		 * @apiSuccess {Object[]} reports Report data
+		 *
+		 */
+
 		'getReportsFromGame/:gameid': ( data, params, callback ) => {
 
 			Bureau.report.getReportsFromGame( params.gameid, ( err, reports ) => {
@@ -147,6 +199,16 @@ module.exports = ( Bureau ) => {
 
 			} )
 		},
+
+		/**
+		 * @api {post} /report/getFullReportsFromGame/:gameid getFullReportsFromGame
+		 * @apiDescription Get all reports associated with a game with assassin and killmethod data
+		 * @apiName report/getFullReportsFromGame
+		 * @apiGroup report
+		 *
+		 * @apiSuccess {Object[]} reports Report data with extra fields
+		 *
+		 */
 
 		'getFullReportsFromGame/:gameid': ( data, params, callback ) => {
 
@@ -161,6 +223,16 @@ module.exports = ( Bureau ) => {
 			} )
 		},
 
+		/**
+		 * @api {post} /report/getPendingReports getPendingReports
+		 * @apiDescription Get all pending reports from your gamegroup
+		 * @apiName report/getPendingReports
+		 * @apiGroup report
+		 *
+		 * @apiSuccess {Object[]} reports Report data
+		 *
+		 */
+
 		getPendingReports: ( data, params, callback ) => {
 			gamegroupFromUid( data.USER_ID, ( err, ggid ) => {
 				if ( err ) {
@@ -170,6 +242,16 @@ module.exports = ( Bureau ) => {
 				Bureau.report.getPendingReports( ggid, callback )
 			} )
 		},
+
+		/**
+		 * @api {post} /report/getFullPendingReports getFullPendingReports
+		 * @apiDescription Get all pending reports from your gamegroup with assassin and killmethod data
+		 * @apiName report/getFullPendingReports
+		 * @apiGroup report
+		 *
+		 * @apiSuccess {Object[]} reports Report data with extra fields
+		 *
+		 */
 
 		getFullPendingReports: ( data, params, callback ) => {
 			gamegroupFromUid( data.USER_ID, ( err, ggid ) => {
