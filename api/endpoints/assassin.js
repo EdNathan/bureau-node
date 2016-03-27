@@ -4,6 +4,7 @@ var utils = require( '../../utils' )
 module.exports = function( Bureau ) {
 
 	var projectAssassin = utils.projectAssassin
+	var assassinProjection = utils.assassinProjection
 
 	return {
 		/**
