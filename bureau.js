@@ -488,6 +488,7 @@ var Bureau = {
 			} )
 		},
 
+		//TODO: Migrate to new reports
 		submitReport: function( uid, report, callback ) {
 			var now = new Date()
 			report.submitted = now

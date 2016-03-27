@@ -627,6 +627,7 @@ var authPages = {
 			}
 		},
 
+		//TODO: Migrate to new reports
 		report: function( req, res ) {
 			var uid = res.locals.uid,
 				victimid = req.body.victimid,
