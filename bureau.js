@@ -622,6 +622,7 @@ var Bureau = {
 			} )
 		},
 
+		//TODO: Migrate to new reports
 		getKills: function( uid, includePending, callback ) {
 			Bureau.assassin.getAssassin( uid, function( err, assassin ) {
 				if ( err ) {
@@ -643,6 +644,7 @@ var Bureau = {
 			} )
 		},
 
+		//TODO: Migrate to new reports
 		getDeaths: function( uid, includePending, callback ) {
 			var filter = {
 					'kills.victimid': uid
@@ -696,6 +698,7 @@ var Bureau = {
 			)
 		},
 
+		//TODO: Migrate to new reports
 		getKillsFromGame: function( uid, gameid, includePending, callback ) {
 			Bureau.assassin.getKills( uid, includePending, function( err, kills ) {
 				if ( err ) {
@@ -709,6 +712,7 @@ var Bureau = {
 			} )
 		},
 
+		//TODO: Migrate to new reports
 		getDeathsFromGame: function( uid, gameid, includePending, callback ) {
 			var filter = {
 					'kills.victimid': uid,
@@ -764,6 +768,7 @@ var Bureau = {
 			)
 		},
 
+		//TODO: Migrate to new reports
 		hasKilledInGame: function( uid, gameid, includePending, callback ) {
 			Bureau.assassin.getKillsFromGame( uid, gameid, includePending, function(
 				err,
@@ -776,6 +781,7 @@ var Bureau = {
 			} )
 		},
 
+		//TODO: Migrate to new reports
 		hasDiedInGame: function( uid, gameid, includePending, callback ) {
 			Bureau.assassin.getDeathsFromGame( uid, gameid, includePending, function(
 				err, deaths ) {
@@ -787,6 +793,7 @@ var Bureau = {
 			} )
 		},
 
+		//TODO: Migrate to new reports
 		getPlayersKilled: function( uid, includePending, callback ) {
 			Bureau.assassin.getKills( uid, includePending, function( err, kills ) {
 				if ( err ) {
@@ -800,6 +807,7 @@ var Bureau = {
 			} )
 		},
 
+		//TODO: Migrate to new reports
 		getPlayersKilledFromGame: function( uid, gameid, includePending, callback ) {
 			Bureau.assassin.getKillsFromGame( uid, gameid, includePending, function(
 				err,
@@ -815,8 +823,8 @@ var Bureau = {
 			} )
 		},
 
-		hasKilledPlayerInGame: function( uid, victimid, gameid, includePending,
-			callback ) {
+		//TODO: Migrate to new reports
+		hasKilledPlayerInGame: function( uid, victimid, gameid, includePending, callback ) {
 			Bureau.assassin.getPlayersKilledFromGame( uid, gameid, includePending,
 				function( err, playersKilled ) {
 					if ( err ) {
@@ -827,6 +835,7 @@ var Bureau = {
 				} )
 		},
 
+		//TODO: Migrate to new reports
 		totalKills: function( uid, callback ) {
 			Bureau.assassin.getKills( uid, true, function( err, kills ) {
 				if ( err ) {
@@ -837,6 +846,7 @@ var Bureau = {
 			} )
 		},
 
+		//TODO: Migrate to new reports
 		totalDeaths: function( uid, callback ) {
 			Bureau.assassin.getDeaths( uid, true, function( err, deaths ) {
 				if ( err ) {
@@ -847,6 +857,7 @@ var Bureau = {
 			} )
 		},
 
+		//TODO: Migrate to new reports
 		stats: function( uid, callback ) {
 			Bureau.assassin.totalKills( uid, function( err, k ) {
 				Bureau.assassin.totalDeaths( uid, function( err, d ) {
@@ -860,6 +871,7 @@ var Bureau = {
 			} )
 		},
 
+		//TODO: Migrate to new reports
 		getLethality: function( uid, callback ) {
 			Bureau.assassin.totalKills( uid, function( err, count ) {
 				var lethality,

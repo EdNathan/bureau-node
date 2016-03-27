@@ -235,6 +235,7 @@ var spiralgame = {
 		}
 	},
 
+	//TODO: Migrate to new reports
 	renderGame: function( game, assassin, gamegroup, callback ) {
 		var self = this
 		self.tick( game, function( err, success ) {

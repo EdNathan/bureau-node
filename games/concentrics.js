@@ -410,7 +410,9 @@ var concentricsgame = {
 
 
 		// Sample inner and middle circles for the rest of the targets
-		newTargets = newTargets.concat( _.sampleSize( _.union( innerCircle, middleCircle ), CONCENTRICS_GAME.TARGET_COUNT - 1 ) )
+		newTargets = newTargets.concat(
+			_.sampleSize( _.union( innerCircle, middleCircle ), CONCENTRICS_GAME.TARGET_COUNT - 1 )
+		)
 
 		if ( newTargets.length < CONCENTRICS_GAME.TARGET_COUNT ) {
 			newTargets = newTargets.concat( _.sampleSize( outerCircle, CONCENTRICS_GAME.TARGET_COUNT - newTargets.length ) )
@@ -458,6 +460,7 @@ var concentricsgame = {
 
 	},
 
+	//TODO: Migrate to new reports
 	renderGame: function( game, assassin, gamegroup, callback ) {
 		var self = this
 		self.tick( game, function( err, success ) {
