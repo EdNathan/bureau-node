@@ -1,14 +1,16 @@
-var MongoClient = require( 'mongodb' ).MongoClient,
-	mongo = require( 'mongodb' ),
-	mongoose = require( 'mongoose' ),
-	utils = require( './utils' ),
-	lethalities = require( './lethalities' ),
-	moment = require( 'moment' ),
-	Mail = require( './mail' ),
-	swig = require( 'swig' ),
-	_ = require( 'lodash' )
+'use strict'
 
-function id( uid ) {
+const MongoClient = require( 'mongodb' ).MongoClient
+const mongo = require( 'mongodb' )
+const mongoose = require( 'mongoose' )
+const utils = require( './utils' )
+const lethalities = require( './lethalities' )
+const moment = require( 'moment' )
+const Mail = require( './mail' )
+const swig = require( 'swig' )
+const _ = require( 'lodash' )
+
+const id = ( uid ) => {
 	try {
 		return new mongo.ObjectID( uid )
 	} catch ( e ) {
@@ -16,26 +18,10 @@ function id( uid ) {
 	}
 }
 
-function empty( obj ) {
-	return _.isEmpty( obj )
-}
+const empty = ( obj ) => _.isEmpty( obj )
 
-function unique( arr ) {
-	//Reduces array to unique values
-	var u = arr.reduce( function( last, current ) {
-		if ( last.indexOf( current ) < 0 ) {
-			last.push( current )
-			return last
-		} else {
-			return last
-		}
-	}, [] )
-
-	return u
-}
-
-function merge( o1, o2 ) {
-	var n = {}
+const merge = ( o1, o2 ) => {
+	let n = {}
 	for ( key in o1 ) {
 		if ( o1.hasOwnProperty( key ) ) {
 			n[ key ] = o1[ key ]
@@ -49,11 +35,9 @@ function merge( o1, o2 ) {
 	return n
 }
 
-function strcopy( str, times ) {
-	return new Array( times + 1 ).join( str )
-}
+const strcopy = ( str, times ) => new Array( times + 1 ).join( str )
 
-function log( msg, indent ) {
+const log = ( msg, indent ) => {
 	indent = indent != undefined ? indent : 1
 	if ( !msg ) {
 		console.log()
@@ -62,12 +46,9 @@ function log( msg, indent ) {
 	}
 }
 
-function line( indent ) {
-	indent = indent != undefined ? indent : 0
-	console.log( strcopy( '        ', indent ) + '----' )
-}
+const line = ( indent ) => console.log( strcopy( '        ', indent != undefined ? indent : 0 ) + '----' )
 
-var Bureau = {
+let Bureau = {
 	db: null,
 	mongoose: null,
 	_initted: false,
@@ -590,157 +571,70 @@ var Bureau = {
 			} )
 		},
 
-		//TODO: Migrate to new reports
 		getKills: function( uid, includePending, callback ) {
-			Bureau.assassin.getAssassin( uid, function( err, assassin ) {
+			Bureau.report.getReports( {
+				killerid: uid,
+				state: includePending ? {
+					$ne: Bureau.report.STATES.REJECTED
+				} : Bureau.report.STATES.APPROVED
+			}, ( err, kills ) => {
 				if ( err ) {
 					callback( err, [] )
 				} else {
-					if ( !assassin.kills ) {
-						callback( null, [] )
-					} else {
-						var kills = assassin.kills.filter( function( x ) {
-							if ( includePending ) {
-								return x.state !== 'rejected'
-							} else {
-								return x.state === 'approved'
-							}
-						} )
-						callback( null, kills )
-					}
+					callback( null, kills )
 				}
 			} )
 		},
 
-		//TODO: Migrate to new reports
 		getDeaths: function( uid, includePending, callback ) {
-			var filter = {
-					'kills.victimid': uid
-				},
-				statequery = includePending ? {
-					$ne: 'rejected'
-				} : 'approved',
-				map = function() {
-					var id = this._id.valueOf(),
-						ggid = this.gamegroup
-
-					this.kills.forEach( function( k ) {
-						k.killerid = id
-						k.gamegroup = ggid
-						emit( k.id, k )
-					} )
-				},
-				reduce = function( key, values ) {
-					return values[ 0 ]
-				},
-				getVal = function( o ) {
-					return o.value
-				}
-
-			Bureau.db.collection( 'assassins' ).mapReduce(
-				map,
-				reduce, {
-					out: {
-						merge: 'kills'
-					},
-					query: filter
-				},
-				function( err, collection ) {
-					if ( err ) {
-						callback( 'There was an error finding the deaths', null )
-						return
-					}
-					collection.find( {
-						'value.victimid': uid,
-						'value.state': statequery
-					}, function( err, cursor ) {
-						cursor.toArray( function( err, docs ) {
-							if ( err ) {
-								callback( err, [] )
-								return;
-							}
-							callback( null, docs.map( getVal ) )
-						} )
-					} )
-				}
-			)
-		},
-
-		//TODO: Migrate to new reports
-		getKillsFromGame: function( uid, gameid, includePending, callback ) {
-			Bureau.assassin.getKills( uid, includePending, function( err, kills ) {
+			Bureau.report.getReports( {
+				victimid: uid,
+				state: includePending ? {
+					$ne: Bureau.report.STATES.REJECTED
+				} : Bureau.report.STATES.APPROVED
+			}, ( err, deaths ) => {
 				if ( err ) {
 					callback( err, [] )
 				} else {
-					var fromGame = kills.filter( function( x ) {
-						return x.gameid + '' === gameid + ''
-					} )
-					callback( null, fromGame )
+					callback( null, deaths )
 				}
 			} )
 		},
 
-		//TODO: Migrate to new reports
-		getDeathsFromGame: function( uid, gameid, includePending, callback ) {
-			var filter = {
-					'kills.victimid': uid,
-					'kills.gameid': gameid
-				},
-				statequery = includePending ? {
-					$ne: 'rejected'
-				} : 'approved',
-				map = function() {
-					var id = this._id.valueOf(),
-						ggid = this.gamegroup
-
-					this.kills.forEach( function( k ) {
-						k.killerid = id
-						k.gamegroup = ggid
-						emit( k.id, k )
-					} )
-				},
-				reduce = function( key, values ) {
-					return values[ 0 ]
-				},
-				getVal = function( o ) {
-					return o.value
+		getKillsFromGame: function( uid, gameid, includePending, callback ) {
+			Bureau.report.getReports( {
+				killerid: uid,
+				gameid: gameid,
+				state: includePending ? {
+					$ne: Bureau.report.STATES.REJECTED
+				} : Bureau.report.STATES.APPROVED
+			}, ( err, kills ) => {
+				if ( err ) {
+					callback( err, [] )
+				} else {
+					callback( null, kills )
 				}
-
-			Bureau.db.collection( 'assassins' ).mapReduce(
-				map,
-				reduce, {
-					out: {
-						merge: 'kills'
-					},
-					query: filter
-				},
-				function( err, collection ) {
-					if ( err ) {
-						callback( 'There was an error finding the deaths', null )
-						return
-					}
-					collection.find( {
-						'value.victimid': uid,
-						'value.gameid': gameid,
-						'value.state': statequery
-					}, function( err, cursor ) {
-						cursor.toArray( function( err, docs ) {
-							if ( err ) {
-								callback( err, [] )
-								return;
-							}
-							callback( null, docs.map( getVal ) )
-						} )
-					} )
-				}
-			)
+			} )
 		},
 
-		//TODO: Migrate to new reports
+		getDeathsFromGame: function( uid, gameid, includePending, callback ) {
+			Bureau.report.getReports( {
+				victimid: uid,
+				gameid: gameid,
+				state: includePending ? {
+					$ne: Bureau.report.STATES.REJECTED
+				} : Bureau.report.STATES.APPROVED
+			}, ( err, deaths ) => {
+				if ( err ) {
+					callback( err, [] )
+				} else {
+					callback( null, deaths )
+				}
+			} )
+		},
+
 		hasKilledInGame: function( uid, gameid, includePending, callback ) {
-			Bureau.assassin.getKillsFromGame( uid, gameid, includePending, function(
-				err,
-				kills ) {
+			Bureau.assassin.getKillsFromGame( uid, gameid, includePending, ( err, kills ) => {
 				if ( err ) {
 					callback( err, false )
 					return
@@ -749,10 +643,8 @@ var Bureau = {
 			} )
 		},
 
-		//TODO: Migrate to new reports
 		hasDiedInGame: function( uid, gameid, includePending, callback ) {
-			Bureau.assassin.getDeathsFromGame( uid, gameid, includePending, function(
-				err, deaths ) {
+			Bureau.assassin.getDeathsFromGame( uid, gameid, includePending, ( err, deaths ) => {
 				if ( err ) {
 					callback( err, false )
 					return
@@ -761,51 +653,40 @@ var Bureau = {
 			} )
 		},
 
-		//TODO: Migrate to new reports
 		getPlayersKilled: function( uid, includePending, callback ) {
-			Bureau.assassin.getKills( uid, includePending, function( err, kills ) {
+			Bureau.assassin.getKills( uid, includePending, ( err, kills ) => {
 				if ( err ) {
 					callback( err, [] )
 				} else {
-					var playersKilled = unique( kills.map( function( x ) {
-						return x.victimid
-					} ) )
+					let playersKilled = _.unique( kills.map( ( x ) => x.victimid ) )
 					callback( null, playersKilled )
 				}
 			} )
 		},
 
-		//TODO: Migrate to new reports
 		getPlayersKilledFromGame: function( uid, gameid, includePending, callback ) {
-			Bureau.assassin.getKillsFromGame( uid, gameid, includePending, function(
-				err,
-				kills ) {
+			Bureau.assassin.getKillsFromGame( uid, gameid, includePending, ( err, kills ) => {
 				if ( err ) {
 					callback( err, [] )
 				} else {
-					var playersKilled = unique( kills.map( function( x ) {
-						return x.victimid
-					} ) )
+					let playersKilled = _.unique( kills.map( ( x ) => x.victimid ) )
 					callback( null, playersKilled )
 				}
 			} )
 		},
 
-		//TODO: Migrate to new reports
 		hasKilledPlayerInGame: function( uid, victimid, gameid, includePending, callback ) {
-			Bureau.assassin.getPlayersKilledFromGame( uid, gameid, includePending,
-				function( err, playersKilled ) {
-					if ( err ) {
-						callback( err, false )
-					} else {
-						callback( null, playersKilled.indexOf( victimid ) > -1 )
-					}
-				} )
+			Bureau.assassin.getPlayersKilledFromGame( uid, gameid, includePending, ( err, playersKilled ) => {
+				if ( err ) {
+					callback( err, false )
+				} else {
+					callback( null, playersKilled.indexOf( victimid ) > -1 )
+				}
+			} )
 		},
 
-		//TODO: Migrate to new reports
 		totalKills: function( uid, callback ) {
-			Bureau.assassin.getKills( uid, true, function( err, kills ) {
+			Bureau.assassin.getKills( uid, true, ( err, kills ) => {
 				if ( err ) {
 					callback( err, 0 )
 				} else {
@@ -814,9 +695,8 @@ var Bureau = {
 			} )
 		},
 
-		//TODO: Migrate to new reports
 		totalDeaths: function( uid, callback ) {
-			Bureau.assassin.getDeaths( uid, true, function( err, deaths ) {
+			Bureau.assassin.getDeaths( uid, true, ( err, deaths ) => {
 				if ( err ) {
 					callback( err, 0 )
 				} else {
@@ -825,11 +705,10 @@ var Bureau = {
 			} )
 		},
 
-		//TODO: Migrate to new reports
 		stats: function( uid, callback ) {
-			Bureau.assassin.totalKills( uid, function( err, k ) {
-				Bureau.assassin.totalDeaths( uid, function( err, d ) {
-					var s = {
+			Bureau.assassin.totalKills( uid, ( err, k ) => {
+				Bureau.assassin.totalDeaths( uid, ( err, d ) => {
+					let s = {
 						kills: k,
 						deaths: d,
 						ratio: isNaN( k / d ) ? 0 : k / d
@@ -839,14 +718,12 @@ var Bureau = {
 			} )
 		},
 
-		//TODO: Migrate to new reports
 		getLethality: function( uid, callback ) {
-			Bureau.assassin.totalKills( uid, function( err, count ) {
-				var lethality,
+			Bureau.assassin.totalKills( uid, ( err, count ) => {
+				let lethality,
 					i = 0
 				while ( !lethality ) {
-					lethality = lethalities[ i ].kills <= count ? lethalities[ i ].name :
-						false
+					lethality = lethalities[ i ].kills <= count ? lethalities[ i ].name : false
 					i++
 				}
 				callback( err, lethality )
