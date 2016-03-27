@@ -59,7 +59,7 @@ module.exports = ( Bureau ) => {
 		state: {
 			required: true,
 			type: String,
-			default: _Report.STATE.WAITING
+			default: _Report.STATES.WAITING
 		},
 		comment: {
 			type: String,
@@ -93,7 +93,7 @@ module.exports = ( Bureau ) => {
 						$in: games.map( ( g ) => g.gameid )
 					},
 					state: {
-						$ne: _Report.STATE.waiting
+						$ne: _Report.STATES.waiting
 					}
 				}, ( err, reports ) => {
 
@@ -101,7 +101,41 @@ module.exports = ( Bureau ) => {
 			} )
 		},
 
-		submitReport: ( uid, report, callback ) => {},
+		submitReport: ( data, callback ) => {
+
+			if ( data.hasOwnProperty( '_id' ) ) {
+				delete data._id;
+			}
+
+			if ( !data || _.isEmpty( data ) || !_.isPlainObject( data ) ) {
+				callback( 'Invalid or no data object supplied to create report' )
+				return
+			}
+
+			data.submitted = new Date()
+			data.state = _Report.STATES.WAITING
+
+			let report = new Report( data )
+
+			report.save( ( err, report ) => {
+				Bureau.assassin.getAssassin( report.victimid, ( err, victim ) => {
+					if ( err ) {
+						callback( err, {} )
+						return
+					}
+					Bureau.game.getGame( report.gameid, ( err, game ) => {
+						if ( err ) {
+							callback( err, {} )
+							return
+						}
+						let notif = `Your report on ${utils.fullname( victim )} in the game ${game.name} has been submitted`
+						Bureau.assassin.addNotification( report.killerid, notif )
+						callback( null, report )
+					} )
+
+				} )
+			} )
+		},
 
 		updateReport: ( reportId, stuff, callback ) => {
 			delete stuff.submitted
@@ -140,20 +174,20 @@ module.exports = ( Bureau ) => {
 					gameid: {
 						$in: gameids
 					},
-					state: _Report.STATE.WAITING
+					state: _Report.STATES.WAITING
 				}, callback )
 			} )
 		},
 
 		acceptReport: ( reportId, callback ) => {
 			_Report.updateReport( reportId, {
-				state: _Report.STATE.APPROVED
+				state: _Report.STATES.APPROVED
 			}, callback )
 		},
 
 		rejectReport: ( reportId, comment, callback ) => {
 			_Report.updateReport( reportId, {
-				state: _Report.STATE.REJECTED,
+				state: _Report.STATES.REJECTED,
 				comment: comment
 			}, callback )
 		},
@@ -206,7 +240,7 @@ module.exports = ( Bureau ) => {
 			)
 		},
 
-		STATE: {
+		STATES: {
 			APPROVED: 'approved',
 			REJECTED: 'rejected',
 			WAITING: 'waiting'
