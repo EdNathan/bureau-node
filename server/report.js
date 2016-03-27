@@ -57,7 +57,7 @@ module.exports = ( Bureau ) => {
 		state: {
 			required: true,
 			type: String,
-			default: 'waiting'
+			default: _Report.STATE.WAITING
 		},
 		comment: {
 			type: String,
@@ -79,10 +79,55 @@ module.exports = ( Bureau ) => {
 
 		getReport: ( reportId, callback ) => Report.findById( reportId, callback ),
 
+		getProcessedReportsByGame: ( ggid, callback ) => {
 
-		getProcessedReportsByGame: ( ggid, callback ) => {},
+			Bureau.game.getGamesInGamegroupAsArray( ggid, ( err, games ) => {
+				if ( err ) {
+					callback( err, [] )
+					return
+				}
+				Report.find( {
+					gameid: {
+						$in: games.map( ( g ) => g.gameid )
+					},
+					state: {
+						$ne: _Report.STATE.waiting
+					}
+				}, ( err, reports ) => {
+
+				} )
+			} )
+		},
+
 		submitReport: ( uid, report, callback ) => {},
-		updateReport: ( reportId, stuff, callback ) => {},
+
+		updateReport: ( reportId, stuff, callback ) => {
+			delete stuff.submitted
+			delete stuff.killerid
+			delete stuff.victimid
+
+			Report.findByIdAndUpdate( reportId, {
+				$set: stuff
+			}, function( err, report ) {
+
+				if ( err ) {
+					callback( err )
+					return
+				}
+
+				Report.findById( reportId, function( err, report ) {
+
+					if ( err ) {
+						callback( err, null )
+					} else {
+						callback( null, report )
+					}
+
+				} )
+
+			} )
+		},
+
 		getPendingReports: ( ggid, callback ) => {
 			Bureau.game.getGameIdsInGamegroup( ggid, ( err, gameids ) => {
 				if ( err ) {
@@ -93,12 +138,23 @@ module.exports = ( Bureau ) => {
 					gameid: {
 						$in: gameids
 					},
-					state: 'waiting'
+					state: _Report.STATE.WAITING
 				}, callback )
 			} )
 		},
-		acceptReport: ( reportId, callback ) => {},
-		rejectReport: ( reportId, comment, callback ) => {},
+
+		acceptReport: ( reportId, callback ) => {
+			_Report.updateReport( reportId, {
+				state: _Report.STATE.APPROVED
+			}, callback )
+		},
+
+		rejectReport: ( reportId, comment, callback ) => {
+			_Report.updateReport( reportId, {
+				state: _Report.STATE.REJECTED,
+				comment: comment
+			}, callback )
+		},
 
 		getFullReport: ( reportId, callback ) => {
 			_Report.getReport( reportId, ( err, report ) => {
@@ -144,7 +200,14 @@ module.exports = ( Bureau ) => {
 			return ( verb
 				.replace( '#v', utils.fullname( victim ) )
 				.replace( '#k', utils.fullname( killer ) )
-				.replace( '#d', report.methoddetail ) )
+				.replace( '#d', report.methoddetail )
+			)
+		},
+
+		STATE: {
+			APPROVED: 'approved',
+			REJECTED: 'rejected',
+			WAITING: 'waiting'
 		}
 
 	}
