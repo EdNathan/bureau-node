@@ -179,6 +179,21 @@ var utils = {
 		Object.keys( obj )
 			.filter( ( k ) => _.isFunction( obj[ k ] ) )
 			.map( ( k ) => console.log( `${k}: ${(obj[k]+'').split('\n')[0].replace('function ','').replace('{','=> {},')}` ) )
+	},
+
+	// Take mongoose objects and turn them into plain objects
+	objectifyCallback: ( callback ) => ( err, thing ) => {
+
+		if ( err ) {
+			callback( err, thing )
+			return
+		}
+
+		if ( _.isArray( thing ) ) {
+			callback( null, thing.map( ( t ) => t.toObject ? t.toObject() : t ) )
+		} else {
+			callback( null, thing.toObject ? thing.toObject() : thing )
+		}
 	}
 
 }

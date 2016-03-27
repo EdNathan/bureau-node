@@ -88,9 +88,9 @@ module.exports = ( Bureau ) => {
 
 	let _Report = {
 
-		getReports: ( query, callback ) => Report.find( query, callback ),
+		getReports: ( query, callback ) => Report.find( query, utils.objectifyCallback( callback ) ),
 
-		getReport: ( reportId, callback ) => Report.findById( reportId, callback ),
+		getReport: ( reportId, callback ) => Report.findById( reportId, utils.objectifyCallback( callback ) ),
 
 		getProcessedReportsByGame: ( ggid, callback ) => {
 
@@ -99,7 +99,7 @@ module.exports = ( Bureau ) => {
 					callback( err, [] )
 					return
 				}
-				Report.find( {
+				_Report.getReports( {
 					gameid: {
 						$in: games.map( ( g ) => g.gameid )
 					},
@@ -208,15 +208,7 @@ module.exports = ( Bureau ) => {
 					return
 				}
 
-				Report.findById( reportId, function( err, report ) {
-
-					if ( err ) {
-						callback( err, null )
-					} else {
-						callback( null, report )
-					}
-
-				} )
+				Report.findById( reportId, utils.objectifyCallback( callback ) )
 
 			} )
 		},
@@ -227,7 +219,7 @@ module.exports = ( Bureau ) => {
 					callback( err, [] )
 					return
 				}
-				Report.find( {
+				_Report.getReports( {
 					gameid: {
 						$in: gameids
 					},
@@ -261,7 +253,6 @@ module.exports = ( Bureau ) => {
 		},
 
 		makeFullReport: ( report, callback ) => {
-
 			Bureau.assassin.getAssassin( report.killerid, ( err, killer ) => {
 				report.killer = killer
 				Bureau.assassin.getAssassin( report.victimid, ( err, victim ) => {
@@ -290,11 +281,12 @@ module.exports = ( Bureau ) => {
 				verb = killmethod ? killmethod.verb : '',
 				killer = report.killer,
 				victim = report.victim
-			return ( verb
+
+			let sentence = verb
 				.replace( '#v', utils.fullname( victim ) )
 				.replace( '#k', utils.fullname( killer ) )
 				.replace( '#d', report.methoddetail )
-			)
+			return sentence
 		},
 
 		STATES: REPORT_STATES
