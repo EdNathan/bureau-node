@@ -1,3 +1,5 @@
+'use strict'
+
 module.exports = ( Bureau ) => {
 	let mongoose = Bureau.mongoose
 	let Schema = mongoose.Schema
