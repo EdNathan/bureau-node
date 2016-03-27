@@ -97,6 +97,34 @@ module.exports = ( Bureau ) => {
 					}
 				}, ( err, reports ) => {
 
+					let idMap = {},
+						numReports = reports.length,
+						doneReports = 0,
+						reportLoaded = () => {
+							if ( ++doneReports === numReports ) {
+								callback( null, games )
+							}
+						}
+
+
+					games.forEach( function( g, i ) {
+						g.reports = []
+						idMap[ g.gameid ] = i
+					} )
+					reports.forEach( function( r ) {
+						_Report.makeFullReport( r, function( err, report ) {
+							var game = games[ idMap[ report.gameid ] ]
+							if ( game ) {
+								game.reports.push( report )
+							}
+							reportLoaded()
+						} )
+					} )
+					if ( numReports < 1 ) {
+						callback( null, games )
+					}
+
+
 				} )
 			} )
 		},
