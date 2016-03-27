@@ -460,7 +460,6 @@ var concentricsgame = {
 
 	},
 
-	//TODO: Migrate to new reports
 	renderGame: function( game, assassin, gamegroup, callback ) {
 		var self = this
 		self.tick( game, function( err, success ) {
@@ -482,41 +481,46 @@ var concentricsgame = {
 					return !_.includes( currentTargetIds, el._id + '' ) && el._id + '' !== uid
 				} )
 
-			var pendingReports = _.map( assassin.kills.filter( function( kill ) {
-				var sameGame = kill.gameid === game.gameid,
-					onCurrentTarget = _.includes( currentTargetIds, kill.victimid )
-				return sameGame && onCurrentTarget && kill.state === 'waiting'
-			} ), 'victimid' )
+			Bureau.report.getReports( {
+				killerid: uid,
+				state: Bureau.report.STATES.WAITING,
+				gameid: game.gameid
+			}, ( err, reports ) => {
+				var pendingReports = _.map( reports.filter( function( kill ) {
+					var onCurrentTarget = _.includes( currentTargetIds, kill.victimid )
+					return onCurrentTarget
+				} ), 'victimid' )
 
-			self.Bureau.assassin.getAssassinsFromIds( currentTargetIds, function( err, targetAssassins ) {
+				self.Bureau.assassin.getAssassinsFromIds( currentTargetIds, function( err, targetAssassins ) {
 
-				targetAssassins = self.Bureau.assassin.objFromAssassins( targetAssassins )
+					targetAssassins = self.Bureau.assassin.objFromAssassins( targetAssassins )
 
-				self.swig.renderFile( './games/views/concentrics.html', {
-						game: game,
-						assassin: assassin,
-						uid: uid,
-						gamegroup: gamegroup,
-						score: self.getScoreForUid( game, uid ),
-						nonTargets: nonTargets,
-						targetsWithPendingReports: _.zipObject( pendingReports ),
-						targets: _.cloneDeep( currentTargets ).map( function( target ) {
-							target.assassin = targetAssassins[ target.id ]
-							return target
-						} ),
-						TARGET_STATES: CONCENTRICS_GAME.TARGET_STATES,
-						deadline: moment( deadline ).format( 'MMMM Do YYYY, h:mm:ss a' ),
-						timeremaining: moment( deadline ).fromNow( true )
-					},
-					function( err, output ) {
-						if ( err ) {
-							console.log( 'ERROR RENDERING GAME', err )
-							callback( err, '' )
-							return
+					self.swig.renderFile( './games/views/concentrics.html', {
+							game: game,
+							assassin: assassin,
+							uid: uid,
+							gamegroup: gamegroup,
+							score: self.getScoreForUid( game, uid ),
+							nonTargets: nonTargets,
+							targetsWithPendingReports: _.zipObject( pendingReports ),
+							targets: _.cloneDeep( currentTargets ).map( function( target ) {
+								target.assassin = targetAssassins[ target.id ]
+								return target
+							} ),
+							TARGET_STATES: CONCENTRICS_GAME.TARGET_STATES,
+							deadline: moment( deadline ).format( 'MMMM Do YYYY, h:mm:ss a' ),
+							timeremaining: moment( deadline ).fromNow( true )
+						},
+						function( err, output ) {
+							if ( err ) {
+								console.log( 'ERROR RENDERING GAME', err )
+								callback( err, '' )
+								return
+							}
+							callback( null, output )
 						}
-						callback( null, output )
-					}
-				)
+					)
+				} )
 			} )
 		} )
 	},
