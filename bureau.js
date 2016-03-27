@@ -1439,6 +1439,16 @@ var Bureau = {
 			} )
 		},
 
+		getGameIdsInGamegroup: function( ggid, callback ) {
+			Bureau.game.getGamesInGamegroupAsArray( ggid, ( err, games ) => {
+				if ( err ) {
+					callback( err, [] )
+				} else {
+					callback( null, games.map( ( g ) => g.gameid ) )
+				}
+			} )
+		},
+
 		toArray: function( games ) {
 			var arr = []
 
