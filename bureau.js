@@ -96,13 +96,7 @@ let Bureau = {
 
 					//Fetch and cache gamegroups
 					Bureau.gamegroup.getGamegroups( function( err, ggs ) {
-						var end = new Date()
-						line()
-						log( 'Started up in ' + ( end - start ) / 1000 + 's' )
-						log( 'Ready to go!' )
-						log( strcopy( '-', 50 ), 0 )
-						Bureau._initted = true
-						callback( undefined, db )
+
 					} )
 				} )
 
@@ -111,14 +105,23 @@ let Bureau = {
 
 			mongoose.connect( utils.mongourl() )
 
-			mongoose.connection.on( 'error', console.error.bind( console, 'mongoose connection error:' ) );
+			mongoose.connection.on( 'error', console.error.bind( console, 'mongoose connection error:' ) )
 
 			mongoose.connection.once( 'open', function() {
+				line()
 				Bureau.mongoose = mongoose
 				Bureau.loadModule( 'report' )
 				Bureau.loadModule( 'bounty' )
 				Bureau.loadModule( 'notifications' )
-			} );
+
+				var end = new Date()
+				line()
+				log( 'Started up in ' + ( end - start ) / 1000 + 's' )
+				log( 'Ready to go!' )
+				log( strcopy( '-', 50 ), 0 )
+				Bureau._initted = true
+				callback( undefined, db )
+			} )
 
 		} )
 
@@ -131,7 +134,7 @@ let Bureau = {
 	},
 
 	loadModule: function( moduleName ) {
-		console.log( 'Loading module: ' + moduleName )
+		log( 'Loading module: ' + moduleName, 1 )
 		Bureau[ moduleName ] = require( './server/' + moduleName )( Bureau )
 	},
 
