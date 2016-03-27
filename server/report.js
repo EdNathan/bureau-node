@@ -5,6 +5,7 @@ module.exports = ( Bureau ) => {
 	let Schema = mongoose.Schema
 
 	let _ = require( 'lodash' )
+	let utils = require( '../utils' )
 
 	const REPORT_STATES = {
 		APPROVED: 'approved',
@@ -15,15 +16,18 @@ module.exports = ( Bureau ) => {
 	let ReportSchema = {
 		victimid: {
 			type: String,
-			required: true
+			required: true,
+			index: true
 		},
 		killerid: {
 			type: String,
-			required: true
+			required: true,
+			index: true
 		},
 		gameid: {
 			type: String,
-			required: true
+			required: true,
+			index: true
 		},
 		submitted: {
 			required: true,
@@ -37,9 +41,7 @@ module.exports = ( Bureau ) => {
 			required: true,
 			type: String,
 			validate: {
-				validator: function( val ) {
-					return val && val.trim().length >= 11
-				},
+				validator: ( val ) => val && val.trim().length >= 11,
 				message: 'A report must have text at minimum 11 characters long'
 			}
 		},
@@ -47,9 +49,7 @@ module.exports = ( Bureau ) => {
 			required: true,
 			type: String,
 			validate: {
-				validator: function( val ) {
-					return val && val.trim().length >= 6
-				},
+				validator: ( val ) => val && val.trim().length >= 6,
 				message: 'A report must have a place at minimum 6 characters long'
 			}
 		},
@@ -61,11 +61,16 @@ module.exports = ( Bureau ) => {
 			type: String,
 			default: ''
 		},
-		coords: String,
+		coords: {
+			type: [ Number ],
+			index: '2d',
+			get: ( val ) => val.reverse().join( ', ' )
+		},
 		state: {
 			required: true,
 			type: String,
-			default: REPORT_STATES.WAITING
+			default: REPORT_STATES.WAITING,
+			index: true
 		},
 		comment: {
 			type: String,
@@ -149,21 +154,39 @@ module.exports = ( Bureau ) => {
 			data.submitted = new Date()
 			data.state = REPORT_STATES.WAITING
 
+			if ( data.coords && data.coords.split( ',' ).length == 2 ) {
+				data.coords = data.coords.split( ',' ).map( ( n ) => Number( n.trim() ) ).reverse()
+			}
+
+			Bureau.game.getGame( data.gameid, ( err, game ) => {
+				if ( err && _.isEmpty( game ) ) {
+					callback( err, {} )
+					return
+				}
+				_Report._createReport( data, callback )
+			} )
+		},
+
+		_createReport: ( data, callback ) => {
 			let report = new Report( data )
 
 			report.save( ( err, report ) => {
-				Bureau.assassin.getAssassin( report.victimid, ( err, victim ) => {
+				if ( err ) {
+					callback( err, {} )
+					return
+				}
+				Bureau.assassin.getAssassin( data.victimid, ( err, victim ) => {
 					if ( err ) {
 						callback( err, {} )
 						return
 					}
-					Bureau.game.getGame( report.gameid, ( err, game ) => {
+					Bureau.game.getGame( data.gameid, ( err, game ) => {
 						if ( err ) {
 							callback( err, {} )
 							return
 						}
 						let notif = `Your report on ${utils.fullname( victim )} in the game ${game.name} has been submitted`
-						Bureau.assassin.addNotification( report.killerid, notif )
+						Bureau.assassin.addNotification( data.killerid, notif )
 						callback( null, report )
 					} )
 
