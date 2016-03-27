@@ -83,8 +83,20 @@ module.exports = ( Bureau ) => {
 		getProcessedReportsByGame: ( ggid, callback ) => {},
 		submitReport: ( uid, report, callback ) => {},
 		updateReport: ( reportId, stuff, callback ) => {},
-		getPendingReports: ( ggid, callback ) => {},
-		getProcessedReports: ( ggid, callback ) => {},
+		getPendingReports: ( ggid, callback ) => {
+			Bureau.game.getGameIdsInGamegroup( ggid, ( err, gameids ) => {
+				if ( err ) {
+					callback( err, [] )
+					return
+				}
+				Report.find( {
+					gameid: {
+						$in: gameids
+					},
+					state: 'waiting'
+				}, callback )
+			} )
+		},
 		acceptReport: ( reportId, callback ) => {},
 		rejectReport: ( reportId, comment, callback ) => {},
 
@@ -105,7 +117,7 @@ module.exports = ( Bureau ) => {
 				report.killer = killer
 				Bureau.assassin.getAssassin( report.victimid, ( err, victim ) => {
 					report.victim = victim
-					Bureau.gamegroup.getKillMethod( report.gamegroup, report.killmethod, ( err, killmethod ) => {
+					Bureau.gamegroup.getKillMethod( killer.gamegroup, report.killmethod, ( err, killmethod ) => {
 						report.killmethod = killmethod
 						report.sentence = Bureau.report.makeKillSentenceFromFullReport( report )
 						callback( null, report )
