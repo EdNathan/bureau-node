@@ -73,20 +73,24 @@ module.exports = ( Bureau ) => {
 		} ).join( ' ' )
 	}
 
-	return {
+	let _Report = {
 
 		getReports: ( query, callback ) => Report.find( query, callback ),
 
+		getReport: ( reportId, callback ) => Report.findById( reportId, callback ),
+
+
 		getProcessedReportsByGame: ( ggid, callback ) => {},
-		getReport: ( reportid, callback ) => {},
 		submitReport: ( uid, report, callback ) => {},
-		updateReport: ( reportid, stuff, callback ) => {},
+		updateReport: ( reportId, stuff, callback ) => {},
 		getPendingReports: ( ggid, callback ) => {},
 		getProcessedReports: ( ggid, callback ) => {},
-		acceptReport: ( reportid, callback ) => {},
-		rejectReport: ( reportid, comment, callback ) => {},
+		acceptReport: ( reportId, callback ) => {},
+		rejectReport: ( reportId, comment, callback ) => {},
 		fullReport: ( report, callback ) => {},
 		getKillSentence: ( report ) => {}
 
 	}
+
+	return _Report
 }
