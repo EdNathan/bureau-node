@@ -489,11 +489,6 @@ var Bureau = {
 			} )
 		},
 
-		submitReport: function( uid, report, callback ) {
-			report.killerid = uid
-			Bureau.report.submitReport( report, callback )
-		},
-
 		getNotifications: function( uid, limit, callback ) {
 			Bureau.notifications.getNotifications( uid, limit, callback )
 		},

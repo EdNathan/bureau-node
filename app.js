@@ -643,6 +643,7 @@ var authPages = {
 				now = new Date(),
 				errs = [],
 				report = {
+					killerid: uid,
 					victimid: victimid,
 					gameid: gameid,
 					time: req.body.time,
@@ -743,7 +744,7 @@ var authPages = {
 									}
 									console.log( 'Kill id valid' )
 									console.log( 'Submitting report' )
-									Bureau.assassin.submitReport( uid, report, function( err, a ) {
+									Bureau.report.submitReport( report, function( err, a ) {
 										console.log( 'Report submitted' )
 										console.log( err )
 										res.redirect( 'home' )
