@@ -1,14 +1,16 @@
-var MongoClient = require( 'mongodb' ).MongoClient,
-	mongo = require( 'mongodb' ),
-	mongoose = require( 'mongoose' ),
-	utils = require( './utils' ),
-	lethalities = require( './lethalities' ),
-	moment = require( 'moment' ),
-	Mail = require( './mail' ),
-	swig = require( 'swig' ),
-	_ = require( 'lodash' )
+'use strict'
 
-function id( uid ) {
+const MongoClient = require( 'mongodb' ).MongoClient
+const mongo = require( 'mongodb' )
+const mongoose = require( 'mongoose' )
+const utils = require( './utils' )
+const lethalities = require( './lethalities' )
+const moment = require( 'moment' )
+const Mail = require( './mail' )
+const swig = require( 'swig' )
+const _ = require( 'lodash' )
+
+const id = ( uid ) => {
 	try {
 		return new mongo.ObjectID( uid )
 	} catch ( e ) {
@@ -16,44 +18,13 @@ function id( uid ) {
 	}
 }
 
-function empty( obj ) {
-	return _.isEmpty( obj )
-}
+const empty = ( obj ) => _.isEmpty( obj )
 
-function unique( arr ) {
-	//Reduces array to unique values
-	var u = arr.reduce( function( last, current ) {
-		if ( last.indexOf( current ) < 0 ) {
-			last.push( current )
-			return last
-		} else {
-			return last
-		}
-	}, [] )
+const merge = utils.merge
 
-	return u
-}
+const strcopy = ( str, times ) => new Array( times + 1 ).join( str )
 
-function merge( o1, o2 ) {
-	var n = {}
-	for ( key in o1 ) {
-		if ( o1.hasOwnProperty( key ) ) {
-			n[ key ] = o1[ key ]
-		}
-	}
-	for ( key in o2 ) {
-		if ( o2.hasOwnProperty( key ) ) {
-			n[ key ] = o2[ key ]
-		}
-	}
-	return n
-}
-
-function strcopy( str, times ) {
-	return new Array( times + 1 ).join( str )
-}
-
-function log( msg, indent ) {
+const log = ( msg, indent ) => {
 	indent = indent != undefined ? indent : 1
 	if ( !msg ) {
 		console.log()
@@ -62,12 +33,9 @@ function log( msg, indent ) {
 	}
 }
 
-function line( indent ) {
-	indent = indent != undefined ? indent : 0
-	console.log( strcopy( '        ', indent ) + '----' )
-}
+const line = ( indent ) => console.log( strcopy( '        ', indent != undefined ? indent : 0 ) + '----' )
 
-var Bureau = {
+let Bureau = {
 	db: null,
 	mongoose: null,
 	_initted: false,
@@ -115,13 +83,7 @@ var Bureau = {
 
 					//Fetch and cache gamegroups
 					Bureau.gamegroup.getGamegroups( function( err, ggs ) {
-						var end = new Date()
-						line()
-						log( 'Started up in ' + ( end - start ) / 1000 + 's' )
-						log( 'Ready to go!' )
-						log( strcopy( '-', 50 ), 0 )
-						Bureau._initted = true
-						callback( undefined, db )
+
 					} )
 				} )
 
@@ -130,13 +92,23 @@ var Bureau = {
 
 			mongoose.connect( utils.mongourl() )
 
-			mongoose.connection.on( 'error', console.error.bind( console, 'mongoose connection error:' ) );
+			mongoose.connection.on( 'error', console.error.bind( console, 'mongoose connection error:' ) )
 
 			mongoose.connection.once( 'open', function() {
+				line()
 				Bureau.mongoose = mongoose
+				Bureau.loadModule( 'report' )
 				Bureau.loadModule( 'bounty' )
 				Bureau.loadModule( 'notifications' )
-			} );
+
+				var end = new Date()
+				line()
+				log( 'Started up in ' + ( end - start ) / 1000 + 's' )
+				log( 'Ready to go!' )
+				log( strcopy( '-', 50 ), 0 )
+				Bureau._initted = true
+				callback( undefined, db )
+			} )
 
 		} )
 
@@ -149,7 +121,7 @@ var Bureau = {
 	},
 
 	loadModule: function( moduleName ) {
-		console.log( 'Loading module: ' + moduleName )
+		log( 'Loading module: ' + moduleName, 1 )
 		Bureau[ moduleName ] = require( './server/' + moduleName )( Bureau )
 	},
 
@@ -364,7 +336,7 @@ var Bureau = {
 				}
 
 			//Check if we have any special things
-			for ( key in stuff ) {
+			for ( var key in stuff ) {
 				if ( key !== 'filter' ) {
 					if ( stuff.hasOwnProperty( key ) && key[ 0 ] === '$' ) {
 						//Special $key, we have to move it outside!
@@ -405,7 +377,7 @@ var Bureau = {
 			}
 
 			//Check if we have any special things
-			for ( key in stuff ) {
+			for ( var key in stuff ) {
 				if ( key !== 'filter' ) {
 					if ( stuff.hasOwnProperty( key ) && key[ 0 ] === '$' ) {
 						//Special $key, we have to move it outside!
@@ -485,39 +457,6 @@ var Bureau = {
 					return
 				}
 				callback( null, pwd )
-			} )
-		},
-
-		submitReport: function( uid, report, callback ) {
-			var now = new Date()
-			report.submitted = now
-			report.id = utils.md5( now + uid )
-			Bureau.assassin.updateAssassin( uid, {
-				$push: {
-					kills: report
-				}
-			}, function( err, a ) {
-				if ( err ) {
-					callback( err, {} )
-					return
-				}
-				Bureau.assassin.getAssassin( report.victimid, function( err, victim ) {
-					if ( err ) {
-						callback( err, {} )
-						return
-					}
-					Bureau.game.getGame( report.gameid, function( err, game ) {
-						if ( err ) {
-							callback( err, {} )
-							return
-						}
-						var notif = 'Your report on ' + utils.fullname( victim ) +
-							' in the game ' + game.name + ' has been submitted'
-						Bureau.assassin.addNotification( uid, notif )
-						callback( null, a )
-					} )
-
-				} )
 			} )
 		},
 
@@ -623,151 +562,69 @@ var Bureau = {
 		},
 
 		getKills: function( uid, includePending, callback ) {
-			Bureau.assassin.getAssassin( uid, function( err, assassin ) {
+			Bureau.report.getReports( {
+				killerid: uid,
+				state: includePending ? {
+					$ne: Bureau.report.STATES.REJECTED
+				} : Bureau.report.STATES.APPROVED
+			}, ( err, kills ) => {
 				if ( err ) {
 					callback( err, [] )
 				} else {
-					if ( !assassin.kills ) {
-						callback( null, [] )
-					} else {
-						var kills = assassin.kills.filter( function( x ) {
-							if ( includePending ) {
-								return x.state !== 'rejected'
-							} else {
-								return x.state === 'approved'
-							}
-						} )
-						callback( null, kills )
-					}
+					callback( null, kills )
 				}
 			} )
 		},
 
 		getDeaths: function( uid, includePending, callback ) {
-			var filter = {
-					'kills.victimid': uid
-				},
-				statequery = includePending ? {
-					$ne: 'rejected'
-				} : 'approved',
-				map = function() {
-					var id = this._id.valueOf(),
-						ggid = this.gamegroup
-
-					this.kills.forEach( function( k ) {
-						k.killerid = id
-						k.gamegroup = ggid
-						emit( k.id, k )
-					} )
-				},
-				reduce = function( key, values ) {
-					return values[ 0 ]
-				},
-				getVal = function( o ) {
-					return o.value
-				}
-
-			Bureau.db.collection( 'assassins' ).mapReduce(
-				map,
-				reduce, {
-					out: {
-						merge: 'kills'
-					},
-					query: filter
-				},
-				function( err, collection ) {
-					if ( err ) {
-						callback( 'There was an error finding the deaths', null )
-						return
-					}
-					collection.find( {
-						'value.victimid': uid,
-						'value.state': statequery
-					}, function( err, cursor ) {
-						cursor.toArray( function( err, docs ) {
-							if ( err ) {
-								callback( err, [] )
-								return;
-							}
-							callback( null, docs.map( getVal ) )
-						} )
-					} )
-				}
-			)
-		},
-
-		getKillsFromGame: function( uid, gameid, includePending, callback ) {
-			Bureau.assassin.getKills( uid, includePending, function( err, kills ) {
+			Bureau.report.getReports( {
+				victimid: uid,
+				state: includePending ? {
+					$ne: Bureau.report.STATES.REJECTED
+				} : Bureau.report.STATES.APPROVED
+			}, ( err, deaths ) => {
 				if ( err ) {
 					callback( err, [] )
 				} else {
-					var fromGame = kills.filter( function( x ) {
-						return x.gameid + '' === gameid + ''
-					} )
-					callback( null, fromGame )
+					callback( null, deaths )
+				}
+			} )
+		},
+
+		getKillsFromGame: function( uid, gameid, includePending, callback ) {
+			Bureau.report.getReports( {
+				killerid: uid,
+				gameid: gameid,
+				state: includePending ? {
+					$ne: Bureau.report.STATES.REJECTED
+				} : Bureau.report.STATES.APPROVED
+			}, ( err, kills ) => {
+				if ( err ) {
+					callback( err, [] )
+				} else {
+					callback( null, kills )
 				}
 			} )
 		},
 
 		getDeathsFromGame: function( uid, gameid, includePending, callback ) {
-			var filter = {
-					'kills.victimid': uid,
-					'kills.gameid': gameid
-				},
-				statequery = includePending ? {
-					$ne: 'rejected'
-				} : 'approved',
-				map = function() {
-					var id = this._id.valueOf(),
-						ggid = this.gamegroup
-
-					this.kills.forEach( function( k ) {
-						k.killerid = id
-						k.gamegroup = ggid
-						emit( k.id, k )
-					} )
-				},
-				reduce = function( key, values ) {
-					return values[ 0 ]
-				},
-				getVal = function( o ) {
-					return o.value
+			Bureau.report.getReports( {
+				victimid: uid,
+				gameid: gameid,
+				state: includePending ? {
+					$ne: Bureau.report.STATES.REJECTED
+				} : Bureau.report.STATES.APPROVED
+			}, ( err, deaths ) => {
+				if ( err ) {
+					callback( err, [] )
+				} else {
+					callback( null, deaths )
 				}
-
-			Bureau.db.collection( 'assassins' ).mapReduce(
-				map,
-				reduce, {
-					out: {
-						merge: 'kills'
-					},
-					query: filter
-				},
-				function( err, collection ) {
-					if ( err ) {
-						callback( 'There was an error finding the deaths', null )
-						return
-					}
-					collection.find( {
-						'value.victimid': uid,
-						'value.gameid': gameid,
-						'value.state': statequery
-					}, function( err, cursor ) {
-						cursor.toArray( function( err, docs ) {
-							if ( err ) {
-								callback( err, [] )
-								return;
-							}
-							callback( null, docs.map( getVal ) )
-						} )
-					} )
-				}
-			)
+			} )
 		},
 
 		hasKilledInGame: function( uid, gameid, includePending, callback ) {
-			Bureau.assassin.getKillsFromGame( uid, gameid, includePending, function(
-				err,
-				kills ) {
+			Bureau.assassin.getKillsFromGame( uid, gameid, includePending, ( err, kills ) => {
 				if ( err ) {
 					callback( err, false )
 					return
@@ -777,8 +634,7 @@ var Bureau = {
 		},
 
 		hasDiedInGame: function( uid, gameid, includePending, callback ) {
-			Bureau.assassin.getDeathsFromGame( uid, gameid, includePending, function(
-				err, deaths ) {
+			Bureau.assassin.getDeathsFromGame( uid, gameid, includePending, ( err, deaths ) => {
 				if ( err ) {
 					callback( err, false )
 					return
@@ -788,47 +644,39 @@ var Bureau = {
 		},
 
 		getPlayersKilled: function( uid, includePending, callback ) {
-			Bureau.assassin.getKills( uid, includePending, function( err, kills ) {
+			Bureau.assassin.getKills( uid, includePending, ( err, kills ) => {
 				if ( err ) {
 					callback( err, [] )
 				} else {
-					var playersKilled = unique( kills.map( function( x ) {
-						return x.victimid
-					} ) )
+					let playersKilled = _.uniq( kills.map( ( x ) => x.victimid ) )
 					callback( null, playersKilled )
 				}
 			} )
 		},
 
 		getPlayersKilledFromGame: function( uid, gameid, includePending, callback ) {
-			Bureau.assassin.getKillsFromGame( uid, gameid, includePending, function(
-				err,
-				kills ) {
+			Bureau.assassin.getKillsFromGame( uid, gameid, includePending, ( err, kills ) => {
 				if ( err ) {
 					callback( err, [] )
 				} else {
-					var playersKilled = unique( kills.map( function( x ) {
-						return x.victimid
-					} ) )
+					let playersKilled = _.uniq( kills.map( ( x ) => x.victimid ) )
 					callback( null, playersKilled )
 				}
 			} )
 		},
 
-		hasKilledPlayerInGame: function( uid, victimid, gameid, includePending,
-			callback ) {
-			Bureau.assassin.getPlayersKilledFromGame( uid, gameid, includePending,
-				function( err, playersKilled ) {
-					if ( err ) {
-						callback( err, false )
-					} else {
-						callback( null, playersKilled.indexOf( victimid ) > -1 )
-					}
-				} )
+		hasKilledPlayerInGame: function( uid, victimid, gameid, includePending, callback ) {
+			Bureau.assassin.getPlayersKilledFromGame( uid, gameid, includePending, ( err, playersKilled ) => {
+				if ( err ) {
+					callback( err, false )
+				} else {
+					callback( null, playersKilled.indexOf( victimid ) > -1 )
+				}
+			} )
 		},
 
 		totalKills: function( uid, callback ) {
-			Bureau.assassin.getKills( uid, true, function( err, kills ) {
+			Bureau.assassin.getKills( uid, true, ( err, kills ) => {
 				if ( err ) {
 					callback( err, 0 )
 				} else {
@@ -838,7 +686,7 @@ var Bureau = {
 		},
 
 		totalDeaths: function( uid, callback ) {
-			Bureau.assassin.getDeaths( uid, true, function( err, deaths ) {
+			Bureau.assassin.getDeaths( uid, true, ( err, deaths ) => {
 				if ( err ) {
 					callback( err, 0 )
 				} else {
@@ -848,9 +696,9 @@ var Bureau = {
 		},
 
 		stats: function( uid, callback ) {
-			Bureau.assassin.totalKills( uid, function( err, k ) {
-				Bureau.assassin.totalDeaths( uid, function( err, d ) {
-					var s = {
+			Bureau.assassin.totalKills( uid, ( err, k ) => {
+				Bureau.assassin.totalDeaths( uid, ( err, d ) => {
+					let s = {
 						kills: k,
 						deaths: d,
 						ratio: isNaN( k / d ) ? 0 : k / d
@@ -861,12 +709,11 @@ var Bureau = {
 		},
 
 		getLethality: function( uid, callback ) {
-			Bureau.assassin.totalKills( uid, function( err, count ) {
-				var lethality,
+			Bureau.assassin.totalKills( uid, ( err, count ) => {
+				let lethality,
 					i = 0
 				while ( !lethality ) {
-					lethality = lethalities[ i ].kills <= count ? lethalities[ i ].name :
-						false
+					lethality = lethalities[ i ].kills <= count ? lethalities[ i ].name : false
 					i++
 				}
 				callback( err, lethality )
@@ -938,7 +785,7 @@ var Bureau = {
 				}
 
 			//Check if we have any special things
-			for ( key in stuff ) {
+			for ( var key in stuff ) {
 				if ( key !== 'filter' ) {
 					if ( stuff.hasOwnProperty( key ) && key[ 0 ] === '$' ) {
 						//Special $key, we have to move it outside!
@@ -1027,7 +874,7 @@ var Bureau = {
 
 			//'killmethods.$.read': true
 
-			for ( key in stuff ) {
+			for ( var key in stuff ) {
 				if ( stuff.hasOwnProperty( key ) ) {
 					o[ 'killmethods.$.' + key ] = stuff[ key ]
 				}
@@ -1185,226 +1032,6 @@ var Bureau = {
 
 	},
 
-	report: {
-		getReports: function( query, filter, callback ) {
-			var f = query,
-				map = function() {
-					var id = this._id.valueOf(),
-						ggid = this.gamegroup
-
-					this.kills.forEach( function( k ) {
-						k.killerid = id
-						k.gamegroup = ggid
-						emit( k.id, k )
-					} )
-				},
-				reduce = function( key, values ) {
-					return values[ 0 ]
-				},
-				getVal = function( o ) {
-					return o.value
-				}
-
-			Bureau.db.collection( 'assassins' ).mapReduce(
-				map,
-				reduce, {
-					out: {
-						merge: 'kills'
-					},
-					query: f
-				},
-				function( err, collection ) {
-					if ( err ) {
-						callback( 'There was an error finding the reports', null )
-						return
-					}
-					collection.find( filter, function( err, cursor ) {
-						cursor.toArray( function( err, docs ) {
-							if ( err ) {
-								callback( err, [] )
-								return;
-							}
-							callback( null, docs.map( getVal ) )
-						} )
-					} )
-				}
-			)
-		},
-
-		getProcessedReportsByGame: function( ggid, callback ) {
-			//Get reports
-			Bureau.report.getReports( {
-				gamegroup: ggid
-			}, {
-				$or: [ {
-					'value.state': 'approved'
-				}, {
-					'value.state': 'rejected'
-				} ],
-				'value.gamegroup': ggid
-			}, function( err, reports ) {
-				Bureau.game.getGamesInGamegroupAsArray( ggid, function( err, games ) {
-					var idMap = {},
-						numReports = reports.length,
-						doneReports = 0,
-						reportLoaded = function() {
-							if ( ++doneReports === numReports ) {
-								callback( null, games )
-							}
-						}
-
-
-					games.forEach( function( g, i ) {
-						g.reports = []
-						idMap[ g.gameid ] = i
-					} )
-					reports.forEach( function( r ) {
-						Bureau.report.fullReport( r, function( err, report ) {
-							var game = games[ idMap[ report.gameid ] ]
-							if ( game ) {
-								game.reports.push( report )
-							}
-							reportLoaded()
-						} )
-					} )
-					if ( numReports < 1 ) {
-						callback( null, games )
-					}
-				} )
-			} )
-		},
-
-		getReport: function( reportid, callback ) {
-			Bureau.report.getReports( {
-				'kills.id': reportid
-			}, {
-				'value.id': reportid
-			}, function( err, reports ) {
-				if ( reports.length < 1 ) {
-					callback( 'There is no report with that id', {} )
-					return
-				}
-				callback( null, reports[ 0 ] )
-			} )
-		},
-
-		updateReport: function( reportid, stuff, callback ) {
-			var toUpdate = {
-					$set: {}
-				},
-				filters = {
-					'kills.id': reportid
-				}
-
-			//Check if we have any special things
-			for ( key in stuff ) {
-				if ( key !== 'filter' ) {
-					if ( stuff.hasOwnProperty( key ) && key[ 0 ] === '$' ) {
-						//Special $key, we have to move it outside!
-						toUpdate[ key ] = {}
-							//Loop through subkey of stuff and modify things...
-						for ( subkey in stuff[ key ] ) {
-							if ( stuff[ key ].hasOwnProperty( subkey ) ) {
-								toUpdate[ key ][ 'kills.$.' + subkey ] = stuff[ key ][ subkey ]
-							}
-						}
-					} else if ( stuff.hasOwnProperty( key ) ) {
-						toUpdate.$set[ 'kills.$.' + key ] = stuff[ key ]
-					}
-				} else {
-					//We want to apply some extra filters
-					filters = merge( filters, stuff.filter )
-				}
-			}
-
-			//Prune empty $set
-			if ( empty( toUpdate.$set ) ) {
-				delete toUpdate.$set
-			}
-
-
-			Bureau.db.collection( 'assassins' ).update( filters, toUpdate, function(
-				err,
-				count ) {
-				if ( !!count ) {
-					Bureau.db.collection( 'assassins' ).findOne( filters, function( err,
-						doc ) {
-						var uid = doc._id + ''
-						if ( Bureau.assassin.cachedAssassins.hasOwnProperty( uid ) ) {
-							delete Bureau.assassin.cachedAssassins[ uid ]
-						}
-						Bureau.assassin.getAssassin( uid, function( err, doc ) { //Force recaching of the assassin
-							Bureau.report.getReport( reportid, callback )
-						} )
-					} )
-				} else {
-					callback( err, {} )
-				}
-			} )
-		},
-
-		getPendingReports: function( ggid, callback ) {
-			Bureau.report.getReports( {
-				gamegroup: ggid
-			}, {
-				'value.state': 'waiting',
-				'value.gamegroup': ggid
-			}, callback )
-		},
-
-		getProcessedReports: function( ggid, callback ) {
-			Bureau.report.getReports( {
-				gamegroup: ggid
-			}, {
-				$or: [ {
-					'value.state': 'approved'
-				}, {
-					'value.state': 'rejected'
-				} ],
-				'value.gamegroup': ggid
-			}, callback )
-		},
-
-		acceptReport: function( reportid, callback ) {
-			Bureau.report.updateReport( reportid, {
-				state: 'approved'
-			}, callback )
-		},
-
-		rejectReport: function( reportid, comment, callback ) {
-			Bureau.report.updateReport( reportid, {
-				state: 'rejected',
-				comment: comment
-			}, callback )
-		},
-
-		fullReport: function( report, callback ) {
-			//We need killer, victim, killmethod and sentence
-			Bureau.assassin.getAssassin( report.killerid, function( err, killer ) {
-				report.killer = killer
-				Bureau.assassin.getAssassin( report.victimid, function( err, victim ) {
-					report.victim = victim
-					Bureau.gamegroup.getKillMethod( report.gamegroup, report.killmethod,
-						function( err, killmethod ) {
-							report.killmethod = killmethod
-							report.sentence = Bureau.report.getKillSentence( report )
-							callback( null, report )
-						} )
-				} )
-			} )
-		},
-
-		getKillSentence: function( report ) {
-			var killmethod = report.killmethod,
-				verb = killmethod ? killmethod.verb : '',
-				killer = report.killer,
-				victim = report.victim
-			return verb.replace( '#v', utils.fullname( victim ) ).replace( '#k', utils
-				.fullname(
-					killer ) ).replace( '#d', report.methoddetail )
-		}
-	},
-
 	games: {},
 
 	game: {
@@ -1423,6 +1050,16 @@ var Bureau = {
 					callback( err, gamegroup.games )
 				}
 
+			} )
+		},
+
+		getGameIdsInGamegroup: function( ggid, callback ) {
+			Bureau.game.getGamesInGamegroupAsArray( ggid, ( err, games ) => {
+				if ( err ) {
+					callback( err, [] )
+				} else {
+					callback( null, games.map( ( g ) => g.gameid ) )
+				}
 			} )
 		},
 
@@ -1659,13 +1296,13 @@ var Bureau = {
 				}
 
 			//Check if we have any special things
-			for ( key in stuff ) {
+			for ( var key in stuff ) {
 				if ( key !== 'filter' ) {
 					if ( stuff.hasOwnProperty( key ) && key[ 0 ] === '$' ) {
 						//Special $key, we have to move it outside!
 						toUpdate[ key ] = {}
 							//Loop through subkey of stuff and modify things...
-						for ( subkey in stuff[ key ] ) {
+						for ( var subkey in stuff[ key ] ) {
 							if ( stuff[ key ].hasOwnProperty( subkey ) ) {
 								toUpdate[ key ][ 'games.$.' + subkey ] = stuff[ key ][ subkey ]
 							}

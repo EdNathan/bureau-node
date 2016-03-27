@@ -252,31 +252,36 @@ var spiralgame = {
 					return el._id + '' !== targetid && el._id + '' !== uid
 				} )
 
-			var pendingReport = assassin.kills.filter( function( kill ) {
-				return kill.gameid === game.gameid && kill.victimid === targetid && kill.state === 'waiting'
-			} ).length > 0
+			Bureau.report.getReports( {
+				killerid: uid,
+				victimid: targetid,
+				gameid: game.gameid,
+				state: Bureau.report.STATES.WAITING
+			}, ( err, reports ) => {
+				var pendingReport = reports.length > 0
 
-			self.Bureau.assassin.getAssassin( targetid, function( err, target ) {
-				self.swig.renderFile( './games/views/spiral.html', {
-						game: game,
-						assassin: assassin,
-						uid: uid,
-						gamegroup: gamegroup,
-						nonTargets: nonTargets,
-						target: target,
-						deadline: moment( deadline ).format( 'MMMM Do YYYY, h:mm:ss a' ),
-						timeremaining: moment( deadline ).fromNow( true ),
-						pendingReport: pendingReport
-					},
-					function( err, output ) {
-						if ( err ) {
-							console.log( 'ERROR RENDERING GAME', err )
-							callback( err, '' )
-							return
+				self.Bureau.assassin.getAssassin( targetid, function( err, target ) {
+					self.swig.renderFile( './games/views/spiral.html', {
+							game: game,
+							assassin: assassin,
+							uid: uid,
+							gamegroup: gamegroup,
+							nonTargets: nonTargets,
+							target: target,
+							deadline: moment( deadline ).format( 'MMMM Do YYYY, h:mm:ss a' ),
+							timeremaining: moment( deadline ).fromNow( true ),
+							pendingReport: pendingReport
+						},
+						function( err, output ) {
+							if ( err ) {
+								console.log( 'ERROR RENDERING GAME', err )
+								callback( err, '' )
+								return
+							}
+							callback( null, output )
 						}
-						callback( null, output )
-					}
-				)
+					)
+				} )
 			} )
 		} )
 	},

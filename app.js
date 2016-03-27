@@ -8,15 +8,25 @@ var Bureau = require( './bureau' ),
 	validator = require( 'validator' ),
 	session = require( 'express-session' ),
 	MongoStore = require( 'connect-mongo' )( session ),
-	moment = require( 'moment' )
+	moment = require( 'moment' ),
+	_ = require( 'lodash' )
 
 
 var app = express()
+var READY = false
+var DONE_READY_HANDLER = null
+var DONE_READY_HANDLER_CALLED = false
 
 module.exports = {
 	Bureau: Bureau,
 	app: app,
-	swig: swig
+	swig: swig,
+	onLoad: ( callback ) => {
+		DONE_READY_HANDLER = callback
+		if ( READY && !DONE_READY_HANDLER_CALLED ) {
+			DONE_READY_HANDLER()
+		}
+	}
 }
 
 var pages = {
@@ -409,7 +419,7 @@ var authPages = {
 					}
 
 					reports.forEach( function( report ) {
-						Bureau.report.fullReport( report, function( err, fullReport ) {
+						Bureau.report.makeFullReport( report, function( err, fullReport ) {
 							report = fullReport
 							reportDone()
 						} )
@@ -632,8 +642,8 @@ var authPages = {
 				victimid = req.body.victimid,
 				gameid = req.body.gameid,
 				killmethod = req.body.killmethod,
-				methoddetail = req.body[ 'killmethod-detail' ]
-			place = req.body.place,
+				methoddetail = req.body[ 'killmethod-detail' ],
+				place = req.body.place,
 				coords = req.body.coords,
 				text = req.body[ 'report-text' ],
 				time = !!req.body.time ? utils.dateFromPrettyTimestamp( req.body.time ) :
@@ -642,6 +652,7 @@ var authPages = {
 				now = new Date(),
 				errs = [],
 				report = {
+					killerid: uid,
 					victimid: victimid,
 					gameid: gameid,
 					time: req.body.time,
@@ -655,7 +666,7 @@ var authPages = {
 			console.log( 'Loading report page' )
 			console.log( req.body, report )
 
-			res.locals = utils.merge( res.locals, report )
+			res.locals = _.merge( res.locals, report )
 
 			res.fromPost = true
 				//Let's validate some shiii
@@ -742,7 +753,7 @@ var authPages = {
 									}
 									console.log( 'Kill id valid' )
 									console.log( 'Submitting report' )
-									Bureau.assassin.submitReport( uid, report, function( err, a ) {
+									Bureau.report.submitReport( report, function( err, a ) {
 										console.log( 'Report submitted' )
 										console.log( err )
 										res.redirect( 'home' )
@@ -1873,4 +1884,11 @@ Bureau.init( function( err, db ) {
 	var port = ( process.env.VMC_APP_PORT || process.env.OPENSHIFT_NODEJS_PORT || 3000 )
 	var host = ( process.env.VCAP_APP_HOST || process.env.OPENSHIFT_NODEJS_IP || 'localhost' )
 	app.listen( port, host )
+
+	READY = true
+
+	if ( DONE_READY_HANDLER && !DONE_READY_HANDLER_CALLED ) {
+		DONE_READY_HANDLER_CALLED = true
+		DONE_READY_HANDLER()
+	}
 } )

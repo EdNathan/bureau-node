@@ -93,7 +93,8 @@ var utils = {
 	},
 
 	merge: function( o1, o2 ) {
-		var n = {}
+		var n = {},
+			key
 		for ( key in o1 ) {
 			if ( o1.hasOwnProperty( key ) ) {
 				n[ key ] = o1[ key ]
@@ -172,6 +173,33 @@ var utils = {
 
 	makeFuzzyRegex: function( str ) {
 		return _.map( str.trim().toLowerCase(), _.escapeRegExp ).join( '.*' )
+	},
+
+	printStubs: function( obj ) {
+		Object.keys( obj )
+			.filter( ( k ) => _.isFunction( obj[ k ] ) )
+			.map( ( k ) => console.log( `${k}: ${(obj[k]+'').split('\n')[0].replace('function ','').replace('{','=> {},')}` ) )
+	},
+
+	mongooseToObject: ( mong ) => {
+		var out = mong.toObject()
+		out.id = mong._id + ''
+		return out
+	},
+
+	// Take mongoose objects and turn them into plain objects
+	objectifyCallback: ( callback ) => ( err, thing ) => {
+
+		if ( err ) {
+			callback( err, thing )
+			return
+		}
+
+		if ( _.isArray( thing ) ) {
+			callback( null, thing.map( utils.mongooseToObject ) )
+		} else {
+			callback( null, utils.mongooseToObject( thing ) )
+		}
 	}
 
 }
