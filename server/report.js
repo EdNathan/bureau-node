@@ -63,7 +63,7 @@ module.exports = ( Bureau ) => {
 		},
 		coords: {
 			type: [ Number ],
-			index: '2d',
+			sparse: '2dsphere',
 			get: ( val ) => val.reverse().join( ', ' )
 		},
 		state: {

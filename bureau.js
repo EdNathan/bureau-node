@@ -333,11 +333,10 @@ let Bureau = {
 				},
 				filters = {
 					_id: objID
-				},
-				key
+				}
 
 			//Check if we have any special things
-			for ( key in stuff ) {
+			for ( var key in stuff ) {
 				if ( key !== 'filter' ) {
 					if ( stuff.hasOwnProperty( key ) && key[ 0 ] === '$' ) {
 						//Special $key, we have to move it outside!
@@ -374,12 +373,11 @@ let Bureau = {
 			//We don't need to invalidate the whole cache, we'll refetch the assassins after we update them
 
 			var toUpdate = {
-					$set: {}
-				},
-				key
+				$set: {}
+			}
 
 			//Check if we have any special things
-			for ( key in stuff ) {
+			for ( var key in stuff ) {
 				if ( key !== 'filter' ) {
 					if ( stuff.hasOwnProperty( key ) && key[ 0 ] === '$' ) {
 						//Special $key, we have to move it outside!
@@ -650,7 +648,7 @@ let Bureau = {
 				if ( err ) {
 					callback( err, [] )
 				} else {
-					let playersKilled = _.unique( kills.map( ( x ) => x.victimid ) )
+					let playersKilled = _.uniq( kills.map( ( x ) => x.victimid ) )
 					callback( null, playersKilled )
 				}
 			} )
@@ -661,7 +659,7 @@ let Bureau = {
 				if ( err ) {
 					callback( err, [] )
 				} else {
-					let playersKilled = _.unique( kills.map( ( x ) => x.victimid ) )
+					let playersKilled = _.uniq( kills.map( ( x ) => x.victimid ) )
 					callback( null, playersKilled )
 				}
 			} )
@@ -784,11 +782,10 @@ let Bureau = {
 				},
 				filters = {
 					ggid: ggid
-				},
-				key
+				}
 
 			//Check if we have any special things
-			for ( key in stuff ) {
+			for ( var key in stuff ) {
 				if ( key !== 'filter' ) {
 					if ( stuff.hasOwnProperty( key ) && key[ 0 ] === '$' ) {
 						//Special $key, we have to move it outside!
@@ -870,15 +867,14 @@ let Bureau = {
 
 		updateKillMethod: function( ggid, methodid, stuff, callback ) {
 			var o = {
-					filter: {
-						'killmethods.id': methodid
-					}
-				},
-				key
+				filter: {
+					'killmethods.id': methodid
+				}
+			}
 
 			//'killmethods.$.read': true
 
-			for ( key in stuff ) {
+			for ( var key in stuff ) {
 				if ( stuff.hasOwnProperty( key ) ) {
 					o[ 'killmethods.$.' + key ] = stuff[ key ]
 				}
@@ -1297,17 +1293,16 @@ let Bureau = {
 				},
 				filters = {
 					'games.gameid': gameid
-				},
-				key
+				}
 
 			//Check if we have any special things
-			for ( key in stuff ) {
+			for ( var key in stuff ) {
 				if ( key !== 'filter' ) {
 					if ( stuff.hasOwnProperty( key ) && key[ 0 ] === '$' ) {
 						//Special $key, we have to move it outside!
 						toUpdate[ key ] = {}
 							//Loop through subkey of stuff and modify things...
-						for ( subkey in stuff[ key ] ) {
+						for ( var subkey in stuff[ key ] ) {
 							if ( stuff[ key ].hasOwnProperty( subkey ) ) {
 								toUpdate[ key ][ 'games.$.' + subkey ] = stuff[ key ][ subkey ]
 							}

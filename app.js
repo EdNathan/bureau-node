@@ -8,7 +8,8 @@ var Bureau = require( './bureau' ),
 	validator = require( 'validator' ),
 	session = require( 'express-session' ),
 	MongoStore = require( 'connect-mongo' )( session ),
-	moment = require( 'moment' )
+	moment = require( 'moment' ),
+	_ = require( 'lodash' )
 
 
 var app = express()
@@ -665,7 +666,7 @@ var authPages = {
 			console.log( 'Loading report page' )
 			console.log( req.body, report )
 
-			res.locals = utils.merge( res.locals, report )
+			res.locals = _.merge( res.locals, report )
 
 			res.fromPost = true
 				//Let's validate some shiii

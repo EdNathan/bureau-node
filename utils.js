@@ -181,6 +181,12 @@ var utils = {
 			.map( ( k ) => console.log( `${k}: ${(obj[k]+'').split('\n')[0].replace('function ','').replace('{','=> {},')}` ) )
 	},
 
+	mongooseToObject: ( mong ) => {
+		var out = mong.toObject()
+		out.id = mong._id + ''
+		return out
+	},
+
 	// Take mongoose objects and turn them into plain objects
 	objectifyCallback: ( callback ) => ( err, thing ) => {
 
@@ -190,9 +196,9 @@ var utils = {
 		}
 
 		if ( _.isArray( thing ) ) {
-			callback( null, thing.map( ( t ) => t.toObject ? t.toObject() : t ) )
+			callback( null, thing.map( utils.mongooseToObject ) )
 		} else {
-			callback( null, thing.toObject ? thing.toObject() : thing )
+			callback( null, utils.mongooseToObject( thing ) )
 		}
 	}
 
