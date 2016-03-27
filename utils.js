@@ -172,6 +172,12 @@ var utils = {
 
 	makeFuzzyRegex: function( str ) {
 		return _.map( str.trim().toLowerCase(), _.escapeRegExp ).join( '.*' )
+	},
+
+	printStubs: function( obj ) {
+		Object.keys( obj )
+			.filter( ( k ) => _.isFunction( obj[ k ] ) )
+			.map( ( k ) => console.log( `${k}: ${(obj[k]+'').split('\n')[0].replace('function ','').replace('{','=> {},')}` ) )
 	}
 
 }
