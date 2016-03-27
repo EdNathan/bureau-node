@@ -87,8 +87,53 @@ module.exports = ( Bureau ) => {
 		getProcessedReports: ( ggid, callback ) => {},
 		acceptReport: ( reportId, callback ) => {},
 		rejectReport: ( reportId, comment, callback ) => {},
-		fullReport: ( report, callback ) => {},
-		getKillSentence: ( report ) => {}
+
+		getFullReport: ( reportId, callback ) => {
+			_Report.getReport( reportId, ( err, report ) => {
+				if ( err ) {
+					callback( err, null )
+					return
+				}
+
+				_Report.makeFullReport( report, callback )
+			} )
+		},
+
+		makeFullReport: ( report, callback ) => {
+
+			Bureau.assassin.getAssassin( report.killerid, ( err, killer ) => {
+				report.killer = killer
+				Bureau.assassin.getAssassin( report.victimid, ( err, victim ) => {
+					report.victim = victim
+					Bureau.gamegroup.getKillMethod( report.gamegroup, report.killmethod, ( err, killmethod ) => {
+						report.killmethod = killmethod
+						report.sentence = Bureau.report.makeKillSentenceFromFullReport( report )
+						callback( null, report )
+					} )
+				} )
+			} )
+		},
+
+		getKillSentence: ( reportId, callback ) => {
+			_Report.getFullReport( reportId, ( err, fullReport ) => {
+				if ( err ) {
+					callback( err, null )
+				} else {
+					callback( err, _Report.makeKillSentenceFromFullReport( fullReport ) )
+				}
+			} )
+		},
+
+		makeKillSentenceFromFullReport: ( report ) => {
+			let killmethod = report.killmethod,
+				verb = killmethod ? killmethod.verb : '',
+				killer = report.killer,
+				victim = report.victim
+			return ( verb
+				.replace( '#v', utils.fullname( victim ) )
+				.replace( '#k', utils.fullname( killer ) )
+				.replace( '#d', report.methoddetail ) )
+		}
 
 	}
 

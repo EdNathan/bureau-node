@@ -409,7 +409,7 @@ var authPages = {
 					}
 
 					reports.forEach( function( report ) {
-						Bureau.report.fullReport( report, function( err, fullReport ) {
+						Bureau.report.makeFullReport( report, function( err, fullReport ) {
 							report = fullReport
 							reportDone()
 						} )
