@@ -6,6 +6,12 @@ module.exports = ( Bureau ) => {
 
 	let _ = require( 'lodash' )
 
+	const REPORT_STATES = {
+		APPROVED: 'approved',
+		REJECTED: 'rejected',
+		WAITING: 'waiting'
+	}
+
 	let ReportSchema = {
 		victimid: {
 			type: String,
@@ -59,7 +65,7 @@ module.exports = ( Bureau ) => {
 		state: {
 			required: true,
 			type: String,
-			default: _Report.STATES.WAITING
+			default: REPORT_STATES.WAITING
 		},
 		comment: {
 			type: String,
@@ -93,7 +99,7 @@ module.exports = ( Bureau ) => {
 						$in: games.map( ( g ) => g.gameid )
 					},
 					state: {
-						$ne: _Report.STATES.waiting
+						$ne: REPORT_STATES.waiting
 					}
 				}, ( err, reports ) => {
 
@@ -141,7 +147,7 @@ module.exports = ( Bureau ) => {
 			}
 
 			data.submitted = new Date()
-			data.state = _Report.STATES.WAITING
+			data.state = REPORT_STATES.WAITING
 
 			let report = new Report( data )
 
@@ -202,20 +208,20 @@ module.exports = ( Bureau ) => {
 					gameid: {
 						$in: gameids
 					},
-					state: _Report.STATES.WAITING
+					state: REPORT_STATES.WAITING
 				}, callback )
 			} )
 		},
 
 		acceptReport: ( reportId, callback ) => {
 			_Report.updateReport( reportId, {
-				state: _Report.STATES.APPROVED
+				state: REPORT_STATES.APPROVED
 			}, callback )
 		},
 
 		rejectReport: ( reportId, comment, callback ) => {
 			_Report.updateReport( reportId, {
-				state: _Report.STATES.REJECTED,
+				state: REPORT_STATES.REJECTED,
 				comment: comment
 			}, callback )
 		},
@@ -268,11 +274,7 @@ module.exports = ( Bureau ) => {
 			)
 		},
 
-		STATES: {
-			APPROVED: 'approved',
-			REJECTED: 'rejected',
-			WAITING: 'waiting'
-		}
+		STATES: REPORT_STATES
 
 	}
 
