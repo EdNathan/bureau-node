@@ -20,20 +20,7 @@ const id = ( uid ) => {
 
 const empty = ( obj ) => _.isEmpty( obj )
 
-const merge = ( o1, o2 ) => {
-	let n = {}
-	for ( key in o1 ) {
-		if ( o1.hasOwnProperty( key ) ) {
-			n[ key ] = o1[ key ]
-		}
-	}
-	for ( key in o2 ) {
-		if ( o2.hasOwnProperty( key ) ) {
-			n[ key ] = o2[ key ]
-		}
-	}
-	return n
-}
+const merge = utils.merge
 
 const strcopy = ( str, times ) => new Array( times + 1 ).join( str )
 
@@ -346,7 +333,8 @@ let Bureau = {
 				},
 				filters = {
 					_id: objID
-				}
+				},
+				key
 
 			//Check if we have any special things
 			for ( key in stuff ) {
@@ -386,8 +374,9 @@ let Bureau = {
 			//We don't need to invalidate the whole cache, we'll refetch the assassins after we update them
 
 			var toUpdate = {
-				$set: {}
-			}
+					$set: {}
+				},
+				key
 
 			//Check if we have any special things
 			for ( key in stuff ) {
@@ -795,7 +784,8 @@ let Bureau = {
 				},
 				filters = {
 					ggid: ggid
-				}
+				},
+				key
 
 			//Check if we have any special things
 			for ( key in stuff ) {
@@ -880,10 +870,11 @@ let Bureau = {
 
 		updateKillMethod: function( ggid, methodid, stuff, callback ) {
 			var o = {
-				filter: {
-					'killmethods.id': methodid
-				}
-			}
+					filter: {
+						'killmethods.id': methodid
+					}
+				},
+				key
 
 			//'killmethods.$.read': true
 
@@ -1306,7 +1297,8 @@ let Bureau = {
 				},
 				filters = {
 					'games.gameid': gameid
-				}
+				},
+				key
 
 			//Check if we have any special things
 			for ( key in stuff ) {

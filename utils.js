@@ -93,7 +93,8 @@ var utils = {
 	},
 
 	merge: function( o1, o2 ) {
-		var n = {}
+		var n = {},
+			key
 		for ( key in o1 ) {
 			if ( o1.hasOwnProperty( key ) ) {
 				n[ key ] = o1[ key ]
