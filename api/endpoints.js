@@ -1,5 +1,6 @@
 module.exports = [
 	'assassin',
+	'report',
 	'bounty',
 	'notifications',
 	'killmethods',

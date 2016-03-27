@@ -3,23 +3,7 @@ var utils = require( '../../utils' )
 
 module.exports = function( Bureau ) {
 
-	var assassinProjection = [
-		'_id',
-		'forename',
-		'surname',
-		'nickname',
-		'course',
-		'address',
-		'liverin',
-		'gamegroup',
-		'college',
-		'guild',
-		'imgname'
-	]
-
-	var projectAssassin = function( assassin ) {
-		return _.pick( assassin, assassinProjection )
-	}
+	var projectAssassin = utils.projectAssassin
 
 	return {
 		'getAssassin/:uid': function( data, params, callback ) {

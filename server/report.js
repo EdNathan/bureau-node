@@ -92,6 +92,18 @@ module.exports = ( Bureau ) => {
 
 		getReport: ( reportId, callback ) => Report.findById( reportId, utils.objectifyCallback( callback ) ),
 
+		getReportsFromGame: ( gameid, callback ) => {
+			Bureau.game.getGame( gameid, ( err, game ) => {
+				if ( err ) {
+					callback( err, {} )
+					return
+				}
+				_Report.getReports( {
+					gameid
+				}, callback )
+			} )
+		},
+
 		getProcessedReportsByGame: ( ggid, callback ) => {
 
 			Bureau.game.getGamesInGamegroupAsArray( ggid, ( err, games ) => {
@@ -252,6 +264,38 @@ module.exports = ( Bureau ) => {
 			} )
 		},
 
+		getFullReports: ( query, callback ) => {
+			_Report.getReports( query, ( err, reports ) => {
+				if ( err ) {
+					callback( err, null )
+					return
+				}
+
+				_Report.makeFullReports( reports, callback )
+
+			} )
+		},
+
+		getFullReportsFromGame: ( ggid, callback ) => {
+			_Report.getReportsFromGame( ggid, ( err, reports ) => {
+				if ( err ) {
+					callback( err )
+					return
+				}
+				_Report.makeFullReports( reports, callback )
+			} )
+		},
+
+		getFullPendingReports: ( ggid, callback ) => {
+			_Report.getPendingReports( ggid, ( err, reports ) => {
+				if ( err ) {
+					callback( err )
+					return
+				}
+				_Report.makeFullReports( reports, callback )
+			} )
+		},
+
 		makeFullReport: ( report, callback ) => {
 			Bureau.assassin.getAssassin( report.killerid, ( err, killer ) => {
 				report.killer = killer
@@ -262,6 +306,32 @@ module.exports = ( Bureau ) => {
 						report.sentence = Bureau.report.makeKillSentenceFromFullReport( report )
 						callback( null, report )
 					} )
+				} )
+			} )
+		},
+
+		makeFullReports: ( reports, callback ) => {
+			let fullReports = []
+			let stopped = false
+
+			let done = () => {
+				if ( fullReports.length === reports.length ) {
+					callback( null, fullReports )
+				}
+			}
+
+			reports.forEach( ( report ) => {
+				_Report.makeFullReport( report, ( err, fullReport ) => {
+					if ( stopped ) {
+						return
+					}
+					if ( err ) {
+						callback( err, [] )
+						stopped = true
+						return
+					}
+					fullReports.push( report )
+					done()
 				} )
 			} )
 		},

@@ -200,7 +200,29 @@ var utils = {
 		} else {
 			callback( null, utils.mongooseToObject( thing ) )
 		}
-	}
+	},
+
+	assassinProjection: [
+		'_id',
+		'forename',
+		'surname',
+		'nickname',
+		'course',
+		'address',
+		'liverin',
+		'gamegroup',
+		'college',
+		'guild',
+		'imgname'
+	],
+
+	_idToid: ( obj ) => {
+		obj.id = obj._id + ''
+		delete obj._id
+		return obj
+	},
+
+	projectAssassin: ( assassin ) => utils._idToid( _.pick( assassin, utils.assassinProjection ) )
 
 }
 

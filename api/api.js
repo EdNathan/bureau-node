@@ -13,12 +13,13 @@ var sendError = function( err, req, res ) {
 	res.header( 'Access-Control-Allow-Origin', '*' )
 	res.header( 'Access-Control-Allow-Credentials', 'true' )
 	res.header( 'Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept' )
-	res.json( 400, {
+	res.status( 400 ).json( {
 		error: err
 	} )
 }
 
 var checkAppToken = function( req, res, next ) {
+
 	if ( req.body.APP_TOKEN === process.env.BUREAU_APP_TOKEN ) {
 		next()
 	} else {
@@ -76,13 +77,13 @@ var _filter_id = function( obj ) {
 
 	if ( obj.toObject ) {
 		obj = obj.toObject()
-		delete obj.__v
 	}
 
 	if ( _.isPlainObject( obj ) && obj._id ) {
 		obj = _.clone( obj )
 		obj.id = obj._id
 		delete obj._id
+		delete obj.__v
 	} else if ( _.isArray( obj ) ) {
 		obj = _.map( obj, _filter_id )
 	}
