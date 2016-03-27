@@ -1,6 +1,6 @@
 {
   "name": "bureau",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "The game engine for the modern assassin",
   "main": "app.js",
   "scripts": {
