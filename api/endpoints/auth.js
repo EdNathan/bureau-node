@@ -6,7 +6,10 @@ module.exports = ( Bureau ) => ( {
 
 	/**
 	 * @api {post} /auth/login login
-	 * @apiDescription Acquire a USER_TOKEN and USER_ID from email and password. Note you DO NOT need to send USER_ID to this endpoint
+	 * @apiDescription Acquire a USER_TOKEN and USER_ID from email and password.
+	 *
+	 * **Note you DO NOT need to send USER_ID or USER_TOKEN to this endpoint**
+	 *
 	 * @apiName auth/login
 	 * @apiGroup auth
 	 *
