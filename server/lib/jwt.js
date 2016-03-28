@@ -28,6 +28,11 @@ const JWT = module.exports = {
 	},
 
 	decodeJSONWebToken: ( token, secret ) => {
+
+		if ( !token || !token.split ) {
+			return JWT.INVALID_JWT
+		}
+
 		let parts = token.split( '.' )
 
 		if ( parts.length !== 3 ) {
