@@ -1,15 +1,17 @@
-var Bureau = module.parent.exports.Bureau
-var app = module.parent.exports.app
-var _ = require( 'lodash' )
+'use strict'
 
-var logApiRequest = function( req, res, next ) {
+const Bureau = module.parent.exports.Bureau
+const app = module.parent.exports.app
+const _ = require( 'lodash' )
+
+let logApiRequest = ( req, res, next ) => {
 	console.log( 'host:', req.get( 'host' ) )
 	console.log( 'origin:', req.get( 'Origin' ) )
 	console.log( req.body )
 	next()
 }
 
-var sendError = function( err, req, res ) {
+let sendError = ( err, req, res ) => {
 	res.header( 'Access-Control-Allow-Origin', '*' )
 	res.header( 'Access-Control-Allow-Credentials', 'true' )
 	res.header( 'Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept' )
@@ -18,7 +20,7 @@ var sendError = function( err, req, res ) {
 	} )
 }
 
-var checkAppToken = function( req, res, next ) {
+let checkAppToken = ( req, res, next ) => {
 
 	if ( req.body.APP_TOKEN === process.env.BUREAU_APP_TOKEN ) {
 		next()
@@ -28,27 +30,27 @@ var checkAppToken = function( req, res, next ) {
 
 }
 
-var checkUserToken = function( req, res, next ) {
-	var uid = req.body.USER_ID,
+let checkUserToken = ( req, res, next ) => {
+	let uid = req.body.USER_ID,
 		suppliedToken = req.body.USER_TOKEN
 
-	Bureau.assassin.getToken( uid, function( err, actualToken ) {
-		if ( !err && suppliedToken === actualToken ) {
+	Bureau.assassin.checkToken( uid, suppliedToken, ( err, payload ) => {
+		if ( !err ) {
 			next()
 		} else {
-			sendError( 'Invalid USER_TOKEN and USER_ID pair', req, res )
+			sendError( `Invalid USER_TOKEN and USER_ID pair: ${err}`, req, res )
 		}
 	} )
 }
 
-var sendHeaders = function( req, res, next ) {
+let sendHeaders = ( req, res, next ) => {
 	res.header( 'Access-Control-Allow-Origin', '*' )
 	res.header( 'Access-Control-Allow-Credentials', 'true' )
 	res.header( 'Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept' )
 	if ( next ) next()
 }
 
-var sendHeadersForOptions = function( req, res, next ) {
+let sendHeadersForOptions = ( req, res, next ) => {
 	if ( req.method === 'OPTIONS' ) {
 		res.header( 'Access-Control-Allow-Origin', '*' )
 		res.header( 'Access-Control-Allow-Methods', 'POST' )
@@ -60,20 +62,20 @@ var sendHeadersForOptions = function( req, res, next ) {
 	}
 }
 
-var authPipeline = [ sendHeadersForOptions, checkAppToken, checkUserToken ]
+let authPipeline = [ sendHeadersForOptions, checkAppToken, checkUserToken ]
 
 authPipeline.map( ( fn ) => app.use( '/api/*', fn ) )
 
-var handleApiRequest = function( handler, req, res ) {
+let handleApiRequest = ( handler, req, res ) => {
 
-	var data = _.omit( req.body, 'USER_TOKEN' )
-	var params = req.params
+	let data = _.omit( req.body, 'USER_TOKEN' )
+	let params = req.params
 
 	handler( data, params, sendResponse.bind( this, req, res ) )
 
 }
 
-var _filter_id = function( obj ) {
+let _filter_id = ( obj ) => {
 
 	if ( obj.toObject ) {
 		obj = obj.toObject()
@@ -91,7 +93,7 @@ var _filter_id = function( obj ) {
 	return obj
 }
 
-var sendResponse = function( req, res, err, data ) {
+let sendResponse = ( req, res, err, data ) => {
 
 	if ( err ) {
 		sendError( err, req, res )
@@ -102,7 +104,7 @@ var sendResponse = function( req, res, err, data ) {
 	res.json( _filter_id( data ) )
 }
 
-var mapApiRoutes = function( routeHandler, route ) {
+let mapApiRoutes = ( routeHandler, route ) => {
 	route = route ? route : ''
 
 	if ( _.isFunction( routeHandler ) ) {
@@ -113,7 +115,7 @@ var mapApiRoutes = function( routeHandler, route ) {
 
 		_.each( routeHandler, function( subRouteHandler, subRoute ) {
 
-			var glue = subRoute === '/' ? '' : '/';
+			let glue = subRoute === '/' ? '' : '/';
 
 			mapApiRoutes( subRouteHandler, route + glue + subRoute );
 
@@ -121,15 +123,15 @@ var mapApiRoutes = function( routeHandler, route ) {
 	}
 }
 
-var mappedEndpoints = {}
+let mappedEndpoints = {}
 
-var createApiEndpoint = function( endpoint ) {
-	var endpointHandler = require( './endpoints/' + endpoint )( Bureau )
+let createApiEndpoint = ( endpoint ) => {
+	let endpointHandler = require( './endpoints/' + endpoint )( Bureau )
 	mapApiRoutes( endpointHandler, endpoint )
 	mappedEndpoints[ endpoint ] = endpoint
 }
 
-var endpoints = require( './endpoints.js' )
+let endpoints = require( './endpoints.js' )
 
 endpoints.map( createApiEndpoint )
 

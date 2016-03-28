@@ -97,6 +97,7 @@ let Bureau = {
 			mongoose.connection.once( 'open', function() {
 				line()
 				Bureau.mongoose = mongoose
+				Bureau.loadModule( 'auth' )
 				Bureau.loadModule( 'report' )
 				Bureau.loadModule( 'bounty' )
 				Bureau.loadModule( 'notifications' )
@@ -489,9 +490,27 @@ let Bureau = {
 			} )
 		},
 
-		getToken: function( uid, callback ) {
-			Bureau.assassin.getAssassin( uid, function( err, assassin ) {
-				callback( err, utils.md5( assassin.joindate + process.env.BUREAU_TOKEN_SECRET ) )
+		getToken: ( uid, callback ) => {
+			Bureau.assassin.getAssassin( uid, ( err, assassin ) => {
+				if ( err ) {
+					callback( err, null )
+				} else {
+					Bureau.auth.getJWT( uid, ( err, jwt ) => {
+						callback( null, jwt )
+					} )
+				}
+			} )
+		},
+
+		checkToken: ( uid, token, callback ) => {
+			Bureau.assassin.getAssassin( uid, ( err, assassin ) => {
+				if ( err ) {
+					callback( err, null )
+				} else {
+					Bureau.auth.checkJWT( uid, token, ( err, payload ) => {
+						callback( err, payload )
+					} )
+				}
 			} )
 		},
 
