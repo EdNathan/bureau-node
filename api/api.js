@@ -62,9 +62,21 @@ let sendHeadersForOptions = ( req, res, next ) => {
 	}
 }
 
-let authPipeline = [ sendHeadersForOptions, checkAppToken, checkUserToken ]
+let testValidMethod = ( req, res, next ) => {
+	if ( req.method === 'OPTIONS' || req.method === 'POST' ) {
+		next()
+	} else {
+		sendError( `API Requests are made over POST, method "${req.method}" not accepted`, req, res )
+	}
+}
 
-authPipeline.map( ( fn ) => app.use( '/api/*', fn ) )
+// Handle auth
+app.use( '/api/auth/*', testValidMethod, sendHeadersForOptions, checkAppToken )
+
+let authPipeline = [ testValidMethod, sendHeadersForOptions, checkAppToken, checkUserToken ]
+
+// Handle everything but auth
+authPipeline.map( ( fn ) => app.use( /\/api\/(?!auth.*).*/, fn ) )
 
 let handleApiRequest = ( handler, req, res ) => {
 
