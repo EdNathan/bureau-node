@@ -1535,7 +1535,6 @@ var checkAuth = function( req, res, next ) {
 	} else {
 		next()
 	}
-	//	next()
 }
 
 //For checking if details updated/password needs resetting etc
