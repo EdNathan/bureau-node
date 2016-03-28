@@ -4,6 +4,20 @@ const _ = require( 'lodash' )
 
 module.exports = ( Bureau ) => ( {
 
+	/**
+	 * @api {post} /auth/login login
+	 * @apiDescription Acquire a USER_TOKEN and USER_ID from email and password
+	 * @apiName auth/login
+	 * @apiGroup auth
+	 *
+	 * @apiParam {String} email Email
+	 * @apiParam {String} password Password
+	 *
+	 * @apiSuccess {String} USER_ID Assassin user id
+	 * @apiSuccess {String} USER_TOKEN API authentication token
+	 *
+	 */
+
 	login: ( data, params, callback ) => {
 
 		let email = _.isString( data.email ) ? data.email : ''
