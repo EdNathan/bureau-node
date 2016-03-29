@@ -1,6 +1,7 @@
 module.exports = [
 	'assassin',
 	'auth',
+	'apptoken',
 	'report',
 	'bounty',
 	'notifications',

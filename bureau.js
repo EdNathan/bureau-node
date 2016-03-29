@@ -98,6 +98,7 @@ let Bureau = {
 				line()
 				Bureau.mongoose = mongoose
 				Bureau.loadModule( 'auth' )
+				Bureau.loadModule( 'apptoken' )
 				Bureau.loadModule( 'report' )
 				Bureau.loadModule( 'bounty' )
 				Bureau.loadModule( 'notifications' )

@@ -21,13 +21,14 @@ let sendError = ( err, req, res ) => {
 }
 
 let checkAppToken = ( req, res, next ) => {
+	Bureau.apptoken.checkAppToken( req.body.APP_TOKEN, ( err, valid ) => {
 
-	if ( req.body.APP_TOKEN === process.env.BUREAU_APP_TOKEN ) {
-		next()
-	} else {
-		sendError( 'Invalid APP_TOKEN', req, res )
-	}
-
+		if ( err || !valid ) {
+			sendError( 'Invalid APP_TOKEN', req, res )
+		} else {
+			next()
+		}
+	} )
 }
 
 let checkUserToken = ( req, res, next ) => {
