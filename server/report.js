@@ -90,7 +90,15 @@ module.exports = ( Bureau ) => {
 
 		getReports: ( query, callback ) => Report.find( query, utils.objectifyCallback( callback ) ),
 
-		getReport: ( reportId, callback ) => Report.findById( reportId, utils.objectifyCallback( callback ) ),
+		getReport: ( reportId, callback ) => Report.findById( reportId, ( err, report ) => {
+
+			if ( err ) {
+				callback( 'No report exists with that ID' )
+				return
+			}
+
+			utils.objectifyCallback( callback )( null, report )
+		} ),
 
 		getReportsFromGame: ( gameid, callback ) => {
 			Bureau.game.getGame( gameid, ( err, game ) => {

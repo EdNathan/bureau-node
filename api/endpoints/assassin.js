@@ -30,6 +30,11 @@ module.exports = function( Bureau ) {
 						return
 					}
 
+					if ( _.isEmpty( assassin ) ) {
+						callback( 'No assassin exists with that id' )
+						return
+					}
+
 					if ( ggid !== assassin.gamegroup ) {
 						callback( 'Assassin is in a different gamegroup to you' )
 						return
