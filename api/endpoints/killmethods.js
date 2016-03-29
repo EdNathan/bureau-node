@@ -12,9 +12,7 @@ module.exports = ( Bureau ) => ( {
 	 */
 	getKillMethods: ( data, params, callback ) => {
 
-		let uid = data.USER_ID
-
-		Bureau.assassin.getGamegroup( uid, ( err, ggid ) => {
+		Bureau.assassin.getGamegroup( data.USER_ID, ( err, ggid ) => {
 
 			if ( err ) {
 				callback( err )

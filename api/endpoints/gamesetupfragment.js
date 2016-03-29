@@ -1,21 +1,24 @@
-module.exports = function( Bureau ) {
+'use strict'
 
-	return {
-		':gametype': function( data, params, callback ) {
-			var gametype = params.gametype
+module.exports = ( Bureau ) => ( {
 
-			if ( !Bureau.game.isGameType( gametype ) ) {
-				callback( '"' + gametype + '" is not a valid game type' )
+	':gametype': ( data, params, callback ) => {
+
+		let gametype = params.gametype
+
+		if ( !Bureau.game.isGameType( gametype ) ) {
+			callback( '"' + gametype + '" is not a valid game type' )
+			return
+		}
+
+		Bureau.games[ gametype ].getGameSetupFragment( function( err, fragment ) {
+
+			if ( err ) {
+				callback( err )
 				return
 			}
-			Bureau.games[ gametype ].getGameSetupFragment( function( err, fragment ) {
-				if ( err ) {
-					callback( err )
-					return
-				}
-				callback( null, fragment )
-			} )
-		}
-	}
 
-}
+			callback( null, fragment )
+		} )
+	}
+} )

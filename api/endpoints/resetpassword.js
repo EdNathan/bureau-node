@@ -1,41 +1,44 @@
-var utils = require( '../../utils' ),
-	moment = require( 'moment' )
+'use strict'
 
-module.exports = function( Bureau ) {
+const utils = require( '../../utils' )
+const moment = require( 'moment' )
 
-	return {
-		':uid': function( data, params, callback ) {
-			var initiatingUser = data.USER_ID,
-				userToReset = params.uid
+module.exports = ( Bureau ) => ( {
 
-			Bureau.assassin.isGuild( initiatingUser, function( err, isGuild ) {
+	':uid': ( data, params, callback ) => {
+
+		let initiatingUser = data.USER_ID
+		let userToReset = params.uid
+
+		Bureau.assassin.isGuild( initiatingUser, ( err, isGuild ) => {
+
+			if ( err ) {
+				callback( err )
+				return
+			}
+
+			if ( !isGuild ) {
+				callback( 'Insufficient privileges to reset a user password' )
+				return
+			}
+
+			Bureau.assassin.createTempPassword( userToReset, ( err, temppassword ) => {
+
 				if ( err ) {
 					callback( err )
 					return
 				}
 
-				if ( !isGuild ) {
-					callback( 'Insufficient privileges to reset a user password' )
-					return
-				}
+				callback( null, {
+					temppassword
+				} )
 
-				Bureau.assassin.createTempPassword( userToReset, function( err, pwd ) {
-					if ( err ) {
-						callback( err )
-						return
-					}
-					callback( null, {
-						temppassword: pwd
-					} )
-
-					Bureau.assassin.getAssassin( initiatingUser, function( err, initiatingAssassin ) {
-						Bureau.assassin.addNotification( userToReset,
-							'Your password was reset by ' + utils.fullname( initiatingAssassin ) +
-							' at ' + moment().format( 'MMMM Do YYYY, h:mm:ss a' ) )
-					} )
+				Bureau.assassin.getAssassin( initiatingUser, ( err, initiatingAssassin ) => {
+					Bureau.assassin.addNotification( userToReset,
+						'Your password was reset by ' + utils.fullname( initiatingAssassin ) +
+						' at ' + moment().format( 'MMMM Do YYYY, h:mm:ss a' ) )
 				} )
 			} )
-		}
+		} )
 	}
-
-}
+} )

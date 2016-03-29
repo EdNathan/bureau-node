@@ -3,7 +3,7 @@
 const _ = require( 'lodash' )
 const utils = require( '../../utils' )
 
-module.exports = function( Bureau ) {
+module.exports = ( Bureau ) => {
 
 	const projectAssassin = utils.projectAssassin
 	const assassinProjection = utils.assassinProjection
@@ -21,11 +21,10 @@ module.exports = function( Bureau ) {
 		 *
 		 */
 
-		'getAssassin/:uid': function( data, params, callback ) {
+		'getAssassin/:uid': ( data, params, callback ) => {
 
-			var uid = params.uid
+			apiutils.sameGamegroup( data.USER_ID, params.uid, ( err, assassin ) => {
 
-			apiutils.sameGamegroup( data.USER_ID, uid, ( err, assassin ) => {
 				if ( err ) {
 					callback( err )
 					return
@@ -47,14 +46,14 @@ module.exports = function( Bureau ) {
 		 *
 		 */
 
-		getAssassins: function( data, params, callback ) {
+		getAssassins: ( data, params, callback ) => {
 
-			Bureau.assassin.getGamegroup( data.USER_ID, function( err, ggid ) {
+			Bureau.assassin.getGamegroup( data.USER_ID, ( err, ggid ) => {
 
-				var filter = _.omit( data, [ 'USER_ID', 'APP_TOKEN' ] )
-				filter.gamegroup = ggid
+				let filtered = _.omit( data, [ 'USER_ID', 'APP_TOKEN' ] )
+				filtered.gamegroup = ggid
 
-				Bureau.assassin.getAssassins( filter, function( err, assassins ) {
+				Bureau.assassin.getAssassins( filtered, ( err, assassins ) => {
 
 					if ( err ) {
 						callback( err )
@@ -81,25 +80,25 @@ module.exports = function( Bureau ) {
 		 *
 		 */
 
-		getAssassinsFromAssassinIds: function( data, params, callback ) {
+		getAssassinsFromAssassinIds: ( data, params, callback ) => {
 
-			var assassinIds = data.assassinIds
-
-			if ( !_.isArray( assassinIds ) ) {
+			if ( !_.isArray( data.assassinIds ) ) {
 				callback( 'Assassin ids must be supplied as an array' )
 				return
 			}
 
-			Bureau.assassin.getGamegroup( data.USER_ID, function( err, ggid ) {
+			let assassinIds = data.assassinIds.filter( _.isString )
 
-				Bureau.assassin.getAssassinsFromIds( assassinIds, function( err, assassins ) {
+			Bureau.assassin.getGamegroup( data.USER_ID, ( err, ggid ) => {
+
+				Bureau.assassin.getAssassinsFromIds( assassinIds, ( err, assassins ) => {
 
 					if ( err ) {
 						callback( err )
 						return
 					}
 
-					assassins = assassins.filter( function( assassin ) {
+					assassins = assassins.filter( ( assassin ) => {
 						return assassin.gamegroup === ggid
 					} )
 
@@ -121,9 +120,9 @@ module.exports = function( Bureau ) {
 		 *
 		 */
 
-		searchAssassinsByName: function( data, params, callback ) {
+		searchAssassinsByName: ( data, params, callback ) => {
 
-			var query = data.name
+			let query = data.name
 
 			if ( !_.isString( query ) || !query ) {
 				callback( 'name must be a string' )
@@ -132,9 +131,9 @@ module.exports = function( Bureau ) {
 
 			query = utils.makeFuzzyRegex( query )
 
-			var queryRegex = new RegExp( query, 'i' )
+			let queryRegex = new RegExp( query, 'i' )
 
-			var projector = _.transform( _.keyBy( assassinProjection ), function( result, n, key ) {
+			let projector = _.transform( _.keyBy( assassinProjection ), ( result, n, key ) => {
 				result[ key ] = 1
 			} )
 
@@ -142,9 +141,9 @@ module.exports = function( Bureau ) {
 				$concat: [ "$forename", " ", "$surname" ]
 			}
 
-			Bureau.assassin.getGamegroup( data.USER_ID, function( err, ggid ) {
+			Bureau.assassin.getGamegroup( data.USER_ID, ( err, ggid ) => {
 
-				var aggregationPipeline = [ {
+				let aggregationPipeline = [ {
 					$match: {
 						gamegroup: ggid
 					}
@@ -156,7 +155,7 @@ module.exports = function( Bureau ) {
 					}
 				} ]
 
-				Bureau.db.collection( 'assassins' ).aggregate( aggregationPipeline, function( err, assassins ) {
+				Bureau.db.collection( 'assassins' ).aggregate( aggregationPipeline, ( err, assassins ) => {
 
 					if ( err ) {
 						callback( err )

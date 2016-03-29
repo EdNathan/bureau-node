@@ -1,60 +1,48 @@
-module.exports = function( Bureau ) {
+'use strict'
 
-	return {
-		/**
-		 * @api {post} /notifications/getNotifications getNotifications
-		 * @apiDescription Get your notifications
-		 * @apiName notifications/getNotifications
-		 * @apiGroup notifications
-		 *
-		 * @apiParam {Number} [limit=30] The maximum number of notifications to retrieve
-		 *
-		 * @apiSuccess {Object[]} notifications The most recent [limit] notifications
-		 *
-		 */
+module.exports = ( Bureau ) => ( {
+	/**
+	 * @api {post} /notifications/getNotifications getNotifications
+	 * @apiDescription Get your notifications
+	 * @apiName notifications/getNotifications
+	 * @apiGroup notifications
+	 *
+	 * @apiParam {Number} [limit=30] The maximum number of notifications to retrieve
+	 *
+	 * @apiSuccess {Object[]} notifications The most recent [limit] notifications
+	 *
+	 */
 
-		getNotifications: function( data, params, callback ) {
-			var uid = data.USER_ID,
-				limit = data.limit ? data.limit : 30
+	getNotifications: ( data, params, callback ) => Bureau.notifications.getNotifications(
+		data.USER_ID, data.limit ? data.limit : 30, callback ),
 
-			Bureau.notifications.getNotifications( uid, limit, callback )
-		},
+	/**
+	 * @api {post} /notifications/markRead/:notificationId markRead
+	 * @apiDescription Mark a notification as read
+	 * @apiName notifications/markRead/:
+	 * @apiGroup notifications
+	 *
+	 * @apiSuccess {Object[]} notifications The last 30 notifications
+	 *
+	 */
 
-		/**
-		 * @api {post} /notifications/markRead/:notificationId markRead
-		 * @apiDescription Mark a notification as read
-		 * @apiName notifications/markRead/:
-		 * @apiGroup notifications
-		 *
-		 * @apiSuccess {Object[]} notifications The last 30 notifications
-		 *
-		 */
+	'markRead/:notificationId': ( data, params, callback ) => Bureau.notifications.markNotificationRead(
+		params.notificationId, ( err, stuff ) => Bureau.assassin.getNotifications( data.USER_ID, 30, callback ) ),
 
-		'markRead/:notificationId': function( data, params, callback ) {
-			var uid = data.USER_ID,
-				id = params.notificationId
+	/**
+	 * @api {post} /notifications/markAllRead markAllRead
+	 * @apiDescription Mark all notifications as read
+	 * @apiName notifications/markAllRead
+	 * @apiGroup notifications
+	 *
+	 * @apiSuccess {Object[]} notifications The last 30 notifications
+	 *
+	 */
 
-			Bureau.notifications.markNotificationRead( id, function( err, stuff ) {
-				Bureau.assassin.getNotifications( uid, 30, callback )
-			} )
-		},
+	markAllRead: ( data, params, callback ) => {
+		let uid = data.USER_ID
 
-		/**
-		 * @api {post} /notifications/markAllRead markAllRead
-		 * @apiDescription Mark all notifications as read
-		 * @apiName notifications/markAllRead
-		 * @apiGroup notifications
-		 *
-		 * @apiSuccess {Object[]} notifications The last 30 notifications
-		 *
-		 */
-
-		markAllRead: function( data, params, callback ) {
-			var uid = data.USER_ID
-
-			Bureau.notifications.markAllNotificationsRead( uid, function( err, notifications ) {
-				Bureau.notifications.getNotifications( uid, 30, callback )
-			} )
-		}
+		Bureau.notifications.markAllNotificationsRead(
+			uid, ( err, notifications ) => Bureau.notifications.getNotifications( uid, 30, callback ) )
 	}
-}
+} )
