@@ -7,7 +7,7 @@ module.exports = ( Bureau ) => {
 	return {
 		createBounty: ( data, params, callback ) => {
 
-			var uid = data.USER_ID
+			let uid = data.USER_ID
 
 			Bureau.assassin.isGuild( uid, ( err, isGuild ) => {
 
@@ -107,7 +107,7 @@ module.exports = ( Bureau ) => {
 
 		getActiveBounties: ( data, params, callback ) => {
 
-			var uid = data.USER_ID
+			let uid = data.USER_ID
 
 			Bureau.assassin.getGamegroup( uid, ( err, ggid ) => {
 
