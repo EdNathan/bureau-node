@@ -1254,6 +1254,26 @@ let Bureau = {
 			} )
 		},
 
+		getCurrentGames: ( ggid, callback ) => {
+			Bureau.game.getGamesInGamegroup( ggid, ( err, games ) => {
+				if ( err ) {
+					callback( err )
+					return
+				}
+				let currentGames = {},
+					now = new Date()
+				for ( let gid in games ) {
+					if ( games.hasOwnProperty( gid ) ) {
+						if ( games[ gid ].start <= now && games[ gid ].end > now ) {
+							currentGames[ gid ] = games[ gid ]
+						}
+					}
+				}
+				callback( null, currentGames )
+
+			} )
+		},
+
 		getGame: function( gameid, callback ) {
 			Bureau.game.getGames( function( err, games ) {
 				if ( !err && games[ gameid ] ) {
@@ -1277,6 +1297,8 @@ let Bureau = {
 				return
 			}
 			gameData.gameid = utils.md5( new Date() + '' )
+
+			gameData.gamegroup = ggid
 
 			//Map the player array to an object
 			var playersArray = gameData.players,
