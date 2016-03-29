@@ -7,21 +7,9 @@ module.exports = ( Bureau ) => {
 	return {
 		createBounty: ( data, params, callback ) => {
 
-			let uid = data.USER_ID
+			apiutils.onlyGuild( data.USER_ID, callback, ( err, isGuild ) => {
 
-			Bureau.assassin.isGuild( uid, ( err, isGuild ) => {
-
-				if ( err ) {
-					callback( err )
-					return
-				}
-
-				if ( !isGuild ) {
-					callback( 'Insufficient privileges to create a bounty' )
-					return
-				}
-
-				Bureau.assassin.getGamegroup( uid, ( err, ggid ) => {
+				Bureau.assassin.getGamegroup( data.USER_ID, ( err, ggid ) => {
 
 					data.gamegroup = ggid
 
@@ -33,22 +21,13 @@ module.exports = ( Bureau ) => {
 
 		'updateBounty/:bountyId': ( data, params, callback ) => {
 
-			Bureau.bounty.getBounty( params.bountyId, ( err, bounty ) => {
 
-				if ( err ) {
-					callback( err )
-					return
-				}
+			apiutils.onlyGuild( data.USER_ID, callback, ( err, isGuild ) => {
 
-				Bureau.assassin.isGuild( data.USER_ID, ( err, isGuild ) => {
+				Bureau.bounty.getBounty( params.bountyId, ( err, bounty ) => {
 
 					if ( err ) {
 						callback( err )
-						return
-					}
-
-					if ( !isGuild ) {
-						callback( 'Insufficient privileges to update a bounty' )
 						return
 					}
 
@@ -68,22 +47,12 @@ module.exports = ( Bureau ) => {
 
 		'archiveBounty/:bountyId': ( data, params, callback ) => {
 
-			Bureau.bounty.getBounty( params.bountyId, ( err, bounty ) => {
+			apiutils.onlyGuild( data.USER_ID, callback, ( err, isGuild ) => {
 
-				if ( err ) {
-					callback( err )
-					return
-				}
-
-				Bureau.assassin.isGuild( data.USER_ID, ( err, isGuild ) => {
+				Bureau.bounty.getBounty( params.bountyId, ( err, bounty ) => {
 
 					if ( err ) {
 						callback( err )
-						return
-					}
-
-					if ( !isGuild ) {
-						callback( 'Insufficient privileges to update a bounty' )
 						return
 					}
 
@@ -97,23 +66,16 @@ module.exports = ( Bureau ) => {
 						Bureau.bounty.archiveBounty( params.bountyId, callback )
 
 					} )
+
 				} )
+
 			} )
 		},
 
-		'getBounty/:bountyId': ( data, params, callback ) => {
-			Bureau.bounty.getBounty( params.bountyId, callback )
-		},
+		'getBounty/:bountyId': ( data, params, callback ) => Bureau.bounty.getBounty( params.bountyId, callback ),
 
-		getActiveBounties: ( data, params, callback ) => {
+		getActiveBounties: ( data, params, callback ) => Bureau.assassin.getGamegroup(
+			data.USER_ID, ( err, ggid ) => Bureau.bounty.getActiveBounties( ggid, callback ) )
 
-			let uid = data.USER_ID
-
-			Bureau.assassin.getGamegroup( uid, ( err, ggid ) => {
-
-				Bureau.bounty.getActiveBounties( ggid, callback )
-
-			} )
-		}
 	}
 }
