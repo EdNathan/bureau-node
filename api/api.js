@@ -90,7 +90,7 @@ let handleApiRequest = ( handler, req, res ) => {
 
 let _filter_id = ( obj ) => {
 
-	if ( obj.toObject ) {
+	if ( obj && obj.toObject ) {
 		obj = obj.toObject()
 	}
 
