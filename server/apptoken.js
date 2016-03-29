@@ -40,6 +40,11 @@ module.exports = ( Bureau ) => {
 				return
 			}
 
+			if ( !_.isArray( owners ) || owners.filter( _.isString ).length < 1 ) {
+				callback( 'App must have at least 1 owner' )
+				return
+			}
+
 			Bureau.assassin.getAssassinsFromIds( owners, ( err, assassins ) => {
 				if ( err ) {
 					callback( err )
