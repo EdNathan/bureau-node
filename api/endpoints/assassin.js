@@ -1,10 +1,14 @@
-var _ = require( 'lodash' )
-var utils = require( '../../utils' )
+'use strict'
+
+const _ = require( 'lodash' )
+const utils = require( '../../utils' )
 
 module.exports = function( Bureau ) {
 
-	var projectAssassin = utils.projectAssassin
-	var assassinProjection = utils.assassinProjection
+	const projectAssassin = utils.projectAssassin
+	const assassinProjection = utils.assassinProjection
+
+	const apiutils = require( '../apiutils' )( Bureau )
 
 	return {
 		/**
@@ -21,27 +25,13 @@ module.exports = function( Bureau ) {
 
 			var uid = params.uid
 
-			Bureau.assassin.getGamegroup( data.USER_ID, function( err, ggid ) {
+			apiutils.sameGamegroup( data.USER_ID, uid, ( err, assassin ) => {
+				if ( err ) {
+					callback( err )
+					return
+				}
 
-				Bureau.assassin.getAssassin( uid, function( err, assassin ) {
-
-					if ( err ) {
-						callback( err )
-						return
-					}
-
-					if ( _.isEmpty( assassin ) ) {
-						callback( 'No assassin exists with that id' )
-						return
-					}
-
-					if ( ggid !== assassin.gamegroup ) {
-						callback( 'Assassin is in a different gamegroup to you' )
-						return
-					}
-
-					callback( null, projectAssassin( assassin ) )
-				} )
+				callback( null, projectAssassin( assassin ) )
 			} )
 		},
 
