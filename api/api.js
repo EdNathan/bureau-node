@@ -3,11 +3,22 @@
 const Bureau = module.parent.exports.Bureau
 const app = module.parent.exports.app
 const _ = require( 'lodash' )
+const apiLog = require( './log' )
 
 let logApiRequest = ( req, res, next ) => {
-	console.log( 'host:', req.get( 'host' ) )
-	console.log( 'origin:', req.get( 'Origin' ) )
-	console.log( req.body )
+
+	if ( req.body.APP_TOKEN !== process.env.BUREAU_APP_TOKEN ) {
+
+		apiLog( [
+			req.body.APP_TOKEN,
+			req.body.USER_ID || 'NO_AUTH',
+			req.route.path,
+			req.path,
+			req.headers.origin,
+			req.headers[ 'user-agent' ]
+		].join( '\t' ) )
+
+	}
 	next()
 }
 
@@ -122,7 +133,7 @@ let mapApiRoutes = ( routeHandler, route ) => {
 
 	if ( _.isFunction( routeHandler ) ) {
 
-		app.post( '/api/' + route, handleApiRequest.bind( this, routeHandler ) )
+		app.post( '/api/' + route, logApiRequest, handleApiRequest.bind( this, routeHandler ) )
 
 	} else if ( _.isPlainObject( routeHandler ) ) {
 
