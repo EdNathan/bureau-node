@@ -491,24 +491,25 @@ let Bureau = {
 			} )
 		},
 
-		getToken: ( uid, callback ) => {
+		getToken: ( uid, appToken, callback ) => {
+
 			Bureau.assassin.getAssassin( uid, ( err, assassin ) => {
 				if ( err ) {
 					callback( err, null )
 				} else {
-					Bureau.auth.getJWT( uid, ( err, jwt ) => {
+					Bureau.auth.getJWT( uid, appToken, ( err, jwt ) => {
 						callback( null, jwt )
 					} )
 				}
 			} )
 		},
 
-		checkToken: ( uid, token, callback ) => {
+		checkToken: ( uid, appToken, token, callback ) => {
 			Bureau.assassin.getAssassin( uid, ( err, assassin ) => {
 				if ( err ) {
 					callback( err, null )
 				} else {
-					Bureau.auth.checkJWT( uid, token, ( err, payload ) => {
+					Bureau.auth.checkJWT( uid, appToken, token, ( err, payload ) => {
 						callback( err, payload )
 					} )
 				}

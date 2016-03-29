@@ -44,9 +44,10 @@ let checkAppToken = ( req, res, next ) => {
 
 let checkUserToken = ( req, res, next ) => {
 	let uid = req.body.USER_ID,
-		suppliedToken = req.body.USER_TOKEN
+		suppliedToken = req.body.USER_TOKEN,
+		appToken = req.body.APP_TOKEN
 
-	Bureau.assassin.checkToken( uid, suppliedToken, ( err, payload ) => {
+	Bureau.assassin.checkToken( uid, appToken, suppliedToken, ( err, payload ) => {
 		if ( !err ) {
 			next()
 		} else {

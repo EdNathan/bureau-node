@@ -171,7 +171,7 @@ module.exports = ( Bureau ) => ( {
 						req.session.gamegroup = assassin.gamegroup
 						req.session.assassin = assassin
 
-						Bureau.assassin.getToken( uid, ( err, token ) => {
+						Bureau.assassin.getToken( uid, process.env.BUREAU_APP_TOKEN, ( err, token ) => {
 							req.session.token = token
 							res.redirect( '/home' )
 						} )

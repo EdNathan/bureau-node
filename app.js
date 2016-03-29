@@ -1521,7 +1521,7 @@ var checkAuth = function( req, res, next ) {
 					req.session.uid = assassin._id + '' //Force it to be a string so we don't get crashes...
 					req.session.gamegroup = assassin.gamegroup
 					req.session.assassin = assassin
-					Bureau.assassin.getToken( cUID, ( err, token ) => {
+					Bureau.assassin.getToken( cUID, process.env.BUREAU_APP_TOKEN, ( err, token ) => {
 						req.session.token = token
 						next()
 					} )

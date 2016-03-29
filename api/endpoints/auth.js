@@ -38,7 +38,7 @@ module.exports = ( Bureau ) => ( {
 
 			let uid = assassin._id + ''
 
-			Bureau.assassin.getToken( uid, ( err, token ) => {
+			Bureau.assassin.getToken( uid, data.APP_TOKEN, ( err, token ) => {
 				if ( err ) {
 					callback( err )
 					return
