@@ -92,7 +92,7 @@ module.exports = ( Bureau ) => {
 
 		getReport: ( reportId, callback ) => Report.findById( reportId, ( err, report ) => {
 
-			if ( err ) {
+			if ( err || !report ) {
 				callback( 'No report exists with that ID' )
 				return
 			}
