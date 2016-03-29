@@ -3,6 +3,7 @@ module.exports = [
 	'auth',
 	'apptoken',
 	'report',
+	'game',
 	'bounty',
 	'notifications',
 	'killmethods',

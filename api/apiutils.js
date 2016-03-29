@@ -2,7 +2,7 @@
 
 module.exports = ( Bureau ) => ( {
 
-	onlyGuild: ( uid, callback ) => {
+	onlyGuild: ( uid, callback, next ) => {
 		Bureau.assassin.isGuild( uid, ( err, isGuild ) => {
 
 			if ( err ) {
@@ -15,7 +15,7 @@ module.exports = ( Bureau ) => ( {
 				return
 			}
 
-			callback( null, true )
+			next( null, true )
 		} )
 	},
 
