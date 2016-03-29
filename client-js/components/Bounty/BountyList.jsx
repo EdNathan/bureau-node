@@ -9,7 +9,7 @@ class BountyList extends React.Component {
 
 		this.refresh()
 
-		makeColourItem(React.findDOMNode(this))
+		makeColourItem(ReactDOM.findDOMNode(this))
 	}
 
 	refresh() {

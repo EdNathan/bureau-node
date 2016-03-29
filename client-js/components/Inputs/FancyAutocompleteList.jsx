@@ -70,7 +70,7 @@ class BureauFancyAutocompleteList extends React.Component {
 		})
 		this.refs.input.value = ''
 		if ( e ) {
-			React.findDOMNode(this.refs.input.refs.input).focus()
+			ReactDOM.findDOMNode(this.refs.input.refs.input).focus()
 		}
 	}
 

@@ -52,7 +52,7 @@ class BureauFancyTextInput extends React.Component {
 
 		var bindAutogrow = (e) => {
 			if(this.autogrown) return
-			$( React.findDOMNode( this.refs.input ) ).autogrow()
+			$( ReactDOM.findDOMNode( this.refs.input ) ).autogrow()
 			this.autogrown = true
 		}
 
