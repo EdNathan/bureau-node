@@ -115,6 +115,7 @@ module.exports = ( Bureau ) => {
 		 * @apiGroup assassin
 		 *
 		 * @apiParam {String} name A search string on assassin names
+		 * @apiParam {Boolean} strict If true search for exact case insensitive match
 		 *
 		 * @apiSuccess {Object[]} assassins Assassin data
 		 *
@@ -129,7 +130,12 @@ module.exports = ( Bureau ) => {
 				return
 			}
 
-			query = utils.makeFuzzyRegex( query )
+			if ( data.hasOwnProperty( 'strict' ) && !_.isBoolean( data.strict ) ) {
+				callback( 'strict must be a boolean' )
+				return
+			}
+
+			query = data.strict ? query : utils.makeFuzzyRegex( query )
 
 			let queryRegex = new RegExp( query, 'i' )
 
