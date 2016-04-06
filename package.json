@@ -47,7 +47,7 @@
     "react-dom": "^0.14.8",
     "serve-static": "^1.10.2",
     "swig": "^1.4.2",
-    "validator": "^5.1.0"
+    "validator": "^5.2.0"
   },
   "author": "Ben Tattersley <ubershinysheep@gmail.com>",
   "license": "UNLICENSED",
