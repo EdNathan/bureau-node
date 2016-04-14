@@ -491,7 +491,7 @@ var authPages = {
 
 			res.fromPost = true
 				//Let's validate some shiii
-			if ( !text || text.length < 11 ) {
+			if ( !text || text.trim().split( /[, ]+/g ).filter( ( s ) => !!s ).length < 10 ) {
 				errs.push( 'Please specify a longer kill report!' )
 			}
 			if ( !place || place.length < 6 ) {

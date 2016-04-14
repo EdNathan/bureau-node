@@ -41,8 +41,8 @@ module.exports = ( Bureau ) => {
 			required: true,
 			type: String,
 			validate: {
-				validator: ( val ) => val && val.trim().length >= 11,
-				message: 'A report must have text at minimum 11 characters long'
+				validator: ( val ) => val && val.trim().split( /[, ]+/g ).filter( ( s ) => !!s ).length >= 10,
+				message: 'A report must contain at least 10 words'
 			}
 		},
 		place: {
