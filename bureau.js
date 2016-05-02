@@ -722,7 +722,7 @@ let Bureau = {
 					let s = {
 						kills: k,
 						deaths: d,
-						ratio: isNaN( k / d ) ? 0 : k / d
+						ratio: isNaN( k / d ) ? 0 : ( k / d ).toFixed( 2 )
 					}
 					callback( err, s )
 				} )
