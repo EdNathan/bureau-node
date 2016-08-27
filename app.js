@@ -1611,6 +1611,8 @@ var checkToken = function( req, res, next ) {
 	} else if ( !formtoken ) {
 		res.send( 'Error! No authentication. Nice hax bro.' )
 	} else if ( seshtoken !== formtoken ) {
+		console.log( req.body )
+		console.log( req.session )
 		res.send( 'Error! Invalid authentication.' )
 	} else {
 		next()
