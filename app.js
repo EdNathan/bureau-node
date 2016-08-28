@@ -1611,9 +1611,17 @@ var checkToken = function( req, res, next ) {
 	} else if ( !formtoken ) {
 		res.send( 'Error! No authentication. Nice hax bro.' )
 	} else if ( seshtoken !== formtoken ) {
-		console.log( req.body )
-		console.log( req.session )
-		res.send( 'Error! Invalid authentication.' )
+
+		Bureau.assassin.checkToken( req.session.uid, process.env.BUREAU_APP_TOKEN, formtoken, ( err, payload ) => {
+			if ( err ) {
+				console.log( req.body )
+				console.log( req.session )
+				res.send( 'Error! Invalid authentication.' )
+			} else {
+				next()
+			}
+		} )
+
 	} else {
 		next()
 	}
