@@ -11,6 +11,7 @@ var Bureau = require( './bureau' ),
 	moment = require( 'moment' ),
 	_ = require( 'lodash' )
 
+console.log( `node ${process.version}` )
 
 var app = express()
 var READY = false

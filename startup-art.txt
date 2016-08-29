@@ -8,4 +8,4 @@
 	88888888P"   `"YbbdP'Y8 88          `"Ybbd8"' `"8bbdP"Y8  `"YbbdP'Y8
 
 			written with love, stress and javascript
-			© Ben Tattersley 2016
+			© Ben Tattersley 2014-2016
