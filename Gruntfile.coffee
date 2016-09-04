@@ -58,16 +58,24 @@ module.exports = (grunt) ->
 			development:
 				options:
 					paths: ['less']
-					cleancss: false
+					sourceMap: true
+					sourceMapBasepath: 'less/'
+					sourceMapRootpath: '/devstatic/less/'
 				files:
 					'static/css/bureau.css': 'less/main.less'
+					'static/css/bureau-login.css': 'less/login.less'
+					'static/css/bureau-landingpage.css': 'less/landingpage.less'
 
 			build:
 				options:
 					paths: ['less']
-					cleancss: true
+					plugins: [
+						new (require('less-plugin-clean-css'))()
+					]
 				files:
 					'build/static/css/bureau.css': 'less/main.less'
+					'build/static/css/bureau-login.css': 'less/login.less'
+					'build/static/css/bureau-landingpage.css': 'less/landingpage.less'
 
 		cssmin:
 			build:

@@ -1,276 +1,342 @@
-/* @override 
-	http://www.dur.ac.uk/b.t.tattersley/bureau/css/bureau-login.css
-	http://localhost:8888/bureau/css/bureau-login.css */
-	
-html, body {
-	width: 100%;
-	height: 100%;
+@import url('//fonts.googleapis.com/css?family=Lato:100,300,400,700');
+.scroller {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
-
-::selection {
-	background: transparent;
+.clearfix {
+  *zoom: 1;
 }
-
+.clearfix::before,
+.clearfix::after {
+  content: " ";
+  /* 1 */
+  display: table;
+  /* 2 */
+}
+.clearfix::after {
+  clear: both;
+}
+@font-face {
+  /* We use a custom icon font made with icomoon.io/app/ that means the icons look crisp on displays of any resolution. Gotta be forward thinking! */
+  font-family: 'BureauToolbar';
+  src: url('../fonts/BureauToolbar.eot');
+  src: url('../fonts/BureauToolbar.eot?#iefix') format('embedded-opentype'), url('../fonts/BureauToolbar.woff') format('woff'), url('../fonts/BureauToolbar.ttf') format('truetype'), url('../fonts/BureauToolbar.svg#BureauToolbar') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+*,
+body,
+html {
+  padding: 0;
+  margin: 0;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: default;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -ms-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+pre {
+  -ms-user-select: text;
+  -moz-user-select: text;
+  -webkit-user-select: text;
+  user-select: text;
+}
 body {
-	width: 100%;
-	height: 100%;
-	display: table;
-	vertical-align: middle;	
-	padding: 0 !important;
+  font-family: 'Lato', Calibri, Arial, sans-serif;
+  text-align: justify;
+  color: #888888;
+  background-color: #d0d0d0;
 }
-
-.header {
-	background: white;
-	width: 100%;
-	height:80px;
-	position: absolute;
-	top:0;
-	left: 0;
-	border-bottom: 2px solid #b82727;
-	display: none;
+html {
+  background-color: transparent;
 }
-
-#login-register-box-wrapper {
-	display: table-cell;
-	text-align: center;
-	vertical-align: middle;
-	width: 100%;
+body,
+html {
+  height: 100%;
 }
-
-.login {
-	margin: 0 auto 0 auto;
-	max-width: 400px;
-	padding-top: 30px;
-	border: 2px solid white !important; /* Override the media query in bureau.css for small screen sizes */
-
+html,
+button,
+input,
+input[type="text"],
+input[type="submit"],
+select,
+textarea {
+  font-family: 'Lato', Calibri, Arial, sans-serif;
+  font-weight: normal;
 }
-
-#login-box {
-	padding-bottom: 5px;
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  padding: 0;
+  margin: 0;
 }
-
-#register-box {
-	margin-top: -248px;
+.mode-login #landing,
+.mode-register #landing {
+  height: 420px;
+  opacity: 1;
+  -webkit-transform: translateY(0);
+  -moz-transform: translateY(0);
+  -o-transform: translateY(0);
+  -ms-transform: translateY(0);
+  transform: translateY(0);
+  -webkit-transition: all 0.5s ease 0s;
+  -moz-transition: all 0.5s ease 0s;
+  -o-transition: all 0.5s ease 0s;
+  transition: all 0.5s ease 0s;
 }
-.login input {
-	display: block;
-	width: 100%;
-	height: 40px;
-	border: none;
-	outline: none;
-	text-indent: 10px;
-	color: #666666;
-	-webkit-border-radius: 0;
-	-moz-border-radius: 0;
-	border-radius: 0;
+.mode-login #pattern,
+.mode-register #pattern,
+.mode-login #pattern.showing,
+.mode-register #pattern.showing {
+  opacity: 0;
 }
-
-.login .input-container {
-	height: 40px;
-	width: 100%;
-	background: white;
-	font-size: 10px;
-	color: #666666;
-	text-align: left;
-	text-indent: 10px;
-	line-height: 40px;
-	position: relative;
-	
+.mode-login #login-signup,
+.mode-register #login-signup {
+  opacity: 0;
 }
-
-.login .input-container label {
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 65px;
-	text-indent: 0;
-	line-height: 13px;
-	padding-top: 9px;
+.mode-login #login,
+.mode-register #login {
+  -webkit-transform: translateY(0%);
+  -moz-transform: translateY(0%);
+  -o-transform: translateY(0%);
+  -ms-transform: translateY(0%);
+  transform: translateY(0%);
 }
-
-.login .input-container input[type="checkbox"] {
-	width: 60px;
-	height: 30px;
-	border-radius: 15px;
-	margin: 5px 3px 0 0;
+@media (max-width: 860px) {
+  .mode-login h1,
+  .mode-register h1 {
+    display: none;
+  }
+  .mode-login #landing,
+  .mode-register #landing {
+    height: 0px;
+    overflow: hidden;
+  }
+  .mode-login #login,
+  .mode-register #login {
+    top: 0px;
+  }
 }
-
-.login .half {
-	width: 50%;
-	float: left;
+.mode-form {
+  overflow: initial;
 }
-
-.login .quarter {
-	width: 25%;
-	float: left;
+.mode-form #landing {
+  /* 		display: block;
+		opacity: 0;
+		height: 0px;
+		overflow: hidden;
+		.transform(translateY(-100%)); */
 }
-
-.login .threequarter {
-	width: 75%;
-	float: left;
+.mode-form #login {
+  top: 0;
+  bottom: 100%;
 }
-
-/* @group Submit & Remember Me */
-	#submit-wrapper {
-		width: 100%;
-		height: 40px;
-		background: white;
-	}
-		
-	.login input[type="submit"] {
-		/* margin-top: 10px; */
-		background: transparent;
-		color: #888888;
-		text-indent: 40%;
-		font-weight: 700;
-		
-		-webkit-transition: all 0.3s ease;
-		transition: all 0.3s ease;
-		
-		-webkit-appearance: none;
-		-moz-appearance: none;
-		appearance: none;
-		
-		cursor: pointer;
-		
-		width: 70% !important;
-		float: left;
-		margin-right: 0;
-		border: none;
-	}
-	
-	.login input[type="submit"]:hover {
-		color: white;
-		background: rgba(0,0,0,0.3);
-		color: white;
-		
-		box-shadow: inset 0px 1px 5px rgba(0,0,0,0.2);
-	}
-		
-	#rememberme-wrapper {
-		width: 30%;
-		float: right;
-		height: 40px;
-		position: relative;
-	}
-	
-	#rememberme-wrapper input[type="checkbox"] {
-		margin: 5px 5px 0 0;
-		float: right;
-
-	}
-	
-	#rememberme-wrapper label {
-		color: #777;
-		font-size: 11px;
-		float: left;
-		position: absolute;
-		left: 0;
-		top: 0;
-		bottom: 0;
-		right: 70px;
-		line-height: 13px;
-		padding-top: 1px;
-		text-transform: uppercase;
-		text-align: right;
-		
-		-webkit-transition: all 0.3s ease;
-		transition: all 0.3s ease;
-	}
-	
-	#submit-button:hover+#rememberme-wrapper > label {
-		color: white;
-	}
-	
-	#submit-button:hover+#rememberme-wrapper > #rememberme-checkbox:checked + label {
-		color: #777;
-	}
-	
-/* @end */
-
-.login select {
-	border: none;
-	outline: none;
-	width:100%;
-	height:40px;
-	line-height: 40px;
-	background: white;
-	
-	-moz-appearance: none;
-	-webkit-appearance: none;
-	appearance: none;
-	
-	-webkit-border-radius: 0;
-	-moz-border-radius: 0;
-	border-radius: 0;
-	
-	text-indent: 10px;
-	color: #666666;
+.mode-form #whitelabels {
+  overflow: hidden;
 }
-
-#consent-label {
-	height: 60px;
-	padding: 10px 10px 0px 10px;
-	background: white;
-	display: block;
-	clear: both;
-	font-size: 14px;
+.mode-form #whitelabels .whitelabel {
+  -webkit-transform: translateX(-120%);
+  -moz-transform: translateX(-120%);
+  -o-transform: translateX(-120%);
+  -ms-transform: translateX(-120%);
+  transform: translateX(-120%);
 }
-
-#consent-box {
-	height: 39px;
-	border-bottom: 1px solid #888888;
-	text-align: center;
+.mode-form #whitelabels .whitelabel:nth-child(2n) {
+  -webkit-transform: translateX(120%);
+  -moz-transform: translateX(120%);
+  -o-transform: translateX(120%);
+  -ms-transform: translateX(120%);
+  transform: translateX(120%);
 }
-
-#register-link {
-	text-decoration: none;
-	color:white;
-	font-size: 10px;
-	font-weight: 400;
+.mode-form #login-form {
+  height: initial;
+  overflow: visible;
+  opacity: 1;
 }
-
-#register-link:hover {
-	color: white;
+#login {
+  position: absolute;
+  top: 415px;
+  left: 0;
+  width: 100%;
+  bottom: 0;
+  -webkit-transform: translateY(100%);
+  -moz-transform: translateY(100%);
+  -o-transform: translateY(100%);
+  -ms-transform: translateY(100%);
+  transform: translateY(100%);
+  -webkit-transition: all 0.5s ease 0s;
+  -moz-transition: all 0.5s ease 0s;
+  -o-transition: all 0.5s ease 0s;
+  transition: all 0.5s ease 0s;
 }
-
-#register:target {
-	height:310px;
+#login-form {
+  display: block;
+  background: #d0d0d0;
+  height: 0px;
+  overflow: hidden;
+  opacity: 0;
+  position: relative;
+  -webkit-transition: opacity 0.2s ease 0s;
+  -moz-transition: opacity 0.2s ease 0s;
+  -o-transition: opacity 0.2s ease 0s;
+  transition: opacity 0.2s ease 0s;
 }
-
-#register {
-	overflow: hidden;
-	height: 0px;
-	-webkit-transition: height 1s ease;
-	transition: height 1s ease;
+#login-form .header {
+  padding: 20px;
 }
-
-.error-output {
-	margin: -10px 0 20px;
-	background: #ba2025;
-	color: white;
-	line-height: 22px;
-	font-size: 16px;
-	box-shadow: 0 0 4px rgba(0,0,0,0.5);
+#login-form .whitelabel-header {
+  background: white;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+  color: #444;
+  font-weight: 300;
+  font-size: 50px;
+  height: 120px;
+  padding: 10px;
+  text-align: center;
 }
-
-.success-output {
-	margin: -10px 0 20px;
-	background: #2ecc71;
-	color: white;
-	line-height: 22px;
-	font-size: 16px;
-	box-shadow: 0 0 4px rgba(255,255,255,0.7);
+#login-form .whitelabel-logo {
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+  background-repeat: no-repeat;
+  background-position: center;
+  float: left;
+  margin-right: 10px;
 }
-
-#forgot-password-link {
-	color: #888;
-	text-decoration: none;
-	font-size: 10px;
-	margin-top: 10px;
-	display: block;
+#login-form .whitelabel-name {
+  display: inline-block;
+  line-height: 100px;
 }
-
-body.dark #forgot-password-link {
-	color: #bbb;
+#whitelabels {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  display: -webkit-box;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;
+  /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox;
+  /* TWEENER - IE 10 */
+  display: -webkit-flex;
+  /* NEW - Chrome */
+  display: flex;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
 }
+#whitelabels .whitelabel {
+  margin: 10px;
+  padding: 15px;
+  width: 50%;
+  max-height: 500px;
+  min-width: 350px;
+  background: white;
+  cursor: pointer;
+  text-decoration: none;
+  border: 1px solid white;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+  -webkit-transition: all 0.5s ease 0s;
+  -moz-transition: all 0.5s ease 0s;
+  -o-transition: all 0.5s ease 0s;
+  transition: all 0.5s ease 0s;
+  display: -webkit-box;
+  /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box;
+  /* OLD - Firefox 19- (buggy but mostly works) */
+  display: -ms-flexbox;
+  /* TWEENER - IE 10 */
+  display: -webkit-flex;
+  /* NEW - Chrome */
+  display: flex;
+  /* NEW, Spec - Opera 12.1, Firefox 20+ */
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  box-orient: vertical;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  box-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+}
+#whitelabels .whitelabel:hover {
+  border-color: #666;
+}
+#whitelabels .whitelabel * {
+  cursor: pointer;
+}
+#whitelabels .whitelabel .logo {
+  width: 60%;
+  min-width: 300px;
+  min-height: 200px;
+  margin: 0 auto;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+#whitelabels .whitelabel .whitelabel-name {
+  color: #333;
+  text-align: center;
+  font-size: 45px;
+  font-weight: 300;
+  margin: 1em 0 -0.5em;
+}
+@media (max-width: 860px) {
+  #whitelabels .whitelabel {
+    -webkit-box-flex: 1;
+    /* OLD - iOS 6-, Safari 3.1-6 */
+    -moz-box-flex: 1;
+    /* OLD - Firefox 19- */
+    width: auto;
+    /* For old syntax, otherwise collapses. */
+    -webkit-flex: 1 1 auto;
+    /* Chrome */
+    -ms-flex: 1 1 auto;
+    /* IE 10 */
+    flex: 1 1 auto;
+    /* NEW, Spec - Opera 12.1, Firefox 20+ */
+    width: 100%;
+    max-height: unset;
+    min-width: unset;
+    margin-left: 0;
+    margin-right: 0;
+    position: relative;
+  }
+  #whitelabels .whitelabel .logo {
+    min-height: unset;
+    min-width: unset;
+    position: absolute;
+    width: initial;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+  }
+  #whitelabels .whitelabel .whitelabel-name {
+    font-size: 25px;
+    text-align: right;
+    display: none;
+  }
+}
+@media (max-width: 860px) {
+  #whitelabels {
+    -webkit-box-orient: vertical;
+    -moz-box-orient: vertical;
+    box-orient: vertical;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+/*# sourceMappingURL=bureau-login.css.map */
