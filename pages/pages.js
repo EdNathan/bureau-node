@@ -26,7 +26,7 @@ module.exports = ( Bureau ) => {
 										'whitelabel',
 										'name'
 									] )
-								)
+								).filter( gg => gg.whitelabel )
 							},
 							res.locals ) )
 					} )
