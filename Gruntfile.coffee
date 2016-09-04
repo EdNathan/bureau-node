@@ -25,7 +25,7 @@ module.exports = (grunt) ->
 			build:
 				files: [{
 					expand: true
-					src: ['static/images/**.{jpg,jpeg,gif,png}']
+					src: ['static/images/**/*.{jpg,jpeg,gif,png}']
 					dest: 'build/'
 				}]
 
@@ -33,7 +33,7 @@ module.exports = (grunt) ->
 			build: {
 				files: [{
 					expand: true,
-					src: ['static/images/**.svg']
+					src: ['static/images/**/*.svg']
 					dest: 'build/'
 				}]
 			}
