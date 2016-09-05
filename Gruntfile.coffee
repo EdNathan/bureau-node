@@ -63,7 +63,6 @@ module.exports = (grunt) ->
 					sourceMapRootpath: '/devstatic/less/'
 				files:
 					'static/css/bureau.css': 'less/main.less'
-					'static/css/bureau-login.css': 'less/login.less'
 					'static/css/bureau-landingpage.css': 'less/landingpage.less'
 
 			build:
@@ -74,7 +73,6 @@ module.exports = (grunt) ->
 					]
 				files:
 					'build/static/css/bureau.css': 'less/main.less'
-					'build/static/css/bureau-login.css': 'less/login.less'
 					'build/static/css/bureau-landingpage.css': 'less/landingpage.less'
 
 		cssmin:

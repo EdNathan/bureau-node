@@ -48,7 +48,7 @@ var b = {
 					e.preventDefault()
 					e.stopPropagation()
 
-					b.setMode( 'login' )
+					b.setMode( a.href.split( '/' ).pop() )
 				} )
 			} )
 		},

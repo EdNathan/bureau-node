@@ -3,8 +3,10 @@
 		{% for gg in gamegroups %}
 			{% if gg.whitelabel %}
 				<a class="whitelabel" href="/login/{{gg.ggid|lower}}">
-					<div class="logo" style="background-image:url('/images/whitelabels/{{gg.ggid|lower}}/logo.svg')"></div>
-					<div class="whitelabel-name">{{gg.name}}</div>
+					<div class="whitelabel-box">
+						<div class="logo" style="background-image:url('/images/whitelabels/{{gg.ggid|lower}}/logo.svg')"></div>
+						<div class="whitelabel-name">{{gg.name}}</div>
+					</div>
 				</a>
 			{% endif %}
 		{% endfor %}
@@ -14,7 +16,6 @@
 <div id="login-form">
 	<div class="header">
 		<div class="whitelabel-header">
-
 			<div class="whitelabel-name">
 				<div class="whitelabel-logo" style="background-image:url('/images/whitelabels/{{gamegroup.ggid|lower}}/logo.svg')"></div>
 				<span>{{gamegroup.name}}</span>
