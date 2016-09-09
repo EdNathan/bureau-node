@@ -93,6 +93,7 @@ module.exports = ( Bureau ) => {
 		},
 		post: {
 			'login/:gamegroup': ( req, res ) => UnAuthedPages.post.login( req, res ),
+			'register/:gamegroup': ( req, res ) => UnAuthedPages.post.login( req, res ),
 
 			login: function( req, res ) {
 				var email = req.body.email.toLowerCase().replace( '@dur.ac.uk', '@durham.ac.uk' ),
@@ -104,7 +105,7 @@ module.exports = ( Bureau ) => {
 					liverin = req.body.liverin == 'yes',
 					course = req.body.course,
 					college = req.body.college,
-					gamegroup = req.body.gamegroup,
+					gamegroup = req.params.gamegroup.toUpperCase(),
 					consent = req.body.consent,
 					errors = []
 
@@ -172,12 +173,7 @@ module.exports = ( Bureau ) => {
 							}
 							Bureau.register.registerNewAssassin( newAssassin, function( err,
 								assassin ) {
-								Bureau.gamegroup.getGamegroups( function( err, gamegroups ) {
-									res.render( 'login', {
-										success: true,
-										gamegroups: gamegroups
-									} )
-								} )
+								UnAuthedPages.get.login[ '/' ]( req, res )
 							} )
 						} else {
 							Bureau.gamegroup.getGamegroups( function( err, gamegroups ) {
