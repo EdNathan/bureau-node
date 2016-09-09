@@ -100,6 +100,10 @@
 		padding: 20px;
 		max-width: 1240px;
 		margin: auto;
+
+		@media(max-width: 860px) {
+			padding: 10px;
+		}
 	}
 
 	.whitelabel-header {
@@ -112,6 +116,20 @@
 		padding: 10px 20px;
 		text-align: center;
 		display: inline-block;
+
+		@media(max-width: 860px) {
+
+			font-size: 30px;
+			height: 90px;
+
+			.whitelabel-logo {
+				width: 70px;
+				height: 70px;
+			}
+			.whitelabel-name {
+				line-height: 70px;
+			}
+		}
 	}
 
 	.whitelabel-logo {
@@ -149,6 +167,12 @@
 		background: white;
 		padding: 20px;
 		box-shadow: 0 2px 3px fade(black, 20%);
+
+		@media(max-width: 860px) {
+			padding: 20px 10px;
+			margin-top: 0;
+		}
+
 
 		input, select {
 			display: block;
