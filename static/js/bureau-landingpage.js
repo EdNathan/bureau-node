@@ -55,6 +55,8 @@ var b = {
 
 		login: function() {
 
+			document.getElementById( 'login' ).style.height = ''
+
 			qs( '.whitelabel' ).forEach( function( el ) {
 				var gg = el.href.split( '/' ).pop()
 				el.href = '/' + b.mode + '/' + gg
@@ -87,9 +89,16 @@ var b = {
 		loginForm: function() {
 			var gamegroup = b.gamegroups[ b.gg ]
 
+			// Animate #login height to zero
+			var height = document.getElementById( 'login' ).getBoundingClientRect().height
+			document.getElementById( 'login' ).style.height = height + 'px'
+			console.log( height )
+			setTimeout( function() {
+				document.getElementById( 'login' ).style.height = '0px'
+			}, 100 )
+
 			qs( '.whitelabel-name span' )[ 0 ].innerHTML = gamegroup.name
 			qs( '.whitelabel-logo' )[ 0 ].style.backgroundImage = 'url(/images/whitelabels/' + b.gg + '/logo.svg)'
-
 		}
 	},
 
