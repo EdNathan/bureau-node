@@ -92,13 +92,25 @@ var b = {
 			// Animate #login height to zero
 			var height = document.getElementById( 'login' ).getBoundingClientRect().height
 			document.getElementById( 'login' ).style.height = height + 'px'
-			console.log( height )
+
 			setTimeout( function() {
 				document.getElementById( 'login' ).style.height = '0px'
 			}, 100 )
 
 			qs( '.whitelabel-name span' )[ 0 ].innerHTML = gamegroup.name
 			qs( '.whitelabel-logo' )[ 0 ].style.backgroundImage = 'url(/images/whitelabels/' + b.gg + '/logo.svg)'
+
+			document.querySelector( 'form input[type=submit]' ).setAttribute( 'value', b.mode )
+
+			var form = document.querySelector( '#login-form form' )
+			form.className = ''
+			if ( gamegroup.academic ) {
+				form.className += ' academic'
+			}
+
+			if ( b.mode === 'register' ) {
+				form.className += ' register'
+			}
 		}
 	},
 

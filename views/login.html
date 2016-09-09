@@ -1,15 +1,13 @@
 <div id="login">
 	<div id="whitelabels">
-		{% for gg in gamegroups %}
-			{% if gg.whitelabel %}
-				<a class="whitelabel" href="/login/{{gg.ggid|lower}}">
-					<div class="whitelabel-box">
-						<div class="logo" style="background-image:url('/images/whitelabels/{{gg.ggid|lower}}/logo.svg')"></div>
-						<div class="whitelabel-name">{{gg.name}}</div>
-					</div>
-				</a>
-			{% endif %}
-		{% endfor %}
+		{% for gg in gamegroups %} {% if gg.whitelabel %}
+		<a class="whitelabel" href="/login/{{gg.ggid|lower}}">
+			<div class="whitelabel-box">
+				<div class="logo" style="background-image:url('/images/whitelabels/{{gg.ggid|lower}}/logo.svg')"></div>
+				<div class="whitelabel-name">{{gg.name}}</div>
+			</div>
+		</a>
+		{% endif %} {% endfor %}
 	</div>
 </div>
 
@@ -22,4 +20,60 @@
 			</div>
 		</div>
 	</div>
+
+	<form action="" method="POST" class="{% if gamegroup.academic %}academic {% endif %}{{mode}}">
+		<input type="email" name="email" placeholder="email">
+		<input type="password" name="password" placeholder="password">
+
+		<div class="register-fields">
+			<input type="password" name="passwordconfirm" placeholder="password again">
+			<input type="text" name="forename" placeholder="forename">
+			<input type="text" name="surname" placeholder="surname">
+
+			<div class="academic-fields">
+
+				<input type="text" name="address" placeholder="Address & Postcode/Block & Room Number">
+
+				<input type="text" name="course" placeholder="Academic Course" value="">
+				<select name="college" placeholder="College (Durham Only)">
+					<option selected value="">College (Durham Only)</option>
+					<option value="None">None</option>
+					<option value="Castle">Castle</option>
+					<option value="Collingwood">Collingwood</option>
+					<option value="Grey">Grey</option>
+					<option value="Hatfield">Hatfield</option>
+					<option value="John Snow">John Snow</option>
+					<option value="Josephine Butler">Josephine Butler</option>
+					<option value="St Aidans">St Aidans</option>
+					<option value="St Chads">St Chads</option>
+					<option value="St Cuthberts">St Cuthberts</option>
+					<option value="St Hild And St Bede">St Hild &amp; St Bede</option>
+					<option value="St Johns">St Johns</option>
+					<option value="St Marys">St Marys</option>
+					<option value="Stephenson">Stephenson</option>
+					<option value="Trevelyan">Trevelyan</option>
+					<option value="Ustinov">Ustinov</option>
+					<option value="Van Mildert">Van Mildert</option>
+				</select>
+			</div>
+
+			<div class="checkbox-row">
+				<input type="checkbox" name="liverin" id="liverin" value="Yes">
+				<label for="liverin">
+					Living In College
+					<div class="checkbox-placeholder"></div>
+				</label>
+			</div>
+
+			<div class="checkbox-row">
+				<input type="checkbox" name="consent" id="consent" value="yes">
+				<label for="consent" id="consent-label">
+					By checking this box you hereby agree to all rules and regulations as outlined in your game group's ruleset
+					<div class="checkbox-placeholder"></div>
+				</label>
+			</div>
+		</div>
+
+		<input type="submit" name="submit" value="{{mode}}">
+	</form>
 </div>

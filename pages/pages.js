@@ -92,6 +92,8 @@ module.exports = ( Bureau ) => {
 			}
 		},
 		post: {
+			'login/:gamegroup': ( req, res ) => UnAuthedPages.post.login( req, res ),
+
 			login: function( req, res ) {
 				var email = req.body.email.toLowerCase().replace( '@dur.ac.uk', '@durham.ac.uk' ),
 					password = req.body.password,
@@ -103,13 +105,11 @@ module.exports = ( Bureau ) => {
 					course = req.body.course,
 					college = req.body.college,
 					gamegroup = req.body.gamegroup,
-					consent = ( req.body.consent.toLowerCase() === 'i agree' ),
-					rememberme = req.body.rememberme == 'yes',
+					consent = req.body.consent,
 					errors = []
 
 				//Check if registering or logging in
-				if ( !!passwordconfirm || !!forename || !!surname || !!address || !!course ||
-					!!gamegroup || !!college || !!consent ) {
+				if ( !req.body.submit === 'register' ) {
 					//Registering!
 					if ( !consent ) {
 						errors.push( 'You must agree to the disclaimer' )

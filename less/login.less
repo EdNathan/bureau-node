@@ -128,6 +128,137 @@
 		display: inline-block;
 		line-height: 100px;
 	}
+
+	.register-fields, .academic-fields {
+		display: none;
+	}
+
+	.academic .academic-fields {
+		display: block;
+	}
+
+	.register .register-fields {
+		display: block;
+	}
+
+	form {
+		display: block;
+		width: 100%;
+		max-width: 600px;
+		margin: 20px auto;
+		background: white;
+		padding: 20px;
+		box-shadow: 0 2px 3px fade(black, 20%);
+
+		input, select {
+			display: block;
+			width: 100%;
+			border: none;
+			background: white;
+			color: @red;
+			height: 50px;
+			font-size: 20px;
+			padding: 0;
+			margin: 0 auto 20px;
+			.appearance;
+			cursor: pointer;
+			border: 1px solid transparent;
+			border-bottom-color: @red;
+			outline: none;
+			.transition;
+			border-radius: 0;
+
+			&:focus {
+				border-color: @red;
+				padding-left: 20px;
+			}
+
+			&[type=text], &[type=password], &[type=email] {
+				cursor: text;
+			}
+
+			&::-webkit-input-placeholder {
+			   color: @red;
+			   text-transform: capitalize;
+			}
+
+			&[type=submit] {
+				margin-bottom: 0;
+				border-bottom: none;
+				background: @red;
+				color: white;
+				border-width: 0;
+				text-transform: uppercase;
+
+				&:focus {
+					outline: 1px solid @red;
+					outline-offset: 10px;
+					padding-left: 0;
+				}
+			}
+		}
+
+		.checkbox-row {
+			width: 100%;
+			min-height: 50px;
+/* 			line-height: 50px; */
+			border: 1px solid transparent;
+			border-bottom-color: @red;
+			color: @red;
+			font-size: 20px;
+			margin: 0 auto 20px;
+			padding: 12px 0;
+			position: relative;
+
+			input[type=checkbox] {
+				display: none;
+			}
+
+			label {
+				display: block;
+				color: inherit;
+				font-size: inherit;
+				cursor: pointer;
+				padding-right: 70px;
+				position: relative;
+			}
+
+			.checkbox-placeholder {
+				position: absolute;
+				width: 40px;
+				height: 40px;
+				bottom: 0;
+				right: 5px;
+				border: 1px solid @red;
+				.transition;
+
+				&::after {
+					content: "✓";
+					position: absolute;
+					top: 0;
+					left: 0;
+					width: 100%;
+					height: 100%;
+					line-height: 40px;
+					color: white;
+					text-align: center;
+					pointer-events: none;
+					font-size: 30px;
+				}
+			}
+
+			input[type=checkbox]:checked + label .checkbox-placeholder {
+				background: @red;
+			}
+		}
+
+		#consent-label {
+			font-size: 14px;
+			color: #666;
+			line-height: 15px;
+			display: block;
+		}
+	}
 }
 
 #whitelabels {
