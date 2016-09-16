@@ -92,10 +92,48 @@ module.exports = ( Bureau ) => {
 			}
 		},
 		post: {
-			'login/:gamegroup': ( req, res ) => UnAuthedPages.post.login( req, res ),
-			'register/:gamegroup': ( req, res ) => UnAuthedPages.post.login( req, res ),
 
-			login: function( req, res ) {
+			'login/:gamegroup': ( req, res ) => {
+				const ggid = req.params.gamegroup.toUpperCase()
+				const email = req.body.email.toLowerCase()
+				const password = req.body.password
+
+				let loginErrors = []
+
+				Bureau.register.loginAssassin( email, password, ( err, assassin ) => {
+					if ( err || !assassin ) {
+						loginErrors.push( 'Incorrect email/password combination' )
+						Bureau.gamegroup.getGamegroups( ( err, gamegroups ) => {
+							res.locals.loginErrors = loginErrors
+							UnAuthedPages.get.login[ ':gamegroup' ]( req, res )
+						} )
+					} else {
+
+						const uid = assassin._id + ''
+
+						res.cookie( 'BAC',
+							uid + 'sheepworks' +
+							utils.md5( uid + '~' + assassin.joindate ), {
+								//Set the cookie for 2 weeks
+								expires: new Date( Date.now() + 3600000 * 24 * 14 ),
+								httpOnly: true
+							} )
+
+						req.session.uid = uid
+						req.session.gamegroup = assassin.gamegroup
+						req.session.assassin = assassin
+
+						Bureau.assassin.getToken( uid, process.env.BUREAU_APP_TOKEN, ( err, token ) => {
+							req.session.token = token
+							res.redirect( '/home' )
+						} )
+					}
+				} )
+			},
+
+			'register/:gamegroup': ( req, res ) => UnAuthedPages.post.register( req, res ),
+
+			register: function( req, res ) {
 				var email = req.body.email.toLowerCase().replace( '@dur.ac.uk', '@durham.ac.uk' ),
 					password = req.body.password,
 					passwordconfirm = req.body.passwordconfirm,
@@ -184,36 +222,6 @@ module.exports = ( Bureau ) => {
 							} )
 						}
 
-					} )
-				} else if ( !!email || !!password ) {
-					Bureau.register.loginAssassin( email, password, function( err, assassin ) {
-						if ( !assassin ) {
-							errors.push( 'Incorrect email/password combination' )
-							Bureau.gamegroup.getGamegroups( function( err, gamegroups ) {
-								res.render( 'login', {
-									loginErrors: errors,
-									gamegroups: gamegroups
-								} )
-							} )
-
-						} else {
-							var uid = assassin._id + ''
-							if ( true ) {
-								res.cookie( 'BAC', uid + 'sheepworks' + utils.md5( uid + '~' + assassin.joindate ), {
-									//Set the cookie for 2 weeks
-									expires: new Date( Date.now() + 3600000 * 24 * 14 ),
-									httpOnly: true
-								} )
-							}
-							req.session.uid = uid
-							req.session.gamegroup = assassin.gamegroup
-							req.session.assassin = assassin
-
-							Bureau.assassin.getToken( uid, process.env.BUREAU_APP_TOKEN, ( err, token ) => {
-								req.session.token = token
-								res.redirect( '/home' )
-							} )
-						}
 					} )
 				}
 			}

@@ -21,6 +21,16 @@
 		</div>
 	</div>
 
+	{% if loginErrors.length %}
+	<div class="login-errors">
+		{% for err in loginErrors %}
+			<div class="login-error">
+				{{err}}
+			</div>
+		{% endfor %}
+	</div>
+	{% endif %}
+
 	<form action="" method="POST" class="{% if gamegroup.academic %}academic {% endif %}{{mode}}">
 		<input type="email" name="email" placeholder="email">
 		<input type="password" name="password" placeholder="password">
