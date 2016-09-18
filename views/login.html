@@ -27,24 +27,33 @@
 			<div class="login-error">
 				{{err}}
 			</div>
+			<br>
 		{% endfor %}
 	</div>
 	{% endif %}
 
+	{% if register_success %}
+	<div class="register-success">
+		<div class="login-error">
+			Your registration was successful. You will be unable to log in until you verify your email address
+		</div>
+	</div>
+	{% endif %}
+
 	<form action="" method="POST" class="{% if gamegroup.academic %}academic {% endif %}{{mode}}">
-		<input type="email" name="email" placeholder="email">
+		<input type="email" name="email" placeholder="email" value={{refilled_email}}>
 		<input type="password" name="password" placeholder="password">
 
 		<div class="register-fields">
 			<input type="password" name="passwordconfirm" placeholder="password again">
-			<input type="text" name="forename" placeholder="forename">
-			<input type="text" name="surname" placeholder="surname">
+			<input type="text" name="forename" placeholder="forename" value="{{refilled_forename}}">
+			<input type="text" name="surname" placeholder="surname" value="{{refilled_surname}}">
 
 			<div class="academic-fields">
 
-				<input type="text" name="address" placeholder="Address & Postcode/Block & Room Number">
+				<input type="text" name="address" placeholder="Address & Postcode/Block & Room Number" value={{refilled_address}}>
 
-				<input type="text" name="course" placeholder="Academic Course" value="">
+				<input type="text" name="course" placeholder="Academic Course" value="{{refilled_course}}">
 				<select name="college" placeholder="College (Durham Only)">
 					<option selected value="">College (Durham Only)</option>
 					<option value="None">None</option>
