@@ -71,12 +71,12 @@
  }
 
 .flex(@grow: 1; @shrink: 1; @basis: auto) {
-  -webkit-box-flex: @grow;				/* OLD - iOS 6-, Safari 3.1-6 */
-  -moz-box-flex: @grow;					/* OLD - Firefox 19- */
-  width: @basis;						/* For old syntax, otherwise collapses. */
-  -webkit-flex: @grow @shrink @basis;	/* Chrome */
-  -ms-flex: @grow @shrink @basis;		/* IE 10 */
-  flex: @grow @shrink @basis;			/* NEW, Spec - Opera 12.1, Firefox 20+ */
+	-webkit-box-flex: @grow;				/* OLD - iOS 6-, Safari 3.1-6 */
+	-moz-box-flex: @grow;					/* OLD - Firefox 19- */
+	width: @basis;						/* For old syntax, otherwise collapses. */
+	-webkit-flex: @grow @shrink @basis;	/* Chrome */
+	-ms-flex: @grow @shrink @basis;		/* IE 10 */
+	flex: @grow @shrink @basis;			/* NEW, Spec - Opera 12.1, Firefox 20+ */
 }
 
 .flex-justify(@justify: center) {
@@ -97,6 +97,22 @@
 	flex-direction: column;
 }
 
+.flex-row() {
+	-webkit-box-orient: horizontal;
+	-moz-box-orient: horizontal;
+	box-orient: horizontal;
+
+	-webkit-flex-direction: row;
+	-ms-flex-direction: row;
+	flex-direction: row;
+}
+
+.flex-wrap() {
+	-webkit-flex-wrap: wrap;
+	-moz-flex-wrap: wrap;
+	flex-wrap: wrap;
+}
+
 .column-no-break() {
 	-webkit-column-break-inside: avoid;
 	-moz-column-break-inside: avoid;
@@ -115,8 +131,23 @@
 	column-gap:@gap;
 }
 
-.scroller() {
+.scroller {
 	overflow-y: scroll;
 	overflow-x: hidden;
 	-webkit-overflow-scrolling: touch;
+}
+
+.clearfix {
+
+	*zoom: 1;
+
+	&::before, &::after {
+		content: " "; /* 1 */
+		display: table; /* 2 */
+	}
+
+	&::after {
+		clear: both;
+	}
+
 }

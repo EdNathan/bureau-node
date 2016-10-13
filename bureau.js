@@ -169,9 +169,6 @@ let Bureau = {
 			//Hash the password
 			data.password = utils.hash( data.password )
 
-			//Add an empty array of kills
-			data.kills = []
-
 			//Mark details up to date
 			data.detailsUpdated = true
 			data.detailsLastUpdated = new Date()

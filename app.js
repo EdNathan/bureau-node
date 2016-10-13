@@ -1634,7 +1634,10 @@ app.use( '/env', ( req, res ) => res.send( `Version: ${process.version}` ) )
 
 app.get( '/', function( req, res ) {
 	if ( !req.session.uid || !req.session.gamegroup || !req.session.token ) {
-		res.render( 'landingpage' )
+		res.locals = {
+			mode: 'landing'
+		}
+		pages.get.login[ '/' ]( req, res )
 	} else {
 		res.redirect( '/home' )
 	}

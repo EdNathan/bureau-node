@@ -25,7 +25,7 @@ module.exports = (grunt) ->
 			build:
 				files: [{
 					expand: true
-					src: ['static/images/**.{jpg,jpeg,gif,png}']
+					src: ['static/images/**/*.{jpg,jpeg,gif,png}']
 					dest: 'build/'
 				}]
 
@@ -33,7 +33,7 @@ module.exports = (grunt) ->
 			build: {
 				files: [{
 					expand: true,
-					src: ['static/images/**.svg']
+					src: ['static/images/**/*.svg']
 					dest: 'build/'
 				}]
 			}
@@ -58,16 +58,22 @@ module.exports = (grunt) ->
 			development:
 				options:
 					paths: ['less']
-					cleancss: false
+					sourceMap: true
+					sourceMapBasepath: 'less/'
+					sourceMapRootpath: '/devstatic/less/'
 				files:
 					'static/css/bureau.css': 'less/main.less'
+					'static/css/bureau-landingpage.css': 'less/landingpage.less'
 
 			build:
 				options:
 					paths: ['less']
-					cleancss: true
+					plugins: [
+						new (require('less-plugin-clean-css'))()
+					]
 				files:
 					'build/static/css/bureau.css': 'less/main.less'
+					'build/static/css/bureau-landingpage.css': 'less/landingpage.less'
 
 		cssmin:
 			build:
