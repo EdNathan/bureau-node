@@ -378,7 +378,7 @@ var authPages = {
 			allreports: function( req, res ) {
 				var ggid = res.locals.gamegroup.ggid,
 					start = new Date()
-				Bureau.report.getProcessedReportsByGame( ggid, function( err, games ) {
+				Bureau.report.getProcessedReportsInCurrentGames( ggid, function( err, games ) {
 					res.render( 'allreports', {
 						reportsByGame: games
 					} )

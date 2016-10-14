@@ -112,16 +112,20 @@ module.exports = ( Bureau ) => {
 			} )
 		},
 
-		getProcessedReportsByGame: ( ggid, callback ) => {
+		getProcessedReportsInCurrentGames: ( ggid, callback ) => {
 
-			Bureau.game.getGamesInGamegroupAsArray( ggid, ( err, games ) => {
+			Bureau.game.getCurrentGames( ggid, ( err, games ) => {
+
 				if ( err ) {
 					callback( err, [] )
 					return
 				}
+
+				const gameids = Object.keys( games )
+
 				_Report.getReports( {
 					gameid: {
-						$in: games.map( ( g ) => g.gameid )
+						$in: gameids
 					},
 					state: {
 						$ne: REPORT_STATES.waiting
@@ -138,10 +142,11 @@ module.exports = ( Bureau ) => {
 						}
 
 
-					games.forEach( function( g, i ) {
-						g.reports = []
-						idMap[ g.gameid ] = i
+					gameids.forEach( function( gid, i ) {
+						games[ gid ].reports = []
+						idMap[ gid ] = i
 					} )
+
 					reports.forEach( function( r ) {
 						_Report.makeFullReport( r, function( err, report ) {
 							var game = games[ idMap[ report.gameid ] ]
@@ -151,6 +156,7 @@ module.exports = ( Bureau ) => {
 							reportLoaded()
 						} )
 					} )
+
 					if ( numReports < 1 ) {
 						callback( null, games )
 					}
