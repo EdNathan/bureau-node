@@ -124,6 +124,7 @@ module.exports = (grunt) ->
 
 	# Default task(s)
 	grunt.registerTask 'default', ['watch:less', 'watch:js']
+	grunt.registerTask 'dev', ['less:development', 'concat:js']
 	grunt.registerTask 'build', [
 			'clean:build',
 			'concat:js',
