@@ -41,7 +41,7 @@ module.exports = ( Bureau ) => {
 			required: true,
 			type: String,
 			validate: {
-				validator: ( val ) => val && val.trim().split( /[, ]+/g ).filter( ( s ) => !!s ).length >= 10,
+				validator: ( val ) => val && val.trim().split( /[, ]+/g ).filter( s => s ).length >= 10,
 				message: 'A report must contain at least 10 words'
 			}
 		},
@@ -80,11 +80,7 @@ module.exports = ( Bureau ) => {
 
 	let Report = mongoose.model( 'Report', ReportSchema )
 
-	let mongooseErrorsToString = function( err ) {
-		return _.map( err.errors, function( e ) {
-			return e.message
-		} ).join( ' ' )
-	}
+	let mongooseErrorsToString = err => _.map( err.errors, e => e.message ).join( ' ' )
 
 	let _Report = {
 
@@ -142,14 +138,13 @@ module.exports = ( Bureau ) => {
 						}
 
 
-					gameids.forEach( function( gid, i ) {
+					gameids.forEach( ( gid, i ) => {
 						games[ gid ].reports = []
-						idMap[ gid ] = i
 					} )
 
-					reports.forEach( function( r ) {
-						_Report.makeFullReport( r, function( err, report ) {
-							var game = games[ idMap[ report.gameid ] ]
+					reports.forEach( r => {
+						_Report.makeFullReport( r, ( err, report ) => {
+							var game = games[ report.gameid ]
 							if ( game ) {
 								game.reports.push( report )
 							}
@@ -227,7 +222,7 @@ module.exports = ( Bureau ) => {
 
 			Report.findByIdAndUpdate( reportId, {
 				$set: stuff
-			}, function( err, report ) {
+			}, ( err, report ) => {
 
 				if ( err ) {
 					callback( err )
