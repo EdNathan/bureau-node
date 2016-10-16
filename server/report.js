@@ -137,7 +137,7 @@ module.exports = ( Bureau ) => {
 						doneReports = 0,
 						reportLoaded = () => {
 							if ( ++doneReports === numReports ) {
-								callback( null, games )
+								callback( null, Bureau.game.toArray( games ) )
 							}
 						}
 
@@ -158,7 +158,7 @@ module.exports = ( Bureau ) => {
 					} )
 
 					if ( numReports < 1 ) {
-						callback( null, games )
+						callback( null, Bureau.game.toArray( games ) )
 					}
 
 
