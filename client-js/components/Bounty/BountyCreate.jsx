@@ -1,8 +1,9 @@
+window._cachedKillmethods = null
+
 class BountyCreate extends React.Component {
 
 	constructor() {
 		super()
-		this._killMethods = false
 		this.state = {
 			waiting: false,
 			error: null
@@ -32,17 +33,17 @@ class BountyCreate extends React.Component {
 
 	getKillMethodSuggestions( inputText, callback ) {
 
-		if ( !this._killMethods ) {
+		if ( !window._cachedKillmethods ) {
 			BureauApi('killmethods/getKillMethods', ( err, killmethods ) => {
 
-				this._killMethods = killmethods
+				window._cachedKillmethods = killmethods
 				this.getKillMethodSuggestions( inputText, callback )
 
 			})
 		} else {
 			let fuzzyRegex = new RegExp( _.map( inputText.trim().toLowerCase(), _.escapeRegExp ).join( '.*' ), 'i')
 
-			let suggestions = this._killMethods.filter( ( killmethod ) => {
+			let suggestions = window._cachedKillmethods.filter( ( killmethod ) => {
 				return fuzzyRegex.test(killmethod.name)
 			}).map( ( killmethod ) => {
 				return {
@@ -131,7 +132,7 @@ class BountyCreate extends React.Component {
 					<BureauFancyAutocompleteList
 						ref="killMethodsInput"
 						placeholder="Search for kill methods"
-						autocomplete={this.getKillMethodSuggestions}/>
+						autocomplete={(a,b) => this.getKillMethodSuggestions(a,b)}/>
 					<BureauFancyButton label="Create Bounty" onClick={this.submitBounty.bind(this)} disabled={this.state.waiting}/>
 				</div>
 			</div>
