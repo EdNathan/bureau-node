@@ -4,7 +4,7 @@ const fs = require( 'fs' )
 
 const moment = require( 'moment' )
 
-const LOG_FILE = `${process.env.OPENSHIFT_LOG_DIR || './'}api.log`
+const LOG_FILE = `${process.env.BUREAU_LOG_DIR || './'}api.log`
 
 const ts = () => moment().format()
 

@@ -7,30 +7,15 @@ var crypto = require( 'crypto' ),
 var utils = {
 	production: process.env.PLATFORM === 'nodejitsu',
 	mongourl: function() {
-		if ( process.env.VCAP_SERVICES ) {
-			var env = JSON.parse( process.env.VCAP_SERVICES );
-			var mongo = env[ 'mongodb2-2.4.8' ][ 0 ][ 'credentials' ];
-			console.log( mongo )
-		} else if ( process.env.OPENSHIFT_NODEJS_IP ) {
-			var mongo = {
-				hostname: process.env.OPENSHIFT_MONGODB_DB_HOST,
-				port: process.env.OPENSHIFT_MONGODB_DB_PORT,
-				username: process.env.OPENSHIFT_MONGODB_DB_USERNAME,
-				password: process.env.OPENSHIFT_MONGODB_DB_PASSWORD,
-				name: '',
-				db: process.env.OPENSHIFT_APP_NAME
-
-			}
-		} else {
-			var mongo = {
-				"hostname": "localhost",
-				"port": 27017,
-				"username": "",
-				"password": "",
-				"name": "",
-				"db": "bureau"
-			}
+		var mongo = {
+			"hostname": "localhost",
+			"port": 27017,
+			"username": "",
+			"password": "",
+			"name": "",
+			"db": "bureau"
 		}
+
 		var generate_mongo_url = function( obj ) {
 			obj.hostname = ( obj.hostname || 'localhost' )
 			obj.port = ( obj.port || 27017 )
@@ -41,8 +26,8 @@ var utils = {
 				return "mongodb://" + obj.hostname + ":" + obj.port + "/" + obj.db
 			}
 		}
-		var mongourl = process.env.PLATFORM === 'nodejitsu' ? passwords.jitsumongo : generate_mongo_url( mongo )
-		return mongourl
+
+		return generate_mongo_url(mongo)
 	},
 	md5: function( str ) {
 		return crypto.createHash( 'md5' ).update( str ).digest( "hex" )

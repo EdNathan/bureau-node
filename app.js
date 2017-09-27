@@ -9,7 +9,10 @@ var Bureau = require( './bureau' ),
 	session = require( 'express-session' ),
 	MongoStore = require( 'connect-mongo' )( session ),
 	moment = require( 'moment' ),
-	_ = require( 'lodash' )
+	_ = require( 'lodash' ),
+	argv = require('yargs').argv
+
+require('dotenv').config()
 
 console.log( `node ${process.version}` )
 
@@ -1714,8 +1717,8 @@ Bureau.init( function( err, db ) {
 		} ).join( ' ' )
 	} )
 
-	var port = ( process.env.VMC_APP_PORT || process.env.OPENSHIFT_NODEJS_PORT || 3000 )
-	var host = ( process.env.VCAP_APP_HOST || process.env.OPENSHIFT_NODEJS_IP || 'localhost' )
+	var port = process.env.PORT || argv.port || 3000
+	var host = process.env.HOST || argv.host || '0.0.0.0'
 	app.listen( port, host )
 
 	READY = true
