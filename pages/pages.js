@@ -184,7 +184,7 @@ module.exports = ( Bureau ) => {
 						if ( course.length < 1 )
 							errors.push( 'No course given, use N/A if not applicable' )
 
-						if ( !college && gamegroup === 'DURHAM' )
+						if ( !college && ggid === 'DURHAM' )
 							errors.push( 'No college selected' )
 					}
 
