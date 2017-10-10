@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 var Bureau = require( './bureau' ),
 	utils = require( './utils' ),
 	express = require( 'express' ),
@@ -12,7 +14,6 @@ var Bureau = require( './bureau' ),
 	_ = require( 'lodash' ),
 	argv = require('yargs').argv
 
-require('dotenv').config()
 
 console.log( `node ${process.version}` )
 
