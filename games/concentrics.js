@@ -481,9 +481,9 @@ var concentricsgame = {
 					return !_.includes( currentTargetIds, el._id + '' ) && el._id + '' !== uid
 				} )
 
-			Bureau.report.getReports( {
+			self.Bureau.report.getReports( {
 				killerid: uid,
-				state: Bureau.report.STATES.WAITING,
+				state: self.Bureau.report.STATES.WAITING,
 				gameid: game.gameid
 			}, ( err, reports ) => {
 				var pendingReports = _.map( reports.filter( function( kill ) {
