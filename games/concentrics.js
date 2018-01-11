@@ -435,6 +435,13 @@ var concentricsgame = {
 			var player = game.players[ playerId ]
 			var newTargets = self.pickNewTargetsForPlayer( game, playerId )
 
+			if ( player.targets.length ) {
+				const lastSetOfTargets = player.targets.pop()
+				lastSetOfTargets.originalDeadline = lastSetOfTargets.deadline
+				lastSetOfTargets.deadline = now.toDate()
+				player.targets.push(lastSetOfTargets)
+			}
+
 			player.targets.push( {
 				deadline: newDeadline,
 				targetStatuses: newTargets.map( function( targetId ) {
