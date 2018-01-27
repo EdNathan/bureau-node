@@ -325,7 +325,7 @@ var concentricsgame = {
 
 			// Find out if another player has this player as an in progress target
 			return currentTargets.filter( function( target ) {
-				return target.id === playerId && target.status === CONCENTRICS_GAME.TARGET_STATES.IN_PROGRESS
+				return target.id === playerId && target.status != CONCENTRICS_GAME.TARGET_STATES.EXPIRED
 			} ).length > 0
 		} ) )
 	},
@@ -816,7 +816,7 @@ var concentricsgame = {
 			newDeadline = moment( now ).add( deadlineDays, 'days' ).toDate(),
 			newPlayer = {
 				targets: [],
-				circle: CONCENTRICS_GAME.CIRCLES.INNER_CIRCLE,
+				circle: CONCENTRICS_GAME.CIRCLES.MIDDLE_CIRCLE,
 				permaCircle: false
 			}
 
